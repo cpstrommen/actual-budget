@@ -89,8 +89,8 @@ export function MobileNavTabs() {
 
   const navTabs = [
     {
-      name: t('Budget'),
-      path: '/budget',
+      name: t('CFM'),
+      path: '/cfm',
       style: navTabStyle,
       Icon: SvgWallet,
     },

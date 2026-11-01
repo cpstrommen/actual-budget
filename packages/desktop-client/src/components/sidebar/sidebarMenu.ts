@@ -1,4 +1,5 @@
 export const SIDEBAR_MENU_ITEM_IDS = [
+  'cfm',
   'budget',
   'reports',
   'schedules',

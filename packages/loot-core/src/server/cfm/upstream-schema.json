@@ -1,0 +1,1694 @@
+{
+  "formatVersion": 1,
+  "upstreamVersion": "26.10.0",
+  "commit": "5897cfa65afec3d0252d7467e5b7a033fb66900b",
+  "migrations": [
+    {
+      "id": 1548957970627,
+      "file": "1548957970627_remove-db-version.sql",
+      "sha256": "75566e310c4549df79cc1e7899389feae3ac4791f682e4e59b55001b5862e901"
+    },
+    {
+      "id": 1550601598648,
+      "file": "1550601598648_payees.sql",
+      "sha256": "586c365eaef01db19345bf6a19430bb0a3a0a42cf219c4be20822ba8acb0bd15"
+    },
+    {
+      "id": 1555786194328,
+      "file": "1555786194328_remove_category_group_unique.sql",
+      "sha256": "6afdb7f2a07844ca9263688cf5e601da5e1564a3ed5267545f02a4f40b6d4476"
+    },
+    {
+      "id": 1561751833510,
+      "file": "1561751833510_indexes.sql",
+      "sha256": "bd89c7bd8fb82c5fa2662daf5decbfd87bb9538cea826efffab4a3fa44eddc89"
+    },
+    {
+      "id": 1567699552727,
+      "file": "1567699552727_budget.sql",
+      "sha256": "1aae0ddff63b14166d6e0f168d351441877bc8e72150e9ec8cedef8b938d9ed4"
+    },
+    {
+      "id": 1582384163573,
+      "file": "1582384163573_cleared.sql",
+      "sha256": "083cab3f6f9a286063453100c7d52bab8cb6b7ac16093d42541f9d9614c21bf2"
+    },
+    {
+      "id": 1597756566448,
+      "file": "1597756566448_rules.sql",
+      "sha256": "c68499e46db192f7dc60ed42d76cc86e05600594671ecb7a6c7c63c1a0a75174"
+    },
+    {
+      "id": 1608652596043,
+      "file": "1608652596043_parent_field.sql",
+      "sha256": "882baf6afadd13374641c0b61b197f67816d83902b9dea245ba9803c01299f8c"
+    },
+    {
+      "id": 1608652596044,
+      "file": "1608652596044_trans_views.sql",
+      "sha256": "dfcfc0e5b938492aa5347b2bc54305f86a6d7a4f8e0682276afc7235af54d289"
+    },
+    {
+      "id": 1612625548236,
+      "file": "1612625548236_optimize.sql",
+      "sha256": "54a671df6b90586d1bdaeadf362fccb0518111d5ff9aa702df70d9b5d9f56dbe"
+    },
+    {
+      "id": 1614782639336,
+      "file": "1614782639336_trans_views2.sql",
+      "sha256": "61c4602fbad55832ddf7f26e54d356f81d6d019984a0efad76059350286413e9"
+    },
+    {
+      "id": 1615745967948,
+      "file": "1615745967948_meta.sql",
+      "sha256": "e63d7cc224c316378a2b3581164a486d8d683f018a2c105d4017c87267643713"
+    },
+    {
+      "id": 1616167010796,
+      "file": "1616167010796_accounts_order.sql",
+      "sha256": "68bbe2f018b2da2775a56649f4b337dd5238af81912763d4a68e5e74d099c5bd"
+    },
+    {
+      "id": 1618975177358,
+      "file": "1618975177358_schedules.sql",
+      "sha256": "dd61d87ab18faaa102e103cf7225eb8b53ed293a04ae86f48cd65af3a27cc768"
+    },
+    {
+      "id": 1632571489012,
+      "file": "1632571489012_remove_cache.js",
+      "sha256": "c0695cd40c06bcc18f30550286ec0b767ccba7faa2cae5d7a20ed2866eff587f"
+    },
+    {
+      "id": 1679728867040,
+      "file": "1679728867040_rules_conditions.sql",
+      "sha256": "17413daafa800c33c3682828dff4a507087b0eead2ab3fb282515e16ea639e4c"
+    },
+    {
+      "id": 1681115033845,
+      "file": "1681115033845_add_schedule_name.sql",
+      "sha256": "489381ca60308fff15412a4ec6ca41bceec4a0c2d1e26ab249f7b0ff62bd8e5f"
+    },
+    {
+      "id": 1682974838138,
+      "file": "1682974838138_remove_payee_rules.sql",
+      "sha256": "763455424632da16f6be7db43871e42e69d106a0840a5d38d61f3cb4a1a15f83"
+    },
+    {
+      "id": 1685007876842,
+      "file": "1685007876842_add_category_hidden.sql",
+      "sha256": "a7f1b80e4f342593dd7c961bffa5ca23fe59d2f1d694716c8653353aec5a954c"
+    },
+    {
+      "id": 1686139660866,
+      "file": "1686139660866_remove_account_type.sql",
+      "sha256": "4456361fae4b67d3243def5cc0650338ee5c9fbebfb977a716c47648e3849d36"
+    },
+    {
+      "id": 1688749527273,
+      "file": "1688749527273_transaction_filters.sql",
+      "sha256": "ceb054d06727f4143420dd35653002217640893812146ea14f6c4d825e467e30"
+    },
+    {
+      "id": 1688841238000,
+      "file": "1688841238000_add_account_type.sql",
+      "sha256": "265a1475dc01b614943a0b11b6e54d82ce7e53cd796b862f2cce81f0e79190ef"
+    },
+    {
+      "id": 1691233396000,
+      "file": "1691233396000_add_schedule_next_date_tombstone.sql",
+      "sha256": "29732bc8279a5d9c111c7b7c4ea7b45b5e2c0f55b59bc4d93a83467d0c657c7c"
+    },
+    {
+      "id": 1694438752000,
+      "file": "1694438752000_add_goal_targets.sql",
+      "sha256": "2636f3e7a3d3026fc7c67fab0a0f73cd9a8a14f57dcd4ea7fe762791951c02ac"
+    },
+    {
+      "id": 1697046240000,
+      "file": "1697046240000_add_reconciled.sql",
+      "sha256": "24f44f300544351857da9395bbe0ff3b28ab93913fe4d5493f3f7d141665b9ae"
+    },
+    {
+      "id": 1704572023730,
+      "file": "1704572023730_add_account_sync_source.sql",
+      "sha256": "a2a942636395d96be80e3c1b915741ae931a152a8f93d7a88f708152ae5ade89"
+    },
+    {
+      "id": 1704572023731,
+      "file": "1704572023731_add_missing_goCardless_sync_source.sql",
+      "sha256": "ca03745e86c52850ba1e949555703c5639df443a74864a16e65ea81dfdcd6431"
+    },
+    {
+      "id": 1707267033000,
+      "file": "1707267033000_reports.sql",
+      "sha256": "ec40f1db297b92193fa1180680deb9b9f0e104186cc628e8cb5938df24fc7d7a"
+    },
+    {
+      "id": 1712784523000,
+      "file": "1712784523000_unhide_input_group.sql",
+      "sha256": "2185eb159c28e269cd0534fd232151102644deccd242736bea23d23f4ea5f942"
+    },
+    {
+      "id": 1716359441000,
+      "file": "1716359441000_include_current.sql",
+      "sha256": "0ebb51205c90e85569ed06c6d6e4b47162ef34e6b5da2f73c32da3858442dd63"
+    },
+    {
+      "id": 1720310586000,
+      "file": "1720310586000_link_transfer_schedules.sql",
+      "sha256": "a1e3a6a54ea3cd5fed13bdbfce725873bd1a4a24cc6f8abc70ba955f4d8b6ab4"
+    },
+    {
+      "id": 1720664867241,
+      "file": "1720664867241_add_payee_favorite.sql",
+      "sha256": "ab21d24c223d4c0257c8d22f0f4d74d585dd7d558e3c7af15973eb31511914e5"
+    },
+    {
+      "id": 1720665000000,
+      "file": "1720665000000_goal_context.sql",
+      "sha256": "c4d68449b5b88c4c4ee4ba33d8d8713892b2c7021c0ceff3b626396d2676e5b0"
+    },
+    {
+      "id": 1722717601000,
+      "file": "1722717601000_reports_move_selected_categories.js",
+      "sha256": "78518cb0679e0ca1dddda7f14d2d82fd2d911244dd7c78820ed8bc492221e938"
+    },
+    {
+      "id": 1722804019000,
+      "file": "1722804019000_create_dashboard_table.js",
+      "sha256": "965a56eb9a6d6b722583a869f4b0dc3cc77fca177e736bd923ad51dafe04a9e5"
+    },
+    {
+      "id": 1723665565000,
+      "file": "1723665565000_prefs.js",
+      "sha256": "cc82555f54a6b3d26c23baae0f8ba90f578667d9015dc5a88dd453ae2b6bb0d8"
+    },
+    {
+      "id": 1730744182000,
+      "file": "1730744182000_fix_dashboard_table.sql",
+      "sha256": "3db383b10ed9ba43abfb3359a1a6a00cb2c273b8e8686cdd3bfe1755d8cb919d"
+    },
+    {
+      "id": 1736640000000,
+      "file": "1736640000000_custom_report_sorting.sql",
+      "sha256": "a60fcd9b4e840c17e2a4a31f30d3ef4bb06bd0b8c0e4af7acba05e768776c9ca"
+    },
+    {
+      "id": 1737158400000,
+      "file": "1737158400000_add_learn_categories_to_payees.sql",
+      "sha256": "b0d373722e7f1c347202ce64b7360daa2047e9e6cf58699076d32db98ebfb4c5"
+    },
+    {
+      "id": 1738491452000,
+      "file": "1738491452000_sorting_rename.sql",
+      "sha256": "be8434eec826d8482ce8dc937aaa924fb8560d7ee9c6dfd84fd430ca6ab151e2"
+    },
+    {
+      "id": 1739139550000,
+      "file": "1739139550000_bank_sync_page.sql",
+      "sha256": "880247b4a518dfcb2fc21ba4af0d280643160b606d90cb52a7d8f26632c46505"
+    },
+    {
+      "id": 1740506588539,
+      "file": "1740506588539_add_last_reconciled_at.sql",
+      "sha256": "7e89870f84b4b56af97257448d2fb064ffcae6cbc4c44748b89ffca289a0f76a"
+    },
+    {
+      "id": 1745425408000,
+      "file": "1745425408000_update_budgetType_pref.sql",
+      "sha256": "37c59829a0644b94f1df02685d9b8640ec0fa609a9c23899dfcfad000aea8514"
+    },
+    {
+      "id": 1749799110000,
+      "file": "1749799110000_add_tags.sql",
+      "sha256": "14c150a64e08fd8150e12c378200092af7b8f4c03069b34360901cb3eb9b7645"
+    },
+    {
+      "id": 1749799110001,
+      "file": "1749799110001_tags_tombstone.sql",
+      "sha256": "33c7b597ba290d897bad00b2104e401d380b1bbfafcca1dda7de9f265bf5fa7e"
+    },
+    {
+      "id": 1754611200000,
+      "file": "1754611200000_add_category_template_settings.sql",
+      "sha256": "fc95a7ad651687c5e4eec36a89476c8faddc64722b73326e3af80d562bb43f9e"
+    },
+    {
+      "id": 1759260219000,
+      "file": "1759260219000_add_trim_interval_report_setting.sql",
+      "sha256": "7b0f3ba004078a0f51a9d18e6e7312f6f54b280216508ae6b1563a44b506ffa7"
+    },
+    {
+      "id": 1759842823172,
+      "file": "1759842823172_add_isGlobal_to_preferences.sql",
+      "sha256": "edbfd62ccefd2628c62f27e92caa64894e0e4de3c43baf94424ae3bd1d2d74de"
+    },
+    {
+      "id": 1762178745667,
+      "file": "1762178745667_rename_csv_skip_lines_pref.sql",
+      "sha256": "2baf91646869ee97b74e60db0a97df088b799dc395635b62a6ab283d4ae758f2"
+    },
+    {
+      "id": 1765518577215,
+      "file": "1765518577215_multiple_dashboards.js",
+      "sha256": "61f48407e23d744dc8738031c1b1d07ea75265461ed976a7a662d1f4095a63fa"
+    },
+    {
+      "id": 1768872504000,
+      "file": "1768872504000_add_payee_locations.sql",
+      "sha256": "ebaa4677d62abfd442be138d9cc8778d8fb64132a8ac653f8c3f03a19e9046b5"
+    },
+    {
+      "id": 1769000000000,
+      "file": "1769000000000_add_custom_upcoming_length.sql",
+      "sha256": "6868b2ff18e8df85daa317e58cb96e04600a2d215b42334f8681cf2d67e52591"
+    },
+    {
+      "id": 1778510362740,
+      "file": "1778510362740_add_cleanup_groups_and_def.sql",
+      "sha256": "b2501d91f82ff56ca1140968c437f1c75ad8bed66b336c0154425b62f2500755"
+    },
+    {
+      "id": 1780099200000,
+      "file": "1780099200000_add_show_trend_lines_report_setting.sql",
+      "sha256": "0cd743598eb1d7b85519f537cee8014c1b2a235fe20451897eb4222e308b937f"
+    },
+    {
+      "id": 1780327681000,
+      "file": "1780327681000_add_tags_hidden.sql",
+      "sha256": "72174eea71871a9fdd71ecb9780393ae2c3b48419caa23acc68fbe0383245147"
+    },
+    {
+      "id": 1780606215000,
+      "file": "1780606215000_add_bank_sync_status.sql",
+      "sha256": "8c80a5ea5649435fbfe89308b0c8a2ff9020553dee676aec1c55f48214497f1d"
+    },
+    {
+      "id": 1780606215001,
+      "file": "1780606215001_add_performance_indexes.sql",
+      "sha256": "eb5add27f8bb44c1bd7fe5e14ed20565cd09c7237b03a5f6a7baacb5d7cfdb1f"
+    },
+    {
+      "id": 1783004650757,
+      "file": "1783004650757_schedule_sort_order.sql",
+      "sha256": "38cbfbda34ce749f45d145ad8156a054fd20fa477b83c3176127a695315f7687"
+    },
+    {
+      "id": 1787013118115,
+      "file": "1787013118115_add_account_groups.sql",
+      "sha256": "08f38e203a543ab2e19913c7f03024cbf13cbb3fe818e1f54adbb59e9cf49ac2"
+    },
+    {
+      "id": 1788468782000,
+      "file": "1788468782000_add_messages_pending.js",
+      "sha256": "ffb398fd775b817292bbe5fbd05ec9bf1a19dfc7355f4bb84e46c5121faac433"
+    }
+  ],
+  "schema": [
+    {
+      "type": "table",
+      "name": "__meta__",
+      "tbl_name": "__meta__",
+      "sql": "CREATE TABLE __meta__ (key TEXT PRIMARY KEY, value TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "__migrations__",
+      "tbl_name": "__migrations__",
+      "sql": "CREATE TABLE __migrations__ (id INT PRIMARY KEY NOT NULL)"
+    },
+    {
+      "type": "table",
+      "name": "account_groups",
+      "tbl_name": "account_groups",
+      "sql": "CREATE TABLE account_groups\n  (id TEXT PRIMARY KEY,\n   name TEXT,\n   sort_order REAL,\n   tombstone INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "accounts",
+      "tbl_name": "accounts",
+      "sql": "CREATE TABLE accounts\n   (id TEXT PRIMARY KEY,\n    account_id TEXT,\n    name TEXT,\n    balance_current INTEGER,\n    balance_available INTEGER,\n    balance_limit INTEGER,\n    mask TEXT,\n    official_name TEXT,\n    subtype TEXT,\n    bank TEXT,\n    offbudget INTEGER DEFAULT 0,\n    closed INTEGER DEFAULT 0,\n    tombstone INTEGER DEFAULT 0, sort_order REAL, type TEXT, account_sync_source TEXT, last_sync text, last_reconciled text, bank_sync_status text, account_group_id TEXT DEFAULT NULL)"
+    },
+    {
+      "type": "table",
+      "name": "banks",
+      "tbl_name": "banks",
+      "sql": "CREATE TABLE banks\n (id TEXT PRIMARY KEY,\n  bank_id TEXT,\n  name TEXT,\n  tombstone INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "categories",
+      "tbl_name": "categories",
+      "sql": "CREATE TABLE categories\n (id TEXT PRIMARY KEY,\n  name TEXT,\n  is_income INTEGER DEFAULT 0,\n  cat_group TEXT,\n  sort_order REAL,\n  tombstone INTEGER DEFAULT 0, hidden BOOLEAN NOT NULL DEFAULT 0, goal_def TEXT DEFAULT null, template_settings JSON DEFAULT '{\"source\": \"notes\"}', cleanup_def TEXT DEFAULT NULL)"
+    },
+    {
+      "type": "table",
+      "name": "category_groups",
+      "tbl_name": "category_groups",
+      "sql": "CREATE TABLE category_groups\n   (id TEXT PRIMARY KEY,\n    name TEXT,\n    is_income INTEGER DEFAULT 0,\n    sort_order REAL,\n    tombstone INTEGER DEFAULT 0, hidden BOOLEAN NOT NULL DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "category_mapping",
+      "tbl_name": "category_mapping",
+      "sql": "CREATE TABLE category_mapping\n  (id TEXT PRIMARY KEY,\n   transferId TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "cleanup_groups",
+      "tbl_name": "cleanup_groups",
+      "sql": "CREATE TABLE cleanup_groups\n  (id TEXT PRIMARY KEY,\n   name TEXT NOT NULL,\n   tombstone INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "created_budgets",
+      "tbl_name": "created_budgets",
+      "sql": "CREATE TABLE created_budgets (month TEXT PRIMARY KEY)"
+    },
+    {
+      "type": "table",
+      "name": "custom_reports",
+      "tbl_name": "custom_reports",
+      "sql": "CREATE TABLE custom_reports\n  (\n    id TEXT PRIMARY KEY,\n    name TEXT,\n    start_date TEXT,\n    end_date TEXT,\n    date_static INTEGER DEFAULT 0,\n    date_range TEXT,\n    mode TEXT DEFAULT 'total',\n    group_by TEXT DEFAULT 'Category',\n    balance_type TEXT DEFAULT 'Expense',\n    show_empty INTEGER DEFAULT 0,\n    show_offbudget INTEGER DEFAULT 0,\n    show_hidden INTEGER DEFAULT 0,\n    show_uncategorized INTEGER DEFAULT 0,\n    selected_categories TEXT,\n    graph_type TEXT DEFAULT 'BarGraph',\n    conditions TEXT,\n    conditions_op TEXT DEFAULT 'and',\n    metadata TEXT,\n    interval TEXT DEFAULT 'Monthly',\n    color_scheme TEXT,\n    tombstone INTEGER DEFAULT 0\n  , include_current INTEGER DEFAULT 0, sort_by TEXT DEFAULT 'desc', trim_intervals INTEGER DEFAULT 0, show_trend_lines INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "dashboard",
+      "tbl_name": "dashboard",
+      "sql": "CREATE TABLE dashboard\n        (id TEXT PRIMARY KEY,\n         type TEXT,\n         width INTEGER,\n         height INTEGER,\n         x INTEGER,\n         y INTEGER,\n         meta TEXT,\n         tombstone INTEGER DEFAULT 0, dashboard_page_id TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "dashboard_pages",
+      "tbl_name": "dashboard_pages",
+      "sql": "CREATE TABLE dashboard_pages\n        (id TEXT PRIMARY KEY,\n         name TEXT,\n         tombstone INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "kvcache",
+      "tbl_name": "kvcache",
+      "sql": "CREATE TABLE kvcache (key TEXT PRIMARY KEY, value TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "kvcache_key",
+      "tbl_name": "kvcache_key",
+      "sql": "CREATE TABLE kvcache_key (id INTEGER PRIMARY KEY, key REAL)"
+    },
+    {
+      "type": "table",
+      "name": "messages_clock",
+      "tbl_name": "messages_clock",
+      "sql": "CREATE TABLE messages_clock (id INTEGER PRIMARY KEY, clock TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "messages_crdt",
+      "tbl_name": "messages_crdt",
+      "sql": "CREATE TABLE messages_crdt\n (id INTEGER PRIMARY KEY,\n  timestamp TEXT NOT NULL UNIQUE,\n  dataset TEXT NOT NULL,\n  row TEXT NOT NULL,\n  column TEXT NOT NULL,\n  value BLOB NOT NULL)"
+    },
+    {
+      "type": "table",
+      "name": "messages_pending",
+      "tbl_name": "messages_pending",
+      "sql": "CREATE TABLE messages_pending\n    (dataset TEXT NOT NULL,\n     row TEXT NOT NULL,\n     column TEXT NOT NULL,\n     timestamp TEXT NOT NULL,\n     -- Serialized string form, e.g. \"S:hello\" (see `serializeValue`)\n     value TEXT NOT NULL,\n     PRIMARY KEY (dataset, row, column))"
+    },
+    {
+      "type": "table",
+      "name": "notes",
+      "tbl_name": "notes",
+      "sql": "CREATE TABLE notes\n  (id TEXT PRIMARY KEY,\n   note TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "payee_locations",
+      "tbl_name": "payee_locations",
+      "sql": "CREATE TABLE payee_locations (\n      id TEXT PRIMARY KEY,\n      payee_id TEXT,\n      latitude REAL,\n      longitude REAL,\n      created_at INTEGER,\n      tombstone INTEGER DEFAULT 0\n    )"
+    },
+    {
+      "type": "table",
+      "name": "payee_mapping",
+      "tbl_name": "payee_mapping",
+      "sql": "CREATE TABLE payee_mapping\n  (id TEXT PRIMARY KEY,\n   targetId TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "payees",
+      "tbl_name": "payees",
+      "sql": "CREATE TABLE payees\n  (id TEXT PRIMARY KEY,\n   name TEXT,\n   category TEXT,\n   tombstone INTEGER DEFAULT 0,\n   transfer_acct TEXT, favorite INTEGER DEFAULT 0 DEFAULT FALSE, learn_categories BOOLEAN DEFAULT 1)"
+    },
+    {
+      "type": "table",
+      "name": "pending_transactions",
+      "tbl_name": "pending_transactions",
+      "sql": "CREATE TABLE pending_transactions\n  (id TEXT PRIMARY KEY,\n   acct INTEGER,\n   amount INTEGER,\n   description TEXT,\n   date TEXT,\n   FOREIGN KEY(acct) REFERENCES accounts(id))"
+    },
+    {
+      "type": "table",
+      "name": "preferences",
+      "tbl_name": "preferences",
+      "sql": "CREATE TABLE preferences\n       (id TEXT PRIMARY KEY,\n        value TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "reflect_budgets",
+      "tbl_name": "reflect_budgets",
+      "sql": "CREATE TABLE reflect_budgets\n  (id TEXT PRIMARY KEY,\n   month INTEGER,\n   category TEXT,\n   amount INTEGER DEFAULT 0,\n   carryover INTEGER DEFAULT 0, goal INTEGER DEFAULT null, long_goal INTEGER DEFAULT null)"
+    },
+    {
+      "type": "table",
+      "name": "rules",
+      "tbl_name": "rules",
+      "sql": "CREATE TABLE rules\n  (id TEXT PRIMARY KEY,\n   stage TEXT,\n   conditions TEXT,\n   actions TEXT,\n   tombstone INTEGER DEFAULT 0, conditions_op TEXT DEFAULT 'and')"
+    },
+    {
+      "type": "table",
+      "name": "schedules",
+      "tbl_name": "schedules",
+      "sql": "CREATE TABLE schedules\n  (id TEXT PRIMARY KEY,\n   rule TEXT,\n   active INTEGER DEFAULT 0,\n   completed INTEGER DEFAULT 0,\n   posts_transaction INTEGER DEFAULT 0,\n   tombstone INTEGER DEFAULT 0, name TEXT DEFAULT NULL, custom_upcoming_length TEXT DEFAULT NULL, sort_order REAL DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "schedules_json_paths",
+      "tbl_name": "schedules_json_paths",
+      "sql": "CREATE TABLE schedules_json_paths\n  (schedule_id TEXT PRIMARY KEY,\n   payee TEXT,\n   account TEXT,\n   amount TEXT,\n   date TEXT)"
+    },
+    {
+      "type": "table",
+      "name": "schedules_next_date",
+      "tbl_name": "schedules_next_date",
+      "sql": "CREATE TABLE schedules_next_date\n  (id TEXT PRIMARY KEY,\n   schedule_id TEXT,\n   local_next_date INTEGER,\n   local_next_date_ts INTEGER,\n   base_next_date INTEGER,\n   base_next_date_ts INTEGER, tombstone INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "tags",
+      "tbl_name": "tags",
+      "sql": "CREATE TABLE tags(\n  id TEXT PRIMARY KEY,\n  tag TEXT UNIQUE,\n  color TEXT,\n  description TEXT\n, tombstone integer DEFAULT 0, hidden BOOLEAN DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "transaction_filters",
+      "tbl_name": "transaction_filters",
+      "sql": "CREATE TABLE transaction_filters\n  (id TEXT PRIMARY KEY,\n   name TEXT,\n   conditions TEXT,\n   conditions_op TEXT DEFAULT 'and',\n   tombstone INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "transactions",
+      "tbl_name": "transactions",
+      "sql": "CREATE TABLE transactions\n  (id TEXT PRIMARY KEY,\n   isParent INTEGER DEFAULT 0,\n   isChild INTEGER DEFAULT 0,\n   acct TEXT,\n   category TEXT,\n   amount INTEGER,\n   description TEXT,\n   notes TEXT,\n   date INTEGER,\n   financial_id TEXT,\n   type TEXT,\n   location TEXT,\n   error TEXT,\n   imported_description TEXT,\n   starting_balance_flag INTEGER DEFAULT 0,\n   transferred_id TEXT,\n   sort_order REAL,\n   tombstone INTEGER DEFAULT 0, cleared INTEGER DEFAULT 1, pending INTEGER DEFAULT 0, parent_id TEXT, schedule TEXT, reconciled INTEGER DEFAULT 0, raw_synced_data text)"
+    },
+    {
+      "type": "table",
+      "name": "zero_budget_months",
+      "tbl_name": "zero_budget_months",
+      "sql": "CREATE TABLE zero_budget_months\n  (id TEXT PRIMARY KEY,\n   buffered INTEGER DEFAULT 0)"
+    },
+    {
+      "type": "table",
+      "name": "zero_budgets",
+      "tbl_name": "zero_budgets",
+      "sql": "CREATE TABLE zero_budgets\n  (id TEXT PRIMARY KEY,\n   month INTEGER,\n   category TEXT,\n   amount INTEGER DEFAULT 0,\n   carryover INTEGER DEFAULT 0, goal INTEGER DEFAULT null, long_goal INTEGER DEFAULT null)"
+    },
+    {
+      "type": "index",
+      "name": "idx_payee_locations_geo_tombstone",
+      "tbl_name": "payee_locations",
+      "sql": "CREATE INDEX idx_payee_locations_geo_tombstone ON payee_locations (tombstone, latitude, longitude)"
+    },
+    {
+      "type": "index",
+      "name": "idx_payee_locations_payee_id",
+      "tbl_name": "payee_locations",
+      "sql": "CREATE INDEX idx_payee_locations_payee_id ON payee_locations (payee_id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_payee_locations_tombstone_payee_created",
+      "tbl_name": "payee_locations",
+      "sql": "CREATE INDEX idx_payee_locations_tombstone_payee_created ON payee_locations (tombstone, payee_id, created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_transactions_acct_tombstone",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX idx_transactions_acct_tombstone ON transactions(acct, tombstone)"
+    },
+    {
+      "type": "index",
+      "name": "idx_transactions_schedule",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX idx_transactions_schedule ON transactions(schedule)"
+    },
+    {
+      "type": "index",
+      "name": "messages_crdt_search",
+      "tbl_name": "messages_crdt",
+      "sql": "CREATE INDEX messages_crdt_search ON messages_crdt(dataset, row, column, timestamp)"
+    },
+    {
+      "type": "index",
+      "name": "trans_category",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX trans_category ON transactions(category)"
+    },
+    {
+      "type": "index",
+      "name": "trans_category_date",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX trans_category_date ON transactions(category, date)"
+    },
+    {
+      "type": "index",
+      "name": "trans_date",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX trans_date ON transactions(date)"
+    },
+    {
+      "type": "index",
+      "name": "trans_parent_id",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX trans_parent_id ON transactions(parent_id)"
+    },
+    {
+      "type": "index",
+      "name": "trans_sorted",
+      "tbl_name": "transactions",
+      "sql": "CREATE INDEX trans_sorted ON transactions(date desc, starting_balance_flag, sort_order desc, id)"
+    }
+  ],
+  "tables": {
+    "__meta__": [
+      {
+        "name": "key",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "__migrations__": [
+      {
+        "name": "id",
+        "type": "INT",
+        "pk": 1
+      }
+    ],
+    "account_groups": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "sort_order",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "accounts": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "account_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "balance_current",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "balance_available",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "balance_limit",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "mask",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "official_name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "subtype",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "bank",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "offbudget",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "closed",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "sort_order",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "account_sync_source",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "last_sync",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "last_reconciled",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "bank_sync_status",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "account_group_id",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "banks": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "bank_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "categories": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "is_income",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "cat_group",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "sort_order",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "hidden",
+        "type": "BOOLEAN",
+        "pk": 0
+      },
+      {
+        "name": "goal_def",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "template_settings",
+        "type": "JSON",
+        "pk": 0
+      },
+      {
+        "name": "cleanup_def",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "category_groups": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "is_income",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "sort_order",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "hidden",
+        "type": "BOOLEAN",
+        "pk": 0
+      }
+    ],
+    "category_mapping": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "transferId",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "cleanup_groups": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "created_budgets": [
+      {
+        "name": "month",
+        "type": "TEXT",
+        "pk": 1
+      }
+    ],
+    "custom_reports": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "start_date",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "end_date",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "date_static",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "date_range",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "mode",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "group_by",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "balance_type",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "show_empty",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "show_offbudget",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "show_hidden",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "show_uncategorized",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "selected_categories",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "graph_type",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "conditions",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "conditions_op",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "metadata",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "interval",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "color_scheme",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "include_current",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "sort_by",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "trim_intervals",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "show_trend_lines",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "dashboard": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "width",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "height",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "x",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "y",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "meta",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "dashboard_page_id",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "dashboard_pages": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "kvcache": [
+      {
+        "name": "key",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "kvcache_key": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "pk": 1
+      },
+      {
+        "name": "key",
+        "type": "REAL",
+        "pk": 0
+      }
+    ],
+    "messages_clock": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "pk": 1
+      },
+      {
+        "name": "clock",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "messages_crdt": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "pk": 1
+      },
+      {
+        "name": "timestamp",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "dataset",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "row",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "column",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "value",
+        "type": "BLOB",
+        "pk": 0
+      }
+    ],
+    "messages_pending": [
+      {
+        "name": "dataset",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "row",
+        "type": "TEXT",
+        "pk": 2
+      },
+      {
+        "name": "column",
+        "type": "TEXT",
+        "pk": 3
+      },
+      {
+        "name": "timestamp",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "notes": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "note",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "payee_locations": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "payee_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "latitude",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "longitude",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "payee_mapping": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "targetId",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "payees": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "category",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "transfer_acct",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "favorite",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "learn_categories",
+        "type": "BOOLEAN",
+        "pk": 0
+      }
+    ],
+    "pending_transactions": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "acct",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "amount",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "description",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "date",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "preferences": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "reflect_budgets": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "month",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "category",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "amount",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "carryover",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "goal",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "long_goal",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "rules": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "stage",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "conditions",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "actions",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "conditions_op",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "schedules": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "rule",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "active",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "completed",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "posts_transaction",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "custom_upcoming_length",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "sort_order",
+        "type": "REAL",
+        "pk": 0
+      }
+    ],
+    "schedules_json_paths": [
+      {
+        "name": "schedule_id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "payee",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "account",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "amount",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "date",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "schedules_next_date": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "schedule_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "local_next_date",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "local_next_date_ts",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "base_next_date",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "base_next_date_ts",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "tags": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "tag",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "color",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "description",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "hidden",
+        "type": "BOOLEAN",
+        "pk": 0
+      }
+    ],
+    "transaction_filters": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "conditions",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "conditions_op",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "transactions": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "isParent",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "isChild",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "acct",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "category",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "amount",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "description",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "notes",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "date",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "financial_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "location",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "error",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "imported_description",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "starting_balance_flag",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "transferred_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "sort_order",
+        "type": "REAL",
+        "pk": 0
+      },
+      {
+        "name": "tombstone",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "cleared",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "pending",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "parent_id",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "schedule",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "reconciled",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "raw_synced_data",
+        "type": "TEXT",
+        "pk": 0
+      }
+    ],
+    "zero_budget_months": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "buffered",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ],
+    "zero_budgets": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "pk": 1
+      },
+      {
+        "name": "month",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "category",
+        "type": "TEXT",
+        "pk": 0
+      },
+      {
+        "name": "amount",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "carryover",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "goal",
+        "type": "INTEGER",
+        "pk": 0
+      },
+      {
+        "name": "long_goal",
+        "type": "INTEGER",
+        "pk": 0
+      }
+    ]
+  }
+}

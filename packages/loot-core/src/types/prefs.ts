@@ -1,3 +1,4 @@
+import type { CfmAutomationJobState } from '#shared/cfm-automation';
 export type FeatureFlag =
   | 'newSidebarUI'
   | 'goalTemplatesEnabled'
@@ -161,6 +162,9 @@ export type GlobalPrefs = Partial<{
 
 // GlobalPrefsJson represents what's saved in the global-store.json file
 export type GlobalPrefsJson = Partial<{
+  'cfm-device-id': string;
+  'cfm-job-states': Record<string, CfmAutomationJobState>;
+  'cfm-portability-status': { updatedAt: string; error?: string };
   'user-id'?: string;
   'user-key'?: string;
   'encrypt-keys'?: string;

@@ -468,3 +468,15 @@ export function setPreference<T extends keyof SyncedPrefs>(
 ): Promise<void> {
   return send('preferences/save', { id, value });
 }
+
+// Actual CFM extensions preserve the upstream ledger API alongside the planning workspace.
+export async function getCfmState() { return send('cfm-get-state'); }
+export async function saveCfmRecord(record: import('@actual-app/core/types/models/cfm').CfmRecord) { return send('cfm-save-record', {record}); }
+export async function deleteCfmRecord(id: string) { return send('cfm-delete-record', {id}); }
+export async function runCfmAutomation(options: {now?:string;deviceId?:string;mode?:'application'|'headless'} = {}) { return send('cfm-run-automation',options); }
+export async function exportForActualBudget(options: {targetVersion?:string} = {}) { return send('cfm-export-upstream',options); }
+export async function createCfmAccount(options: import('@actual-app/core/server/cfm/app').CreateCfmAccountOptions) {return send('cfm-create-account',options);}
+export async function setCfmBalance(options: import('@actual-app/core/server/cfm/app').SetBalanceOptions) {return send('cfm-post-adjustment',options);}
+export async function settleCfmObligation(options: import('@actual-app/core/server/cfm/app').SettleOptions) {return send('cfm-settle-obligation',options);}
+export async function projectCfmLiquidity(options: import('@actual-app/core/server/cfm/views').ProjectionOptions) {return send('cfm-project-liquidity',options);}
+export async function runCfmReport(options: {templateId:string;asOf:string;startDate?:string;endDate?:string;requestId?:string}) {return send('cfm-run-report',options);}

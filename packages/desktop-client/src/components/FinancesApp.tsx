@@ -1,3 +1,4 @@
+import { CfmWorkspace } from '#components/cfm/CfmWorkspace';
 import React, { useEffect, useEffectEvent, useRef } from 'react';
 import type { ReactElement } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -260,6 +261,7 @@ export function FinancesApp() {
                   {isNarrowWidth && <MobilePageHeaderSlot />}
 
                   <Routes>
+                    <Route path="/cfm" element={<CfmWorkspace />} />
                     <Route path="/" element={<StartPageRedirect />} />
 
                     <Route path="/reports/*" element={<Reports />} />

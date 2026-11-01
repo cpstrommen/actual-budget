@@ -24,7 +24,8 @@
     "typings/**/*.ts",
     "typings/**/*.d.ts",
     "migrations/**/*.js",
-    "src/server/tests/mockData.json"
+    "src/server/tests/mockData.json",
+    "src/server/cfm/upstream-schema.json"
   ],
   "exclude": ["node_modules", "build", "lib-dist", "@types"]
 }

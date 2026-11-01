@@ -1,3 +1,4 @@
+import type { CfmHandlers } from '#server/cfm/app';
 import type { AccountGroupsHandlers } from '#server/account-groups/app';
 import type { AccountHandlers } from '#server/accounts/app';
 import type { AdminHandlers } from '#server/admin/app';
@@ -26,6 +27,7 @@ import type { ServerHandlers } from './server-handlers';
 
 export type Handlers = {} & ServerHandlers &
   ApiHandlers &
+  CfmHandlers &
   BudgetHandlers &
   DashboardHandlers &
   FiltersHandlers &

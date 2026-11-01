@@ -27,6 +27,7 @@ export function useSidebarMenuItemDetails(): Record<
   const { t } = useTranslation();
 
   return {
+    cfm: { title: t('Cash flow management'), Icon: SvgReports },
     budget: { title: t('Budget'), Icon: SvgWallet },
     reports: { title: t('Reports'), Icon: SvgReports },
     schedules: { title: t('Schedules'), Icon: SvgCalendar3 },

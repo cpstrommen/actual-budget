@@ -4,6 +4,7 @@ import * as connection from '#platform/server/connection';
 import * as db from '#server/db';
 import { incrFetch, whereIn } from '#server/db/util';
 import { batchMessages } from '#server/sync';
+import { assertCfmTransactionChanges } from '#server/cfm/transaction-guard';
 import type { Diff } from '#shared/util';
 import type { PayeeEntity, TransactionEntity } from '#types/models';
 
@@ -49,6 +50,7 @@ export async function batchUpdateTransactions({
   detectOrphanPayees?: boolean;
   runTransfers?: boolean;
 }) {
+  if(runTransfers)await assertCfmTransactionChanges(updated,deleted);
   // Track the ids of each type of transaction change (see below for why)
   let addedIds = [];
   const updatedIds = updated ? updated.map(u => u.id) : [];
