@@ -96,7 +96,7 @@ From July 2025 onwards, GoCardless has stopped accepting new Bank Account Data a
 
 **Does Actual CFM sync automatically with your Bank?**
 
-At this moment, it is not yet possible for Actual CFM to automatically sync with your bank. You need to do this manually by going to "All Accounts" and pressing "Bank Sync".
+Yes. Configure it in **Cash flow management → Automation** after linking your accounts. See [automatic syncing](../bank-sync.md#automatic-syncing) for the application and headless-worker modes. You can also refresh manually by going to **All Accounts** and pressing **Bank Sync**.
 
 <img width="765" alt="The All Accounts page with the Bank Sync button highlighted" src="/img/advanced/bank-sync/gocardless-sync-all@2x.webp" />
 

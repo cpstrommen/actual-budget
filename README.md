@@ -74,4 +74,6 @@ Actual CFM is derived from Actual Budget and retains its [MIT license](LICENSE.t
 
 ## Data Portability
 
+Moving an existing Actual Budget deployment to CFM? Follow [the migration guide](packages/docs/docs/migration/from-actual-budget.md) for backups, separate Docker/Node deployment, native import, bank reconnection, validation, and rollback.
+
 Use **Export for Actual Budget** to create a separate file for the pinned Actual Budget 26.10.0 target, with a CFM audit/recovery archive. The exporter preserves transaction and dated balance history and has an unmodified upstream import/export test. A packaged offline converter keeps the exit available after maintenance ends. See [the return guide](packages/docs/docs/migration/return-to-actual-budget.md) for the procedure and supported target.

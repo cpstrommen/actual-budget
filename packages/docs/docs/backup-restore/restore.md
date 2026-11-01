@@ -43,23 +43,11 @@ You may encounter an error during restoration that says:
 
 `This budget cannot be loaded with this version of the app. Make sure the app is up-to-date.`
 
-This should only happen when you upgrade from a Docker image with the `nightly` tag to a stable release, such as `latest`. It should not happen in other instances. If you see this bug, please submit a bug report.
+This indicates a version/schema compatibility problem, including importing a newer or nightly budget into an older build. Keep the original archive and working installation unchanged, and test a copy with a compatible application version.
 
-**IMPORTANT NOTE**: You _MUST_ download a backup of each of your budgets using the process outlined above **before** continuing. It's always good practice to backup your data before upgrading to a new version.
+Do not delete or insert migration records or manually apply SQL to make the version check pass. A successful version check alone would not prove that the application's expected schema and financial data agree.
 
-The fix for this is to migrate your SQLite database in the steps outlined below manually:
-
-1. Download and install [SQLite Browser](https://sqlitebrowser.org/)
-1. Unzip the backup budget `.zip` file. The filename should look like: `yyyy-mm-dd-My-Finances-abcd1234.zip`
-1. Open SQLite Browser. Click on the "Open Database" button and navigate to the file you just unzipped. You're looking for a file named `db.sqlite`.
-1. Load the file and click on the `Browse Data` tab. Select the `__migrations__` table from the table dropdown menu.
-1. You should see a list of integers under the' id' column. Cross-reference the entries in this table with the list of [database migrations](https://github.com/actualbudget/actual/tree/master/packages/loot-core/migrations) in the main Actual CFM repository.
-1. For every integer that's missing, click on the `.sql` file associated with it and copy the raw data.
-1. Run the SQL query in the Execute tab of SQLite Browser. Be sure to check the output that the command was successful.
-1. If the SQL query that you copied is successful, you'll want to insert the migration command's id into the `__migrations__` table by executing `insert into __migrations__ values(id_of_missing_migration_command);`.
-1. Once your `__migrations__` table matches the database migrations folder, commit and close the database.
-1. Rezip your modified `db.sqlite` and `metadata.json` files into a zip file.
-1. Retry the restore process outlined above.
+For upstream imports, follow [Migrating from Actual Budget](../migration/from-actual-budget.md). For the reverse direction, use [Export for Actual Budget](../migration/return-to-actual-budget.md), which constructs and validates a clean database for its pinned upstream target. Replacing a CFM image with an upstream image against the same live data directory is not a supported downgrade procedure.
 
 ## Automatic Backups
 

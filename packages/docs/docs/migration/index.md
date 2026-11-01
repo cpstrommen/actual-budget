@@ -1,20 +1,22 @@
 # Switching from Another App
 
-Keeping your existing transaction history is important. If you already use a different app, you probably want to migrate it over into Actual CFM.
+Use a native budget import when moving from Actual Budget so your accounts, transactions, and dated balances remain intact. Other applications have their own import workflows.
 
-Right now, only YNAB4 is officially supported. However, the [API](../api/index.md) allows anyone to write a custom
-importer. We will work with the community to help write other importers soon.
+## Moving between Actual Budget and Actual CFM
+
+- [Migrate an Actual Budget deployment to Actual CFM](./from-actual-budget.md), including Docker/Node setup, native import, bank reconnection, and rollback.
+- [Return from Actual CFM to Actual Budget](./return-to-actual-budget.md), preserving the ledger and retaining CFM-only records in a recovery archive.
+- [CFM data and recovery formats](./cfm-format.md).
 
 ## Migration from YNAB
 
 - [Migration from YNAB4](./ynab4.md)
 - [Migration from nYNAB](./nynab.md)
 
+The [API](../api/index.md) is available for custom importers.
+
 ## Migration from the old Actual Budget Desktop App
 
-Are you coming from the original, managed Actual CFM subscription service? That used an older desktop app version,
-which doesn't have the export button. You can also create an equivalent zip archive of your budget folder.
-The folder is at `~/Documents/Actual CFM/My-Budget-abc123` by default on macOS and Linux. The the resulting zip file
-can be imported into Actual CFM via the Web app.
+The original managed Actual Budget service used an older desktop app that may not have an export button. Preserve a copy of its original budget folder. A native ZIP containing that folder's `db.sqlite` and `metadata.json` can be used for import; test a copy for version compatibility before replacing your working installation.
 
-See [Restoring](../backup-restore/restore.md) how to restore that data in the new open source version.
+See [Restoring Backups](../backup-restore/restore.md) for the native import steps.

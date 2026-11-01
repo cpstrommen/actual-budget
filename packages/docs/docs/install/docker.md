@@ -3,98 +3,45 @@ title: 'Docker'
 sidebar_position: 2
 ---
 
-:::note
+Build Actual CFM from this checkout to run it in Docker. There is no published CFM container release configured here; images named `actualbudget/actual-server` or `ghcr.io/actualbudget/actual` contain upstream Actual Budget.
 
-This guide describes an upstream distribution or hosting workflow. It does not install Actual CFM unless you build and supply this fork yourself. Use [Build from Source](./build-from-source.md) for CFM. There is no published CFM Docker/npm/hosting release configured in this repository.
+Moving an existing deployment? Use [Migrating from Actual Budget](../migration/from-actual-budget.md#docker-deployment) for a separate port/volume, native budget import, bank reconnection, and rollback. Do not reuse the upstream data volume for the CFM trial.
 
-:::
+## Build and launch
 
-## Hosting Actual CFM on a home server with Docker
+Install the [source-build prerequisites](./build-from-source.md), Docker, and Docker Compose. From the repository root, with the pinned Node and Yarn versions:
 
-Actual CFM is also available as a Docker image ready to be run in your own custom environment. We publish the image both to [Docker Hub](https://hub.docker.com/r/actualbudget/actual-server) (as `actualbudget/actual-server`) and [GitHub's container registry](https://ghcr.io/actualbudget/actual) (as `ghcr.io/actualbudget/actual`). Actual CFM should function the same when pulled from either registry, so you can choose whichever one you prefer.
+```sh
+yarn install --immutable
+yarn build:server
+docker compose --file packages/sync-server/docker-compose.yml up -d --build
+```
 
-## Docker Tags
+The Compose file builds `actual-cfm:local` using `packages/sync-server/docker/ubuntu.Dockerfile`. That Dockerfile packages the browser and server output from `yarn build:server`; it does not run the source build for you. The repository-root Dockerfile/Compose file are for development.
 
-We publish a number of tags to the official repository now so that users who want to get the latest bleeding edge changes can do that without having to wait for the latest image to be updated. Details of the available tags are below.
+The supplied runtime Compose file publishes port **5006** and stores persistent data in **packages/sync-server/actual-data** through a `/data` bind mount. Change the host port and host data path if needed before starting it. CFM creates `server-files` and `user-files` inside that data directory.
+
+Check the running service:
+
+```sh
+docker compose --file packages/sync-server/docker-compose.yml logs --tail 100 actual_server
+docker compose --file packages/sync-server/docker-compose.yml exec actual_server node scripts/health-check.js
+```
+
+Open `http://localhost:5006` on the host, create the server login, and confirm the interface identifies itself as Actual CFM. Configure [HTTPS](../config/https.md) or a [reverse proxy](../config/reverse-proxies.md) for access from other devices. See [server configuration](../config/index.md) for environment variables and mounted configuration/secrets.
+
+## Updates and backups
+
+Retain a native budget backup, a consistent backup of the complete persistent data directory, and the currently deployed CFM revision. After selecting the new source revision, repeat the install, source build, and Compose command above. Replacing the container retains the bind-mounted data directory; deleting that directory would remove the server's persistent data.
+
+Pulling an upstream image does not update this fork. Returning to upstream uses [Export for Actual Budget](../migration/return-to-actual-budget.md) and a separate upstream budget, rather than replacing the image against the CFM directory.
+
+## Image tags
 
 ### `latest` Tag
 
-The `latest` tag points to the most recent official release of Actual CFM. This is the recommended tag to use for most users.
-
-- `latest`
-- `latest-alpine` - Based on Alpine Linux, which is tiny so it's great for low powered devices.
+Upstream `latest` images install Actual Budget. Use a locally built CFM image, or an image you have built and published from a recorded CFM revision. This repository does not configure a published CFM `latest` channel.
 
 ### `nightly` Tag
 
-The `nightly` tag is updated every time a commit is pushed to the `master` branch. While we welcome people to try it out, there may be more bugs than the official release (please report any you find!). If you choose to give this tag a try, make sure you keep backups of your budget in case something goes wrong.
-
-- `nightly`
-- `nightly-alpine` - Based on Alpine Linux, which is tiny so it's great for low-powered devices.
-
-## Launch container using Docker Compose
-
-Pre-requisites: Docker
-
-You can use the [`docker-compose.yml` file included in the `actual` repository](https://github.com/actualbudget/actual/blob/master/packages/sync-server/docker-compose.yml) to run the latest stable version of the server.
-
-To create and run the container:
-
-```bash
-$ docker compose up --detach
-```
-
-You can optionally configure the container using environment variables — see the [configuration section](../config/index.md) for more details.
-
-### Update Docker Compose container
-
-```bash
-$ docker compose pull && docker compose up -d
-```
-
-## Launch container using docker command
-
-Pre-requisites: Docker
-
-Alternatively to using docker compose, you may also launch docker using this command. This command, as shown, will launch the latest stable build of Actual CFM.
-
-```bash
-$ docker run --pull=always --restart=unless-stopped -d -p 5006:5006 -v YOUR/PATH/TO/DATA:/data --name my_actual_budget actualbudget/actual-server:latest
-```
-
-`--pull=always` -- always pulls the latest image
-
-`--restart=unless-stopped` -- sets the restart policy of the container
-
-`-d` -- starts the container as background application
-
-`-p 5006:5006` -- sets the port to access Actual CFM. (HOST PORT:DOCKER PORT)
-
-`-v YOUR/PATH/TO/DATA:/data` -- tells the container where to store your budget data. This persists the data on your hard disk so it isn't lost if you remove the container. Change the current value to a folder on your host computer. The server will create `server-files` and `user-files` subfolders at this location.
-
-`--name my_actual_budget` -- gives your new docker container a name (change this to whatever you want)
-
-`actualbudget/actual-server:latest` -- defines which image you want to pull and launch.
-
-### Update Docker container using docker command
-
-```bash
-$ docker stop my_actual_budget
-```
-
-```bash
-$ docker container rm my_actual_budget
-```
-
-```bash
-$ docker run --pull=always --restart=unless-stopped -d -p 5006:5006 -v YOUR/PATH/TO/DATA:/data --name my_actual_budget actualbudget/actual-server:latest
-```
-
-You can place all of these in a batch script for a 1 click or single command update.
-
-```bash
-$ docker stop my_actual_budget && docker container rm my_actual_budget && docker run --pull=always --restart=unless-stopped -d -p 5006:5006 -v YOUR/PATH/TO/DATA:/data --name my_actual_budget actualbudget/actual-server:latest
-```
-
-## Test connection within local network
-
-On another PC within the local network connect to http://_serverIP_:_chosenPort_
+Upstream `nightly` images also install Actual Budget. To test a CFM development revision, build that revision yourself and use separate test data. Do not assume an upstream nightly budget can be opened by an older CFM build.

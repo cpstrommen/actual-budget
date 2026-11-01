@@ -25,23 +25,11 @@ You can fetch new transactions [automatically](#automatic-syncing) or manually.
 
 #### Automatic Syncing
 
-Actual CFM can download new transactions from your linked accounts in the background. Automatic syncing is off by default.
+Configure automatic bank refreshes in **Cash flow management → Automation**. Select one scheduler identity, the budget timezone, an interval, and the accounts to refresh. Enable it after checking a manual refresh; provider limits and retry backoff still apply.
 
-To turn it on:
+Application mode requires an open, unlocked CFM client and performs bounded catch-up after suspension. Running jobs while all clients are closed requires the separately configured headless worker. See [CFM automation](../actual-cfm.md#automation) for setup, credentials, and the selected-writer requirements.
 
-1. Open **Bank Sync** from the sidebar (on mobile, find it in the navigation menu).
-2. In the **Automatic syncing** section, choose how often Actual CFM should sync: **Every 12 hours**, **Every day** or **Every week**.
-3. To use a different schedule, choose **Custom interval**, then enter a number and pick the unit (minutes, hours, days or weeks).
-
-The **Automatic syncing** section only appears once at least one account is linked to a bank.
-
-A few things to know:
-
-- Syncing only happens while Actual CFM is open. If you close Actual CFM, it catches up the next time you open it.
-- The shortest custom interval is 15 minutes. Banks limit how often accounts can be refreshed, so syncing more often than you need can use up that allowance.
-- A sync runs when any linked account hasn't synced within the chosen interval. Syncs you start manually, and syncs from your other devices, count towards this, so having Actual CFM open on several devices doesn't multiply the requests sent to your bank.
-- Each automatic sync covers all of your linked accounts, not only the ones that are overdue.
-- Automatic syncing is skipped while the sync server can't be reached, and tries again once the connection is back.
+When [migrating from Actual Budget](../migration/from-actual-budget.md), configure credentials on the new server and reconnect the imported accounts before enabling automatic refreshes.
 
 #### Manual Syncing
 

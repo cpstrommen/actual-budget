@@ -4,6 +4,8 @@ Actual CFM exports your ledger for **Actual Budget 26.10.0**, pinned to commit `
 
 Transactions and dated balances remain ordinary ledger entries. Returning does not replace account history with one opening balance. CFM-only plans, valuations, obligations, and report snapshots remain readable in a companion recovery archive.
 
+For the other direction, see [Migrating from Actual Budget to Actual CFM](from-actual-budget.md).
+
 ## Return procedure
 
 1. Finish transactions and synchronization. Disable scheduled work for the final export.

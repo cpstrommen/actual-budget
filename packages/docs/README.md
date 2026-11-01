@@ -2,6 +2,8 @@
 
 Local documentation for Actual CFM, a personal fork of Actual Budget focused on annual planning, cash flow, liquidity, and asset valuation. Existing guides describe inherited functionality; the CFM workflows are described in [Using Actual CFM](docs/actual-cfm.md) and tracked in [wishlist.md](../../wishlist.md).
 
+For an existing deployment, start with [Migrating from Actual Budget](docs/migration/from-actual-budget.md). The [return guide](docs/migration/return-to-actual-budget.md) covers the reverse direction.
+
 ## Local Development
 
 From the repository root, with the Node and Yarn versions specified by the project:

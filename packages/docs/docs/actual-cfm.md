@@ -2,6 +2,8 @@
 
 Open **Cash flow management** in the sidebar. The as-of date controls historical statements and report cutoffs. Monthly budgets, account registers, imports, reconciliation, and existing reports remain available.
 
+To bring an existing deployment and its history into CFM, start with [Migrating from Actual Budget](migration/from-actual-budget.md).
+
 ## Try the complete example
 
 Build the API, then generate a separate synthetic file:

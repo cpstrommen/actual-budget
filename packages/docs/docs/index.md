@@ -10,6 +10,8 @@ Actual CFM is a personal fork of Actual Budget for annual planning, cash flow ma
 
 The cash flow workspace includes annual plans with YTD comparisons, asset valuations, receivables/payables, liquidity scenarios, and reusable report packages. Start with [Using Actual CFM](actual-cfm.md). The root `wishlist.md` records the implementation and acceptance criteria.
 
+Already running Actual Budget? Follow [Migrating from Actual Budget to Actual CFM](migration/from-actual-budget.md) to move your deployment and ledger, configure CFM, and retain a verified return path.
+
 ## Using the Inherited Features
 
 The guides in this site describe functionality inherited from Actual Budget. Monthly budgeting remains available alongside the CFM workspace. Start with [building from source](install/build-from-source.md) to run this fork. Upstream hosted services and downloads contain Actual Budget builds.

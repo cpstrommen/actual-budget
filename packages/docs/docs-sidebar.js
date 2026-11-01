@@ -74,6 +74,7 @@ const sidebars = {
             id: 'migration/index',
           },
           items: [
+            'migration/from-actual-budget',
             'migration/ynab4',
             'migration/nynab',
             'migration/return-to-actual-budget',
