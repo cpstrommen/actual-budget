@@ -249,7 +249,7 @@ Available tables: ${AVAILABLE_TABLES}
 Use "actual query tables" and "actual query fields <table>" for schema info.
 
 Common filter operators: $eq, $ne, $lt, $lte, $gt, $gte, $like, $and, $or
-See ActualQL docs for full reference: https://actualbudget.org/docs/api/actual-ql/
+See ActualQL docs for full reference: https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/api/actual-ql/index.md
 
 Tips:
   - Amounts are stored as integer cents (e.g. 166500 = 1665.00).
@@ -264,7 +264,7 @@ Tips:
 export function registerQueryCommand(program: Command) {
   const query = program
     .command('query')
-    .description('Run AQL (Actual Query Language) queries');
+    .description('Run AQL (Actual CFM Query Language) queries');
 
   query
     .command('run')

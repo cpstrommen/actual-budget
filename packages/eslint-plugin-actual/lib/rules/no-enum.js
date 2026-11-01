@@ -13,8 +13,7 @@ module.exports = {
     fixable: null,
     schema: [],
     messages: {
-      noEnum:
-        'Avoid `enum` — use an object or a map instead (see contributing/code-style.md).',
+      noEnum: 'Avoid `enum` — use an object or a map instead.',
     },
   },
 

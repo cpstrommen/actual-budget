@@ -4,15 +4,15 @@
    from a custom theme or the CSS override, since those are declared later. */
 :root {
   --color-sidebarRedesignBackground: var(--palette-white);
-  --color-sidebarRedesignItemText: var(--palette-navy800);
-  --color-sidebarRedesignItemBackgroundHover: var(--palette-navy100);
-  --color-sidebarRedesignItemAccentSelected: var(--palette-purple500);
-  --color-sidebarRedesignItemTextSelected: var(--palette-purple600);
-  --color-sidebarRedesignItemBackgroundSelected: var(--palette-purple100);
+  --color-sidebarRedesignItemText: var(--palette-gray800);
+  --color-sidebarRedesignItemBackgroundHover: var(--palette-gray100);
+  --color-sidebarRedesignItemAccentSelected: var(--palette-gray800);
+  --color-sidebarRedesignItemTextSelected: var(--palette-gray900);
+  --color-sidebarRedesignItemBackgroundSelected: var(--palette-gray100);
   --color-sidebarRedesignItemBackgroundFailed: var(--palette-red500);
   --color-sidebarRedesignHeaderText: var(--palette-gray700);
-  --color-sidebarRedesignTextSubdued: var(--palette-navy600);
-  --color-sidebarRedesignTextMuted: var(--palette-navy400);
+  --color-sidebarRedesignTextSubdued: var(--palette-gray600);
+  --color-sidebarRedesignTextMuted: var(--palette-gray400);
   --color-sidebarRedesignRightBorder: var(--palette-border);
 }
 

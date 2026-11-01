@@ -149,7 +149,7 @@ function UserAccessContent({ isModal }: ManageUserAccessContentProps) {
             </Trans>{' '}
             <Link
               variant="external"
-              to="https://actualbudget.org/docs/config/multi-user#user-access-management"
+              to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/config/multi-user.md#user-access-management"
               linkColor="muted"
             >
               <Trans>Learn more</Trans>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#1f1f1f"/>
+  <path transform="translate(90 150) scale(6)" fill="#f2f2f2" d="M3 20h6v9H3zm9-8h6v17h-6zm9-9h6v26h-6zM2 31h26v1H2z"/>
+  <text x="340" y="285" font-family="Arial, sans-serif" font-size="88" font-weight="700" fill="#f2f2f2">Actual CFM</text>
+  <text x="345" y="350" font-family="Arial, sans-serif" font-size="27" fill="#c6c6c6">Annual planning. Liquidity. Financial position.</text>
+</svg>

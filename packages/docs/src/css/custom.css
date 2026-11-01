@@ -21,7 +21,7 @@ h1 {
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #6b46c1;
+  --ifm-color-primary: #444444;
   --ifm-color-primary-dark: var(--ifm-color-primary);
   --ifm-color-primary-darker: var(--ifm-color-primary);
   --ifm-color-primary-darkest: var(--ifm-color-primary);
@@ -113,4 +113,10 @@ h1 {
 
 img {
   height: auto;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #c6c6c6;
+  --ifm-background-color: #1f1f1f;
+  --ifm-background-surface-color: #242424;
 }

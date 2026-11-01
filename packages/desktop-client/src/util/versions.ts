@@ -57,7 +57,7 @@ export async function getLatestVersion(): Promise<string | 'unknown'> {
 
   try {
     const response = await fetch(
-      'https://api.github.com/repos/actualbudget/actual/releases/latest',
+      'https://api.github.com/repos/cpstrommen/actual-budget/releases/latest',
     );
     const json = await response.json();
     return json?.tag_name ?? 'unknown';

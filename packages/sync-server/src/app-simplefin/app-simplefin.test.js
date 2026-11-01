@@ -340,7 +340,7 @@ describe('per-budget credentials', () => {
       accounts: okResponse(JSON.stringify({ accounts: [], errors: [] })),
     });
 
-    await post('/accounts').set('X-Actual-File-Id', fileA).expect(200);
+    await post('/accounts').set('X-Actual CFM-File-Id', fileA).expect(200);
 
     expect(undici.fetch).toHaveBeenCalledWith(
       'https://bridge.example.com/claim/abc',
@@ -391,7 +391,7 @@ describe('per-budget credentials', () => {
     ]) {
       for (const batch of [false, true]) {
         const res = await post('/transactions')
-          .set('X-Actual-File-Id', fileId)
+          .set('X-Actual CFM-File-Id', fileId)
           .send({
             accountId: batch ? ['account'] : 'account',
             startDate: batch ? ['2024-01-01'] : '2024-01-01',
@@ -412,13 +412,13 @@ describe('per-budget credentials', () => {
   it('does not fall back to global credentials when a budget token is invalid', async () => {
     secretsService.set(SecretName.simplefin_token, 'Forbidden', fileA);
     const fetch = vi.spyOn(undici, 'fetch');
-    const status = await post('/status').set('X-Actual-File-Id', fileA);
+    const status = await post('/status').set('X-Actual CFM-File-Id', fileA);
     expect(status.body.data).toEqual({
       configured: false,
       source: 'per-budget-file',
     });
     for (const path of ['/accounts', '/transactions']) {
-      const res = await post(path).set('X-Actual-File-Id', fileA);
+      const res = await post(path).set('X-Actual CFM-File-Id', fileA);
       expect(res.body.data.error_code).toBe('INVALID_ACCESS_TOKEN');
     }
     expect(fetch).not.toHaveBeenCalled();
@@ -427,11 +427,13 @@ describe('per-budget credentials', () => {
   it('falls back to global credentials after clearing only the budget credentials', async () => {
     secretsService.set(SecretName.simplefin_token, SETUP_TOKEN, fileA);
     expect(
-      (await post('/status').set('X-Actual-File-Id', fileA)).body.data.source,
+      (await post('/status').set('X-Actual CFM-File-Id', fileA)).body.data
+        .source,
     ).toBe('per-budget-file');
     secretsService.set(SecretName.simplefin_token, null, fileA);
     expect(
-      (await post('/status').set('X-Actual-File-Id', fileA)).body.data.source,
+      (await post('/status').set('X-Actual CFM-File-Id', fileA)).body.data
+        .source,
     ).toBe('global');
     expect((await post('/status')).body.data.source).toBe('global');
   });
@@ -453,7 +455,7 @@ describe('per-budget credentials', () => {
           await request(app)
             .post(path)
             .set('x-actual-token', token)
-            .set('X-Actual-File-Id', fileId)
+            .set('X-Actual CFM-File-Id', fileId)
             .expect(403);
         }
       }
@@ -465,11 +467,11 @@ describe('per-budget credentials', () => {
     'checks budget access before %s',
     async path => {
       const fetch = vi.spyOn(undici, 'fetch');
-      await post(path).set('X-Actual-File-Id', '../invalid').expect(400);
+      await post(path).set('X-Actual CFM-File-Id', '../invalid').expect(400);
       await request(app)
         .post(path)
         .set('x-actual-token', 'valid-token-user')
-        .set('X-Actual-File-Id', fileA)
+        .set('X-Actual CFM-File-Id', fileA)
         .expect(403);
       expect(fetch).not.toHaveBeenCalled();
 
@@ -481,7 +483,7 @@ describe('per-budget credentials', () => {
         await request(app)
           .post('/status')
           .set('x-actual-token', 'valid-token-user')
-          .set('X-Actual-File-Id', fileA)
+          .set('X-Actual CFM-File-Id', fileA)
           .expect(200);
       } finally {
         getAccountDb().mutate('DELETE FROM user_access WHERE file_id = ?', [

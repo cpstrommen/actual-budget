@@ -1,6 +1,6 @@
 # Categories
 
-You can manage your categories in the budget page. Actual supports both expense and income categories.
+You can manage your categories in the budget page. Actual CFM supports both expense and income categories.
 
 Get some background information and recommendations on budget categories in our
 [starting fresh](../getting-started/starting-fresh.md#3-setting-up-your-budget-categories) guide.

@@ -1,8 +1,9 @@
 {
   "name": "desktop-electron",
   "version": "26.10.0",
-  "description": "A simple and powerful personal finance system",
-  "author": "Actual",
+  "private": true,
+  "description": "Actual CFM — annual planning, cash flow management, and financial position",
+  "author": "Actual CFM",
   "main": "build/desktop-electron/index.js",
   "scripts": {
     "clean": "rm -rf dist",
@@ -36,7 +37,7 @@
     "vitest": "^5.0.4"
   },
   "build": {
-    "appId": "com.actualbudget.actual",
+    "appId": "io.github.cpstrommen.actualcfm",
     "files": [
       "build",
       "!build/desktop-electron/{tests,vitest.config.*}",
@@ -102,22 +103,14 @@
       "desktop": {
         "entry": {
           "Categories": "Finance;Office",
-          "Keywords": "Budget;Finance;Money;Expenses;Savings;",
-          "StartupWMClass": "actual"
+          "Keywords": "Cashflow;Planning;Finance;Liquidity;Assets;",
+          "StartupWMClass": "actual-cfm"
         }
       },
-      "executableName": "actual"
+      "executableName": "actual-cfm"
     },
     "win": {
       "target": [
-        {
-          "target": "appx",
-          "arch": [
-            "ia32",
-            "x64",
-            "arm64"
-          ]
-        },
         {
           "target": "nsis",
           "arch": [
@@ -130,13 +123,7 @@
       "icon": "icons/icon.png",
       "artifactName": "${productName}-windows-${arch}.${ext}"
     },
-    "appx": {
-      "identityName": "actualbudget.org.ActualBudget",
-      "publisherDisplayName": "actualbudget.org",
-      "displayName": "Actual Budget",
-      "publisher": "CN=19454997-90E1-4473-879D-96D6A77A6056"
-    },
     "npmRebuild": false
   },
-  "productName": "Actual"
+  "productName": "Actual CFM"
 }

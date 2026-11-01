@@ -1,8 +1,8 @@
 # Payees
 
-A payee is a description of the source of a transaction. Actual provides a powerful way of managing payees.
+A payee is a description of the source of a transaction. Actual CFM provides a powerful way of managing payees.
 
-When importing transactions, by default Actual will create new payees based on the imported name. Often this ends up with some ugly names like `Target Debit Crd Ach Tran Co Id:Xxxxx15170`. With payee management, you can clean these names up, set rules for how payees are resolved, and even set a default category to use.
+When importing transactions, by default Actual CFM will create new payees based on the imported name. Often this ends up with some ugly names like `Target Debit Crd Ach Tran Co Id:Xxxxx15170`. With payee management, you can clean these names up, set rules for how payees are resolved, and even set a default category to use.
 
 :::info[Payee Management]
 
@@ -12,7 +12,7 @@ To manage payees, either select **Settings > Payees** from the sidebar or click 
 
 ## How Payees Work
 
-When importing transactions from a file, Actual tries to automatically match the imported names to existing payees. It does this by running through **rules** that you can edit. If no existing payee is found, it will create one.
+When importing transactions from a file, Actual CFM tries to automatically match the imported names to existing payees. It does this by running through **rules** that you can edit. If no existing payee is found, it will create one.
 
 If a payee is found with an exact match as the imported name, it will always use that payee. Otherwise, it will look for payees with rules that match. These rules specify whether it should match a string exactly, or if it should contain a string. For example, a **Target** payee might have a rule that says "if a name contains 'Target', use this payee", and the ugly payee above would be resolved to the **Target** payee.
 
@@ -20,7 +20,7 @@ When a payee is matched, if it has a **default category** the transaction will a
 
 :::tip[Category Learning]
 
-Actual defaults with Category Learning enabled. You can find this setting in the bottom left corner of the Payees page. A more in depth discussion of Payee Rules and Category Learning can be found in the [Rules](../budgeting/rules/index.md) documentation. You can turn this off for one, several or all Payees. [Learn more](../budgeting/rules/index.md#managing-rules)
+Actual CFM defaults with Category Learning enabled. You can find this setting in the bottom left corner of the Payees page. A more in depth discussion of Payee Rules and Category Learning can be found in the [Rules](../budgeting/rules/index.md) documentation. You can turn this off for one, several or all Payees. [Learn more](../budgeting/rules/index.md#managing-rules)
 
 :::
 
@@ -51,7 +51,7 @@ A powerful feature is merging payees. You may already have months worth of data 
 
    <img width="638" alt="The 3 payees menu open with Merge highlighted" src="/img/transactions/payees-merge-option@2x.webp" />
 
-5. All of the payees will merge into one. Actual will choose one of the payee names to retain but you can edit the payee name by clicking it and typing in the desired name for the final payee.
+5. All of the payees will merge into one. Actual CFM will choose one of the payee names to retain but you can edit the payee name by clicking it and typing in the desired name for the final payee.
 
    <img width="638" alt="A single Morrisons payee left after merging" src="/img/transactions/payees-merged@2x.webp" />
 

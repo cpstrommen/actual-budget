@@ -126,7 +126,7 @@ async function getPrNumberFromHead(
     // will return as if the head query parameter doesn't exist. To get around
     // this, we make the page size 2 and only return the number if the length.
     const resp = await fetch(
-      'https://api.github.com/repos/actualbudget/actual/pulls?state=open&per_page=2&head=' +
+      'https://api.github.com/repos/cpstrommen/actual-budget/pulls?state=open&per_page=2&head=' +
         head,
     );
     if (!resp.ok) {

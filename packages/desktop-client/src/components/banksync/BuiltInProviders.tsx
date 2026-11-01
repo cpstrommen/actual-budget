@@ -76,7 +76,7 @@ export function BuiltInProviders({
         <Paragraph style={{ fontSize: 15, color: theme.pageTextSubdued }}>
           <Trans>
             Set up a bank sync provider, then link new accounts or connect an
-            existing Actual account.
+            existing Actual CFM account.
           </Trans>
         </Paragraph>
       </View>
@@ -95,10 +95,10 @@ export function BuiltInProviders({
           </Button>
           <Paragraph style={{ fontSize: 15, marginTop: 10 }}>
             <Trans>
-              Connect to an Actual server to set up{' '}
+              Connect to an Actual CFM server to set up{' '}
               <Link
                 variant="external"
-                to="https://actualbudget.org/docs/advanced/bank-sync"
+                to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/advanced/bank-sync.md"
                 linkColor="muted"
               >
                 automatic syncing

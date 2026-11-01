@@ -56,9 +56,15 @@ export function ExportBudget() {
           <Trans>
             <span>Export</span> your data as a zip file containing{' '}
             <code>db.sqlite</code> and <code>metadata.json</code> files. It can
-            be imported into another Actual instance by closing an open file (if
-            any), then clicking the "Import file" button, then choosing
-            "Actual."
+            be imported into another compatible Actual CFM instance by closing
+            an open file (if any), then clicking the "Import file" button, then
+            choosing "Actual CFM / Actual Budget".
+          </Trans>{' '}
+          <Trans>
+            This is a native backup. Returning to upstream Actual Budget
+            requires a verified compatible export; future CFM data extensions
+            may need conversion. Keep the original backup until imported history
+            is checked.
           </Trans>
           {encryptKeyId ? (
             <>
@@ -88,8 +94,8 @@ export function ExportBudget() {
       {warnings.includes('exceeds-import-size-limit') && (
         <Text style={{ color: theme.warningText }}>
           <Trans>
-            This export is larger than Actual can safely re-import. You may not
-            be able to restore this backup.
+            This export is larger than Actual CFM can safely re-import. You may
+            not be able to restore this backup.
           </Trans>
         </Text>
       )}

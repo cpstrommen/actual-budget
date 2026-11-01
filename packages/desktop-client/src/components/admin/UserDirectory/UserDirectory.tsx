@@ -55,11 +55,11 @@ function useGetUserDirectoryErrors() {
           );
         case 'role-does-not-exists':
           return t(
-            'Selected role does not exist, possibly a bug? Visit https://actualbudget.org/contact/ for support.',
+            'Selected role does not exist, possibly a bug? Visit https://github.com/cpstrommen/actual-budget/issues for support.',
           );
         default:
           return t(
-            'An internal error occurred, sorry! Visit https://actualbudget.org/contact/ for support. (ref: {{reason}})',
+            'An internal error occurred, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support. (ref: {{reason}})',
             { reason },
           );
       }
@@ -256,7 +256,7 @@ function UserDirectoryContent({ isModal }: ManageUserDirectoryContentProps) {
               </Trans>{' '}
               <Link
                 variant="external"
-                to="https://actualbudget.org/docs/config/multi-user/"
+                to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/config/multi-user.md"
                 linkColor="muted"
               >
                 <Trans>Learn more</Trans>

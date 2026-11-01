@@ -3,9 +3,15 @@ title: 'Docker'
 sidebar_position: 2
 ---
 
-## Hosting Actual on a home server with Docker
+:::note
 
-Actual is also available as a Docker image ready to be run in your own custom environment. We publish the image both to [Docker Hub](https://hub.docker.com/r/actualbudget/actual-server) (as `actualbudget/actual-server`) and [GitHub's container registry](https://ghcr.io/actualbudget/actual) (as `ghcr.io/actualbudget/actual`). Actual should function the same when pulled from either registry, so you can choose whichever one you prefer.
+This guide describes an upstream distribution or hosting workflow. It does not install Actual CFM unless you build and supply this fork yourself. Use [Build from Source](./build-from-source.md) for CFM. There is no published CFM Docker/npm/hosting release configured in this repository.
+
+:::
+
+## Hosting Actual CFM on a home server with Docker
+
+Actual CFM is also available as a Docker image ready to be run in your own custom environment. We publish the image both to [Docker Hub](https://hub.docker.com/r/actualbudget/actual-server) (as `actualbudget/actual-server`) and [GitHub's container registry](https://ghcr.io/actualbudget/actual) (as `ghcr.io/actualbudget/actual`). Actual CFM should function the same when pulled from either registry, so you can choose whichever one you prefer.
 
 ## Docker Tags
 
@@ -13,7 +19,7 @@ We publish a number of tags to the official repository now so that users who wan
 
 ### `latest` Tag
 
-The `latest` tag points to the most recent official release of Actual. This is the recommended tag to use for most users.
+The `latest` tag points to the most recent official release of Actual CFM. This is the recommended tag to use for most users.
 
 - `latest`
 - `latest-alpine` - Based on Alpine Linux, which is tiny so it's great for low powered devices.
@@ -49,7 +55,7 @@ $ docker compose pull && docker compose up -d
 
 Pre-requisites: Docker
 
-Alternatively to using docker compose, you may also launch docker using this command. This command, as shown, will launch the latest stable build of Actual.
+Alternatively to using docker compose, you may also launch docker using this command. This command, as shown, will launch the latest stable build of Actual CFM.
 
 ```bash
 $ docker run --pull=always --restart=unless-stopped -d -p 5006:5006 -v YOUR/PATH/TO/DATA:/data --name my_actual_budget actualbudget/actual-server:latest
@@ -61,7 +67,7 @@ $ docker run --pull=always --restart=unless-stopped -d -p 5006:5006 -v YOUR/PATH
 
 `-d` -- starts the container as background application
 
-`-p 5006:5006` -- sets the port to access Actual. (HOST PORT:DOCKER PORT)
+`-p 5006:5006` -- sets the port to access Actual CFM. (HOST PORT:DOCKER PORT)
 
 `-v YOUR/PATH/TO/DATA:/data` -- tells the container where to store your budget data. This persists the data on your hard disk so it isn't lost if you remove the container. Change the current value to a folder on your host computer. The server will create `server-files` and `user-files` subfolders at this location.
 

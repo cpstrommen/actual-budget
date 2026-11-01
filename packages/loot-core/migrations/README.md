@@ -1,10 +1,10 @@
 # Database migrations
 
-Actual upgrades local budget databases by running the SQL and JavaScript files in this directory in timestamp order. Each file name must start with a numeric id (typically the authoring timestamp in milliseconds), followed by a short description.
+Actual CFM upgrades local budget databases by running the SQL and JavaScript files in this directory in timestamp order. Each file name must start with a numeric id (typically the authoring timestamp in milliseconds), followed by a short description.
 
 ## Cross-version sync
 
-Actual supports running different app versions against the same synced budget. A device on an older release may still receive sync messages produced by a newer release, and it must keep loading and syncing until it upgrades.
+Actual CFM supports running different app versions against the same synced budget. A device on an older release may still receive sync messages produced by a newer release, and it must keep loading and syncing until it upgrades.
 
 That only works if newer migrations are **additive-only**: they may extend the schema, but must not remove or rename anything an older client still reads or writes through sync.
 

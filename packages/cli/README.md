@@ -1,14 +1,12 @@
-# @actual-app/cli
+# Actual CFM CLI (`@actual-app/cli`)
 
-Command-line interface for [Actual Budget](https://actualbudget.org). Query and modify your budget data from the terminal — accounts, transactions, categories, payees, rules, schedules, and more.
+Command-line interface for Actual CFM. Query and modify your budget data from the terminal — accounts, transactions, categories, payees, rules, schedules, and more.
 
-> **Note:** This CLI connects to a running [Actual sync server](https://actualbudget.org/docs/install/). It does not operate on local budget files directly.
+> **Note:** This CLI connects to a running Actual CFM sync server. It does not operate on local budget files directly.
 
 ## Installation
 
-```bash
-npm install -g @actual-app/cli
-```
+Build this fork from the repository root with `yarn build:cli` and run `node packages/cli/dist/cli.js`. The published `@actual-app/cli` npm package is an upstream Actual Budget build. Existing command and configuration names are retained for compatibility.
 
 Requires Node.js >= 22.
 
@@ -43,7 +41,7 @@ Configuration is resolved in this order (highest priority first):
 
 | Variable                     | Description                                           |
 | ---------------------------- | ----------------------------------------------------- |
-| `ACTUAL_SERVER_URL`          | URL of the Actual sync server (required)              |
+| `ACTUAL_SERVER_URL`          | URL of the Actual CFM sync server (required)          |
 | `ACTUAL_PASSWORD`            | Server password (required unless using token)         |
 | `ACTUAL_SESSION_TOKEN`       | Session token (alternative to password)               |
 | `ACTUAL_SYNC_ID`             | Budget Sync ID (required for most commands)           |

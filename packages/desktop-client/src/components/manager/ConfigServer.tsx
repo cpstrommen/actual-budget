@@ -148,7 +148,7 @@ export function ElectronServerConfig({
             Need to expose your server to the internet? Follow our step-by-step{' '}
             <Link
               variant="external"
-              to="https://actualbudget.org/docs/install/desktop-app"
+              to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/install/desktop-app.md"
             >
               guide
             </Link>{' '}
@@ -315,7 +315,7 @@ export function ConfigServer() {
         );
       default:
         return t(
-          'Server does not look like an Actual server. Is it set up correctly?',
+          'Server does not look like an Actual CFM server. Is it set up correctly?',
         );
     }
   }
@@ -421,13 +421,13 @@ export function ConfigServer() {
             {currentUrl ? (
               <Trans>
                 Existing sessions will be logged out and you will log in to this
-                server. We will validate that Actual is running at this URL.
+                server. We will validate that Actual CFM is running at this URL.
               </Trans>
             ) : (
               <Trans>
                 A sync server keeps your budget up to date across all your
                 devices and unlocks features like bank syncing. It is completely
-                optional: Actual works great on just this device too.
+                optional: Actual CFM works great on just this device too.
               </Trans>
             )}
           </Text>
@@ -445,7 +445,7 @@ export function ConfigServer() {
                 can{' '}
                 <Link
                   variant="external"
-                  to="https://actualbudget.org/docs/install/"
+                  to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/install/index.md"
                   linkColor="purple"
                 >
                   learn how to set one up

@@ -96,7 +96,7 @@ export function NewsEntryCard({ entry, isUnread }: NewsEntryCardProps) {
       <Text style={{ fontSize: 13 }}>
         <Link variant="external" to={entry.url} linkColor="purple">
           {isRelease ? (
-            <Trans>View on actualbudget.org</Trans>
+            <Trans>View CFM announcement</Trans>
           ) : (
             <Trans>Read the full post</Trans>
           )}

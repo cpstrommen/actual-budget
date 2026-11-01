@@ -68,18 +68,22 @@ export function Bootstrap() {
 
   return (
     <View style={{ maxWidth: 450 }}>
-      <Title text={t('Welcome to Actual!')} />
+      <Title text={t('Welcome to Actual CFM!')} />
       <Paragraph style={{ fontSize: 16, color: theme.pageTextDark }}>
         <Trans>
-          Actual is a super fast privacy-focused app for managing your finances.
-          To secure your data, you'll need to set a password for your server.
+          Actual CFM is a local-first workspace for annual planning, liquidity,
+          and financial position. To secure your data, you'll need to set a
+          password for your server.
         </Trans>
       </Paragraph>
 
       <Paragraph isLast style={{ fontSize: 16, color: theme.pageTextDark }}>
         <Trans>
           Consider opening{' '}
-          <Link variant="external" to="https://actualbudget.org/docs/tour/">
+          <Link
+            variant="external"
+            to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/tour/index.md"
+          >
             our tour
           </Link>{' '}
           in a new tab for some guidance on what to do when you've set your

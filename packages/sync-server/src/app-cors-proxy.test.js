@@ -189,7 +189,7 @@ describe('app-cors-proxy', () => {
         'GET,HEAD,OPTIONS',
       );
       expect(res.headers['access-control-allow-headers']).toBe(
-        'Content-Type, X-Actual-Token',
+        'Content-Type, X-Actual CFM-Token',
       );
       expect(res.headers['access-control-max-age']).toBe('600');
     });
@@ -518,7 +518,7 @@ describe('app-cors-proxy', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             Authorization: 'Bearer test-github-token',
-            'User-Agent': 'Actual-Budget-Plugin-System',
+            'User-Agent': 'Actual CFM-Budget-Plugin-System',
           }),
         }),
       );
@@ -536,7 +536,7 @@ describe('app-cors-proxy', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             Authorization: 'Bearer test-github-token',
-            'User-Agent': 'Actual-Budget-Plugin-System',
+            'User-Agent': 'Actual CFM-Budget-Plugin-System',
           }),
         }),
       );

@@ -11,14 +11,14 @@ If you want to restart an existing budget while keeping your categories, payees,
 
 ## 1. Setting up Accounts
 
-It is recommended to add all accounts you have to Actual.
+It is recommended to add all accounts you have to Actual CFM.
 This includes all savings, checking, and investment accounts.
 These accounts should match what shows up in your Bank or Credit Union.
-For example, if you have a savings, checking, and credit card account with Bank of America, add each as a separate account in Actual.
+For example, if you have a savings, checking, and credit card account with Bank of America, add each as a separate account in Actual CFM.
 
 ### On Budget or Off Budget
 
-In Actual, you have the option of on budget accounts and off budget accounts.
+In Actual CFM, you have the option of on budget accounts and off budget accounts.
 On budget accounts are included towards the funds available in your budget, while off budget accounts are only for tracking.
 Off budget accounts are included in the net worth report.
 It is usually best to err towards putting accounts on budget versus off budget.
@@ -54,7 +54,7 @@ If your starting date is before the current date, edit the date on the starting 
 
 Once your account has the proper starting balance, add all the transactions between your start date and today.
 You can enter transactions [manually](../transactions/importing.md#manually-add-transactions), via [file import](../transactions/importing.md#import-financial-files), or via bank syncing to pull in transactions.
-For bank syncing, Actual has built-in support for [GoCardless](../advanced/bank-sync.md) which works for most EU/UK banks, and SimpleFIN for US/Canadian banks. Note: GoCardless has stopped accepting accounts for this service.
+For bank syncing, Actual CFM has built-in support for [GoCardless](../advanced/bank-sync.md) which works for most EU/UK banks, and SimpleFIN for US/Canadian banks. Note: GoCardless has stopped accepting accounts for this service.
 For other bank syncing options see the [community projects page](../community-repos.md).
 
 An optional step after you have created your accounts and added your transactions is to reconcile the account.
@@ -73,8 +73,8 @@ you manage this by creating an account called Cash, which you treat as any other
 Now that your accounts are set up and your current balance is accurate, you can start adding budget categories.
 While making these categories, remember that all money entering or leaving your budget needs a category.
 
-By default, Actual will start you off with a few basic expense categories.
-If you aren't sure what categories you need, Actual will start you with a few basic ones.
+By default, Actual CFM will start you off with a few basic expense categories.
+If you aren't sure what categories you need, Actual CFM will start you with a few basic ones.
 
 - **Food**: all grocery and restaurant spending
 - **Bills**: all bills that charge the same amount each month
@@ -103,7 +103,7 @@ You may also want a category for interest and dividends.
 
 ### Group your expense categories
 
-Actual has a nifty and useful feature where you can organize your expense categories into groups.
+Actual CFM has a nifty and useful feature where you can organize your expense categories into groups.
 This not only provides more visibility and control over your spending but also empowers you
 to make informed financial decisions.
 When using the [envelope method](./envelope-budgeting.md), one will move available funds between categories when
@@ -182,7 +182,7 @@ The only certainty we have in this day and age is that price increases will occu
 
 We can now see the budget numbers to be used for the month of August in the Average column
 
-### Using Actual to find your initial budget numbers
+### Using Actual CFM to find your initial budget numbers
 
 It's important to note that this method only works correctly if you use a debit or credit card for all your purchases.
 As a result, your actual _start date_ for your budget is in the past. We will reiterate our warning on
@@ -217,7 +217,7 @@ Budgeting, even without historical data, can help you gain control over your
 finances, reduce stress, and achieve your financial goals. It just takes a
 little bit of effort to get going.
 
-You can start using Actual without actually assigning your available funds before you start
+You can start using Actual CFM without actually assigning your available funds before you start
 budgeting.
 
 1. Record every transaction you make daily. If you do it weekly, the chances are that you will have
@@ -244,13 +244,13 @@ With persistence, you will reach your budgeting goals.
 
 Now that you've set your accounts, categories, and budget values, it's time for the fun part of budgeting!
 
-Actual uses a style of budgeting called Zero-Sum Budgeting, or the more common name
+Actual CFM uses a style of budgeting called Zero-Sum Budgeting, or the more common name
 _envelope budgeting_.
 
 Shortly this method goes like this:
 
 1. Allocate all available funds (income) into your categories whenever you get income.
-2. Track your spending in each category. Every time a new transaction is entered into Actual
+2. Track your spending in each category. Every time a new transaction is entered into Actual CFM
    (either manually or by importing from your bank statements), your process should
    look something like this:
    1. Give that transaction a category.
@@ -263,14 +263,14 @@ Shortly this method goes like this:
 
 :::info
 
-This topic is so important on how to actually use Actual, that we have devoted a separate page on **[envelope budgeting](./envelope-budgeting.md)**.
+This topic is so important on how to actually use Actual CFM, that we have devoted a separate page on **[envelope budgeting](./envelope-budgeting.md)**.
 
 :::
 
 ## The next step in your budgeting journey
 
-A good next step is to read through the "Using Actual" section of the documentation. This section has detailed explanations on the
-features of Actual and how to use them. Some of the most useful features are [Rules](../budgeting/rules/index.md),
+A good next step is to read through the "Using Actual CFM" section of the documentation. This section has detailed explanations on the
+features of Actual CFM and how to use them. Some of the most useful features are [Rules](../budgeting/rules/index.md),
 [Schedules](../schedules.md), [Reconciliation](../accounts/reconciliation.md),
 and [Reports](../reports/index.md).
 

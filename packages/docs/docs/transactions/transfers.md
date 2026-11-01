@@ -1,8 +1,8 @@
 # Transfers
 
-If you want to transfer money between accounts, you will want to do it in a way that doesn't mess up reports. If you only created two transactions, Actual would have no way of knowing they are a single transfer and can be ignored in reports.
+If you want to transfer money between accounts, you will want to do it in a way that doesn't mess up reports. If you only created two transactions, Actual CFM would have no way of knowing they are a single transfer and can be ignored in reports.
 
-When you create a transfer in Actual, those two transactions are linked, and updating one automatically updates the other. For example, if you typed something into the **Notes** column it would appear in both transactions. Some fields are always kept in sync this way, while others will be kept independent or synced optionally. See [Modifying a Transfer](#modifying-a-transfer) below for the full breakdown.
+When you create a transfer in Actual CFM, those two transactions are linked, and updating one automatically updates the other. For example, if you typed something into the **Notes** column it would appear in both transactions. Some fields are always kept in sync this way, while others will be kept independent or synced optionally. See [Modifying a Transfer](#modifying-a-transfer) below for the full breakdown.
 
 <img width="860" alt="Both halves of a transfer in All accounts: 500.00 out of Bank of America and into Ally Savings, with the category Transfer" src="/img/transactions/transfers-linked-pair@2x.webp" />
 
@@ -60,7 +60,7 @@ These fields are independent, and changing one side leaves the other side alone:
 
 ### Syncing the Transfer Date
 
-By default, changing the date on one side of a transfer leaves the other side where it is. This is useful when the money takes a few days to arrive, so the two accounts see the transaction on different dates, and your Actual register can match the Bank register exactly.
+By default, changing the date on one side of a transfer leaves the other side where it is. This is useful when the money takes a few days to arrive, so the two accounts see the transaction on different dates, and your Actual CFM register can match the Bank register exactly.
 
 If you want both dates to move together, tick **Sync both transfer dates** at the bottom of the date picker, then choose the new date. The other side of the transfer is moved to the same date.
 
@@ -74,7 +74,7 @@ Delete a transfer the same way you delete any transaction: hover over it and pre
 
 ## Transfer Categories
 
-Transfers between On Budget accounts don't have a category. This is because the funds never left your budget. One way to think about this is that the funds both left and entered your budget thus canceling each other out. Actual marks these types of transfers with _`Transfer`_ in the category field.
+Transfers between On Budget accounts don't have a category. This is because the funds never left your budget. One way to think about this is that the funds both left and entered your budget thus canceling each other out. Actual CFM marks these types of transfers with _`Transfer`_ in the category field.
 
 Transfers between Off Budget and On Budget accounts are different. Only one half of the transfer exists on your budget and, from the perspective of your budget, is the same as a regular transaction. You can create these transfers just the same as an On Budget transfer, but you will be asked to assign a category on the On Budget side of the transfer.
 

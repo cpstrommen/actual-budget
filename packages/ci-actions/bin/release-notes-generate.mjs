@@ -170,7 +170,7 @@ const releasesPath = 'packages/docs/docs/releases.md';
 await group('Generate blog post', async () => {
   const template = `---
 title: Release ${version}
-description: New release of Actual.
+description: New release of Actual CFM.
 date: ${releaseDate}T10:00
 slug: release-${version}
 tags: [announcement, release]

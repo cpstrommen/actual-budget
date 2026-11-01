@@ -21,6 +21,6 @@ Once you have completed these steps your app will be created and your User Acces
 
 ### Link account with Akahu
 
-In Actual Budget, Go to **More → Bank Sync**, in the **Akahu** card, click **Set up** and paste in the App ID and User Access Tokens.
+In Actual CFM, Go to **More → Bank Sync**, in the **Akahu** card, click **Set up** and paste in the App ID and User Access Tokens.
 
 From the same Bank Sync screen, click on **Link bank account** under the **Akahu** card and follow the prompts to link your account.

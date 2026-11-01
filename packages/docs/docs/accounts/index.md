@@ -4,7 +4,7 @@ You can add as many accounts as you like. Adding all of your accounts (including
 
 ## Off budget accounts
 
-Actual makes a distinction between accounts being **on** budget or **off** budget.
+Actual CFM makes a distinction between accounts being **on** budget or **off** budget.
 
 **Off budget** accounts don't affect the budget and are meant to track stuff like investments and mortgages. Transactions in off budget accounts can't be categorized; they simply track balances over time.
 
@@ -14,7 +14,7 @@ Depending on your usage, savings accounts can be on or off the budget. If you're
 
 ## Adding a new account
 
-You can add an account to your budget at any time, however when you first install Actual you can use the `Add account` button in the middle of the screen.
+You can add an account to your budget at any time, however when you first install Actual CFM you can use the `Add account` button in the middle of the screen.
 
 ![A new, empty budget with the Add account button in the middle of the accounts page](/img/accounts/accounts-add-account@2x.webp)
 
@@ -46,7 +46,7 @@ If you select the Off budget checkbox then change the account type, the Off budg
 
 ![The new Checking account with its starting balance, listed in the sidebar](/img/accounts/accounts-new-account@2x.webp)
 
-You can now see the account in the sidebar of Actual
+You can now see the account in the sidebar of Actual CFM
 
 ## Closing or deleting an account
 
@@ -62,7 +62,7 @@ You can still access this account under **Closed Accounts** in the sidebar, and 
 
 ## Renaming an existing account
 
-Click the account name in the sidebar of Actual
+Click the account name in the sidebar of Actual CFM
 
 <img width="252" alt="The accounts list in the sidebar with the Checking account highlighted" src="/img/accounts/accounts-sidebar-list@2x.webp" />
 

@@ -156,7 +156,7 @@ describe('secretsService', () => {
     it('returns 404 if secret does not exist', async () => {
       const res = await request(app)
         .get(`/${SecretName.gocardless_secretKey}`)
-        .set('X-Actual-File-Id', 'test-file-id')
+        .set('X-Actual CFM-File-Id', 'test-file-id')
         .set('x-actual-token', 'valid-token');
 
       expect(res.statusCode).toEqual(404);
@@ -184,7 +184,7 @@ describe('secretsService', () => {
       secretsService.set(testSecretName, testSecretValue, testFileId);
       const res = await request(app)
         .get(`/${testSecretName}`)
-        .set('X-Actual-File-Id', 'test-file-id')
+        .set('X-Actual CFM-File-Id', 'test-file-id')
         .set('x-actual-token', 'valid-token');
 
       expect(res.statusCode).toEqual(204);
@@ -195,7 +195,7 @@ describe('secretsService', () => {
 
       const res = await request(app)
         .get(`/${testSecretName}`)
-        .set('X-Actual-File-Id', testFileId)
+        .set('X-Actual CFM-File-Id', testFileId)
         .set('x-actual-token', 'valid-token');
 
       expect(res.statusCode).toEqual(404);
@@ -222,7 +222,7 @@ describe('secretsService', () => {
 
       const res = await request(app)
         .delete(`/${testSecretName}`)
-        .set('X-Actual-File-Id', testFileId)
+        .set('X-Actual CFM-File-Id', testFileId)
         .set('x-actual-token', 'valid-token');
 
       expect(res.statusCode).toEqual(200);
@@ -259,7 +259,7 @@ describe('secretsService', () => {
 
       const res = await request(app)
         .post('/')
-        .set('X-Actual-File-Id', 'shared-user-secret-file')
+        .set('X-Actual CFM-File-Id', 'shared-user-secret-file')
         .set('x-actual-token', 'valid-token-user')
         .send({
           name: testSecretName,
@@ -300,7 +300,7 @@ describe('secretsService', () => {
       it('GET returns 403 when the user does not own the file', async () => {
         const res = await request(app)
           .get(`/${testSecretName}`)
-          .set('X-Actual-File-Id', 'test-file-id')
+          .set('X-Actual CFM-File-Id', 'test-file-id')
           .set('x-actual-token', 'valid-token-user');
 
         expect(res.statusCode).toEqual(403);
@@ -314,7 +314,7 @@ describe('secretsService', () => {
       it('GET returns 204 for admin users when secret exists', async () => {
         const res = await request(app)
           .get(`/${testSecretName}`)
-          .set('X-Actual-File-Id', 'test-file-id')
+          .set('X-Actual CFM-File-Id', 'test-file-id')
           .set('x-actual-token', 'valid-token-admin');
 
         expect(res.statusCode).toEqual(204);
@@ -328,7 +328,7 @@ describe('secretsService', () => {
 
         const res = await request(app)
           .post('/')
-          .set('X-Actual-File-Id', 'owner-secret-file')
+          .set('X-Actual CFM-File-Id', 'owner-secret-file')
           .set('x-actual-token', 'valid-token-user')
           .send({
             name: testSecretName,

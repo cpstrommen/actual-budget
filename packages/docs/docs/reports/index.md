@@ -1,9 +1,9 @@
 # Reports Dashboard
 
-Actual features a robust report dashboard.
+Actual CFM features a robust report dashboard.
 It is here to allow each user to do deep analysis of their transaction data.
 
-A default dashboard is provided to get you acquainted with the capabilities of the Actual reporting system.
+A default dashboard is provided to get you acquainted with the capabilities of the Actual CFM reporting system.
 The dashboard is fully customizable, with many available reports and widgets.
 If one dashboard is not enough, you can make as many dashboards as you like, each with its own set of reports and widgets.
 
@@ -12,7 +12,7 @@ This flexibility gives each user the tools they need to understand their finance
 
 ![The default Reports dashboard](/img/reports/reports-dashboard@2x.webp)
 
-Currently, Actual comes with the following built-in widgets and reports:
+Currently, Actual CFM comes with the following built-in widgets and reports:
 
 - [Cash Flow graph](#cash-flow-graph)
 - [Net Worth graph](#net-worth-graph)
@@ -83,13 +83,13 @@ The Crossover Point report is a financial planning tool inspired by the "Your Mo
 
 The crossover point report requires four key inputs to generate projections:
 
-| Parameter                       | Description                                                                              | Details                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Expense Categories**          | Specify which Actual Budget categories are expenses that will continue beyond retirement | Used to project expenses into the future to determine when passive income will cover living expenses.<br/>Exclude categories that won't persist beyond financial independence (e.g., retirement savings contributions, work-related expenses).                                                                                                                                         |
-| **Income Accounts**             | Select accounts to include when calculating passive income                               | Include retirement accounts (401k, IRA, etc.) and investment accounts.<br/>Exclude accounts not used for retirement funding (e.g., children's education accounts).                                                                                                                                                                                                                     |
-| **Safe Withdrawal Rate**        | Annual percentage of portfolio to withdraw for living expenses                           | Default: 4% (based on "The 4% Rule" from Trinity Study, 1998). Adjust based on risk tolerance and asset allocation. [More info](https://en.wikipedia.org/wiki/Retirement_spend-down#Withdrawal_rate)                                                                                                                                                                                   |
-| **Expense Projection Type**     | Method for projecting future expenses from historical data                               | **Hampel Filtered Median**: Uses a [Hampel test](https://en.wikipedia.org/wiki/Hampel_test) to filter out outlier monthly expenses, then projects the median of the remaining months into the future.<br/>**Median**: Projects the median of historical monthly expenses, without any outlier filtering.<br/>**Mean**: Projects the average (mean) of all historical monthly expenses. |
-| **Estimated Return** (Optional) | Anticipated annual rate of return for Income Accounts                                    | Varies based on asset allocation and risk tolerance. If not provided, calculates historical return based on the change in Income Account balance over time.<br/>**Note**: The historical calculation includes contributions, which can inflate the rate of return.                                                                                                                     |
+| Parameter                       | Description                                                                           | Details                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Expense Categories**          | Specify which Actual CFM categories are expenses that will continue beyond retirement | Used to project expenses into the future to determine when passive income will cover living expenses.<br/>Exclude categories that won't persist beyond financial independence (e.g., retirement savings contributions, work-related expenses).                                                                                                                                         |
+| **Income Accounts**             | Select accounts to include when calculating passive income                            | Include retirement accounts (401k, IRA, etc.) and investment accounts.<br/>Exclude accounts not used for retirement funding (e.g., children's education accounts).                                                                                                                                                                                                                     |
+| **Safe Withdrawal Rate**        | Annual percentage of portfolio to withdraw for living expenses                        | Default: 4% (based on "The 4% Rule" from Trinity Study, 1998). Adjust based on risk tolerance and asset allocation. [More info](https://en.wikipedia.org/wiki/Retirement_spend-down#Withdrawal_rate)                                                                                                                                                                                   |
+| **Expense Projection Type**     | Method for projecting future expenses from historical data                            | **Hampel Filtered Median**: Uses a [Hampel test](https://en.wikipedia.org/wiki/Hampel_test) to filter out outlier monthly expenses, then projects the median of the remaining months into the future.<br/>**Median**: Projects the median of historical monthly expenses, without any outlier filtering.<br/>**Mean**: Projects the average (mean) of all historical monthly expenses. |
+| **Estimated Return** (Optional) | Anticipated annual rate of return for Income Accounts                                 | Varies based on asset allocation and risk tolerance. If not provided, calculates historical return based on the change in Income Account balance over time.<br/>**Note**: The historical calculation includes contributions, which can inflate the rate of return.                                                                                                                     |
 
 ### How It Works
 

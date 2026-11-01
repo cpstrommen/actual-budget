@@ -4,11 +4,11 @@ Rules determine how a transaction is processed. When importing or syncing transa
 
 Cleaning up payees is a common use case of rules since they are ugly much of the time. But rules can do anything: they can set the "notes" field, create a transfer, and more. If you want to be super detailed, you can create all kinds of rules to automate your process away.
 
-Here's the best part: you might never need to touch rules. Actual will **automatically create rules for you** based on your behavior. As you rename payees or categorize transactions, it will use rules as a mechanism for writing down what you've done so it will automatically happen later. For example, if you categorize the payee "Kroger" as "Food" a couple times, it will create a rule to automatically apply that category on import. As you use Actual more, your data will automatically get cleaned up for you based on your previous behavior.
+Here's the best part: you might never need to touch rules. Actual CFM will **automatically create rules for you** based on your behavior. As you rename payees or categorize transactions, it will use rules as a mechanism for writing down what you've done so it will automatically happen later. For example, if you categorize the payee "Kroger" as "Food" a couple times, it will create a rule to automatically apply that category on import. As you use Actual CFM more, your data will automatically get cleaned up for you based on your previous behavior.
 
 Eventually, you can just import transactions and quickly see your spending without having to do a lot of repetitive work to get up-to-date.
 
-The second best part is because you ultimately own the rules, you are free to go in and change the rules that Actual made for you. We'll show you how this works in more detail below.
+The second best part is because you ultimately own the rules, you are free to go in and change the rules that Actual CFM made for you. We'll show you how this works in more detail below.
 
 ## How the Rules Work
 
@@ -20,7 +20,7 @@ If there is a conflict, for example if two rules set the category, the rule that
 
 Rules are **automatically ranked** from least to most specific. If the conditions of one rule apply broadly, while the conditions of another are more specific, the latter will always run _after_ the former so its changes always win out. This means you can make a broad rule like "if a transaction's payee _contains_ 'cat' set the category to 'pets'", and then fix a mismatched transaction with another rule that says "if the payee _is_ 'catan' set the category to 'games'". An "is" condition always ranks higher than "contains". Generally, you don't need to worry about this and it should work like you expect.
 
-While ranking works for the most part, you might want to say "this rule _always_ should run last no matter what". Actual allows this with **stages**. Rules are actually run in 3 stages: `pre`, `default`, and `post`. By tagging a rule as `pre` or `post`, you force it to always run before or after rules in the other stages. Within a stage, rules are still automatically ranked.
+While ranking works for the most part, you might want to say "this rule _always_ should run last no matter what". Actual CFM allows this with **stages**. Rules are actually run in 3 stages: `pre`, `default`, and `post`. By tagging a rule as `pre` or `post`, you force it to always run before or after rules in the other stages. Within a stage, rules are still automatically ranked.
 
 ### Condition Types
 
@@ -44,7 +44,7 @@ Conditions can use the following fields:
 - amount (outflow)
 - cleared
 
-`imported payee` is different from `payee` in that it is _always_ the original text of the payee or description field when the transaction was imported. `payee` references a payee in Actual. This matters because it allows you to rename a payee before it is created in Actual. You can have several rules that all check `imported payee` and set the payee to something without worrying about them stepping on each other. (Conditions can't reliably check `payee` if previous rules changed it)
+`imported payee` is different from `payee` in that it is _always_ the original text of the payee or description field when the transaction was imported. `payee` references a payee in Actual CFM. This matters because it allows you to rename a payee before it is created in Actual CFM. You can have several rules that all check `imported payee` and set the payee to something without worrying about them stepping on each other. (Conditions can't reliably check `payee` if previous rules changed it)
 
 The `inflow` and `outflow` versions of `amount` make it easier to work with amounts. If you only want to match expenses between 5 and 10 dollars, use `amount (outflow)` because that money is leaving the account. If you use `amount`, you'd have to use negative numbers and it's simply less convenient.
 
@@ -66,27 +66,27 @@ Actions can also prepend or append text to the `notes` field.
 
 ## Experimental: rule formulas
 
-Actual also has an experimental “Excel formula mode” that lets some **Set** actions compute their value from a formula (toggle with the **ƒ** button in the rule editor). See [Excel Formula Mode](../../experimental/formulas.md).
+Actual CFM also has an experimental “Excel formula mode” that lets some **Set** actions compute their value from a formula (toggle with the **ƒ** button in the rule editor). See [Excel Formula Mode](../../experimental/formulas.md).
 
 ## Automatic Rules
 
-Right now, there are two types of rules that Actual will automatically create or update for you: renaming payees and categorizing transactions.
+Right now, there are two types of rules that Actual CFM will automatically create or update for you: renaming payees and categorizing transactions.
 
-When you change the payee of a transaction and the previous one is no longer used anywhere, Actual will ask you if you want to automatically apply that rename in the future. This creates a nice flow for cleaning up transactions: you can import transactions with ugly payees like `AMAZON.COM*5C7QC7MH0 AM 10/26 PURCHASE AMZN.COM/BILL`, and then change the payee in the transactions list. Actual will ask you if you want to do that in the future, and if you click yes, that payee will automatically be cleaned up in the future.
+When you change the payee of a transaction and the previous one is no longer used anywhere, Actual CFM will ask you if you want to automatically apply that rename in the future. This creates a nice flow for cleaning up transactions: you can import transactions with ugly payees like `AMAZON.COM*5C7QC7MH0 AM 10/26 PURCHASE AMZN.COM/BILL`, and then change the payee in the transactions list. Actual CFM will ask you if you want to do that in the future, and if you click yes, that payee will automatically be cleaned up in the future.
 
-You can also select the "edit" option to the right of the rule. Actual will take you to the rule that it created for the rename, and you can change it however you like. For the above payee, you probably want to change the condition to "contains 'amazon'" so all amazon payees are cleaned up.
+You can also select the "edit" option to the right of the rule. Actual CFM will take you to the rule that it created for the rename, and you can change it however you like. For the above payee, you probably want to change the condition to "contains 'amazon'" so all amazon payees are cleaned up.
 
-Payee renaming rules that Actual creates are always in the `pre` stage, so they always run first.
+Payee renaming rules that Actual CFM creates are always in the `pre` stage, so they always run first.
 
-Actual also creates/updates rules for categorizing transactions. When you categorize a transaction, it will determine the best category for a transaction (basically the most common one) and create a rule that sets the category for the payee. If a rule already exists for the payee, it updates the category to set.
+Actual CFM also creates/updates rules for categorizing transactions. When you categorize a transaction, it will determine the best category for a transaction (basically the most common one) and create a rule that sets the category for the payee. If a rule already exists for the payee, it updates the category to set.
 
 Over time, most categories should automatically get set for you which reduces a lot of tedious work.
 
 Categorizing rules are always created in the default stage. Since payee renaming rules are `pre`, they always run before categorizing no matter what. In this case, we don't want them automatically ranked because we always want the payee to be set before running the category rules.
 
-Of course, you are free to edit the rules as you like. Change the category set for a payee, or tweak the renaming rules. Actual is there to help, but ultimately you are in control.
+Of course, you are free to edit the rules as you like. Change the category set for a payee, or tweak the renaming rules. Actual CFM is there to help, but ultimately you are in control.
 
-If Actual is doing something that you simply don't like, create a `post` rule to force it to run after everything else. You could even turn off auto-categorizing altogether by create a `post` rule that matches a `date` of today or later (so all transactions would match) and sets the category to `null`.
+If Actual CFM is doing something that you simply don't like, create a `post` rule to force it to run after everything else. You could even turn off auto-categorizing altogether by create a `post` rule that matches a `date` of today or later (so all transactions would match) and sets the category to `null`.
 
 ## Managing Rules
 

@@ -2,7 +2,13 @@
 title: 'Fly.io'
 ---
 
-In order to deploy Actual to Fly.io, you'll need to use their command line interface from a terminal program. If you've never used a terminal before, don't worry! We'll walk you through every step of the process.
+:::note
+
+This guide describes an upstream distribution or hosting workflow. It does not install Actual CFM unless you build and supply this fork yourself. Use [Build from Source](./build-from-source.md) for CFM. There is no published CFM Docker/npm/hosting release configured in this repository.
+
+:::
+
+In order to deploy Actual CFM to Fly.io, you'll need to use their command line interface from a terminal program. If you've never used a terminal before, don't worry! We'll walk you through every step of the process.
 
 ## Setup
 
@@ -97,7 +103,7 @@ Now that you've gotten the CLI set up, you're ready to deploy your app to Fly.io
 
 Now that you've got the configuration file set up, you're ready to deploy your app to Fly.io. To do so, run the following commands. Wait for each command to finish before running the next one.
 
-First, tell Fly about Actual:
+First, tell Fly about Actual CFM:
 
 ```bash
 fly launch --image actualbudget/actual-server:latest
@@ -108,11 +114,11 @@ This command will ask a series of questions:
 1. "_An existing fly.toml file was found. Would you like to copy its configuration to the new app? y/N_" Type `y` and press enter to use the config file we've provided.
 2. "_Do you want to tweak these settings before proceeding? y/N_" If you choose `y`, the web configuration UI will open in your browser.
 
-You can now visit your very own instance of Actual by opening the link on the last line of the output.
+You can now visit your very own instance of Actual CFM by opening the link on the last line of the output.
 
-## Configuring Actual
+## Configuring Actual CFM
 
-Now that Actual has been launched, you should be able to navigate to Actual using the URL
+Now that Actual CFM has been launched, you should be able to navigate to Actual CFM using the URL
 provided by the Fly command above earlier.
 
 <details>
@@ -127,15 +133,15 @@ link
 
 ![](/img/fly/fly-dash-2.webp)
 
-This will now open Actual so we can start configuring it.
+This will now open Actual CFM so we can start configuring it.
 
 </details>
 
 1. Set a password - remember this, you will need it in the future.
 
-   <img width="498" alt="The Welcome to Actual screen asking you to set a server password" src="/img/install/server-set-password@2x.webp" />
+   <img width="498" alt="The Welcome to Actual CFM screen asking you to set a server password" src="/img/install/server-set-password@2x.webp" />
 
-2. You'll see a welcome screen. Either click "Import my budget" to [import your budget from YNAB or the subscription version of Actual](../migration/index.md), or click "Start budgeting" to create a blank budget file.
+2. You'll see a welcome screen. Either click "Import my budget" to [import your budget from YNAB or the subscription version of Actual CFM](../migration/index.md), or click "Start budgeting" to create a blank budget file.
 
    ![The welcome screen with the Start budgeting button and the Import my budget link](/img/fly/fly-welcome@2x.webp)
 
@@ -143,11 +149,11 @@ This will now open Actual so we can start configuring it.
 
    ![A new, empty budget](/img/fly/fly-first-budget@2x.webp)
 
-Actual is now up and running. Congratulations! Consider checking out [our tour](../tour/index.md) next.
+Actual CFM is now up and running. Congratulations! Consider checking out [our tour](../tour/index.md) next.
 
-## Updating Actual
+## Updating Actual CFM
 
-When updates to Actual are released, you'll need to re-deploy your app to get the latest version.
+When updates to Actual CFM are released, you'll need to re-deploy your app to get the latest version.
 
 ```
 fly deploy --image actualbudget/actual-server:latest your-app-name
@@ -155,7 +161,7 @@ fly deploy --image actualbudget/actual-server:latest your-app-name
 
 ### Local terminal
 
-Open a terminal window and navigate to the folder where you set up Actual. Run the following command:
+Open a terminal window and navigate to the folder where you set up Actual CFM. Run the following command:
 
 ```bash
 fly deploy
@@ -163,7 +169,7 @@ fly deploy
 
 ## Cost Optimizations
 
-If you're looking to lower your monthly compute costs for Actual Budget and can accept a 5-15 second delay when starting your budgeting session, you can add this feature to your services section and re-deploy.
+If you're looking to lower your monthly compute costs for Actual CFM and can accept a 5-15 second delay when starting your budgeting session, you can add this feature to your services section and re-deploy.
 
 ```toml
 [[services]]
@@ -180,9 +186,9 @@ With these settings, Fly.io will automatically stop your instance after a few mi
 
   **A.** Pay as you go plans are billed for all usage monthly.
 
-- **Q.** _How can I try out a beta/unstable version of Actual?_
+- **Q.** _How can I try out a beta/unstable version of Actual CFM?_
 
-  **A.** We publish unstable releases of Actual every day. These versions may have known or unknown issues that could corrupt your budget. If you'd like to try them out, re-deploy with the nightly version. For example, if your app is at `https://fly-actual-rushing-waters-9999.fly.dev`:
+  **A.** We publish unstable releases of Actual CFM every day. These versions may have known or unknown issues that could corrupt your budget. If you'd like to try them out, re-deploy with the nightly version. For example, if your app is at `https://fly-actual-rushing-waters-9999.fly.dev`:
 
 ```
 fly deploy --image actualbudget/actual-server:nightly --app fly-actual-rushing-waters-9999 --remote-only --no-cache

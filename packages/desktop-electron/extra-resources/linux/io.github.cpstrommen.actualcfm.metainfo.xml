@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>io.github.cpstrommen.actualcfm</id>
+  <name>Actual CFM</name>
+  <summary>Annual planning and liquidity management</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <content_rating type="oars-1.0" />
+  <description>
+    <p>Actual CFM is a local-first financial workspace for annual planning, liquidity management, asset valuation, and net equity. It is independently developed from Actual Budget. CFM planning features are under development; accounts, the ledger, and monthly budgeting provide the foundation.</p>
+  </description>
+  <branding>
+    <!-- For Flathub Banners - https://docs.flathub.org/banner-preview/-->
+    <!-- CFM neutral palette -->
+    <color type="primary" scheme_preference="light">#f2f2f2</color>
+     <!-- Dark CFM surface -->
+    <color type="primary" scheme_preference="dark">#1f1f1f</color>
+  </branding>
+  <launchable type="desktop-id">io.github.cpstrommen.actualcfm.desktop</launchable>
+  <url type="homepage">https://github.com/cpstrommen/actual-budget</url>
+  <url type="bugtracker">https://github.com/cpstrommen/actual-budget/issues</url>
+  <url type="vcs-browser">https://github.com/cpstrommen/actual-budget</url>
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </recommends>
+
+  <developer id="io.github.cpstrommen">
+    <name>Actual CFM</name>
+  </developer>
+</component>

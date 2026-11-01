@@ -2,7 +2,7 @@
 
 <ExperimentalFeatureWarning issueId="9007" />
 
-The redesigned sidebar replaces the navigation panel on the left of the screen. It's based on the winning entry from the [sidenav design competition](../../blog/sidenav-design-winner) and adds:
+The redesigned sidebar replaces the navigation panel on the left of the screen. It's based on the winning entry from the [sidenav design competition](https://actualbudget.org/blog/sidenav-design-winner) and adds:
 
 - Account groups, such as "Checking", "Savings" or "Retirement"
 - Drag and drop reordering of accounts and groups
@@ -27,7 +27,7 @@ To switch back to the classic sidebar, untick the same setting. Your account gro
 
 The screenshot at the top of this page is labeled with the four parts of the sidebar:
 
-- **A. Budget name and sync status.** Hover over the budget name and click the pencil to rename the budget. Click the Actual logo to switch to another budget file. The line underneath tells you whether the budget is synced, syncing, offline, or kept on this device only.
+- **A. Budget name and sync status.** Hover over the budget name and click the pencil to rename the budget. Click the Actual CFM logo to switch to another budget file. The line underneath tells you whether the budget is synced, syncing, offline, or kept on this device only.
 - **B. Navigation.** Links to the Budget, Reports and Schedules pages. Payees, Rules, Tags and Bank Sync are in Settings.
 - **C. Accounts.** Your accounts, their balances and your account groups.
 - **D. Settings.** A shortcut to the Settings page, always at the bottom of the sidebar.

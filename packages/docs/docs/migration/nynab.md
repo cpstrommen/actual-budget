@@ -10,7 +10,7 @@ To export your budget from YNAB, choose one of the methods below. The third-part
 Visit [https://json-exporter-for-ynab.netlify.app](https://json-exporter-for-ynab.netlify.app), which guides you through authorizing your YNAB account and downloading your budget as a JSON file.
 
 :::note
-This tool is maintained by the community, not the Actual Budget team. It may occasionally be unavailable or show an authorization restriction from YNAB. If that happens, use one of the alternative export methods below.
+This tool is maintained by the community, not the Actual CFM team. It may occasionally be unavailable or show an authorization restriction from YNAB. If that happens, use one of the alternative export methods below.
 :::
 
 Once you have the JSON file, skip ahead to [Import the JSON File](#import-the-json-file).
@@ -69,7 +69,7 @@ Before you start, [get your YNAB API token](#getting-your-ynab-api-token) if you
 ![Clicking Download to save the YNAB plan JSON file](/img/migrating/nynab-api-ui-download.webp)
 
 :::note
-If the import later fails with a **not-ynab5** error, you are likely on an older version of Actual. Either update Actual, or open the downloaded file in a plain text editor and change the leading `"plan"` to `"budget"` before importing.
+If the import later fails with a **not-ynab5** error, you are likely on an older version of Actual CFM. Either update Actual CFM, or open the downloaded file in a plain text editor and change the leading `"plan"` to `"budget"` before importing.
 :::
 
   </TabItem>
@@ -175,7 +175,7 @@ Once you have the JSON file, proceed to [Import the JSON File](#import-the-json-
 
 ## Import the JSON File
 
-1. Open Actual
+1. Open Actual CFM
 2. Select the drop-down menu and **Switch file**
 3. Select **Import file**
 
@@ -193,12 +193,12 @@ Once you have the JSON file, proceed to [Import the JSON File](#import-the-json-
 
 #### Credit Cards
 
-If you import credit cards with previous debt, you must handle these differently. Otherwise, your budget months will show overspending. Actual does not handle carrying over debt the same way, but offers a more manual approach.
+If you import credit cards with previous debt, you must handle these differently. Otherwise, your budget months will show overspending. Actual CFM does not handle carrying over debt the same way, but offers a more manual approach.
 
 1. From the Budget screen, create a category named `Credit Card` (perhaps under a Category Group of `Debt`).
 2. Change all overspent transactions to have their category be this `Credit Card` category.
 3. On the first month of overspending for this category, click on the Balance (it should show red) and select `Rollover overspending`.
-4. Next, you must assign money each historical month to cover any payments of the `Credit Card` category. Open YNAB and look through each month to find the "extra" amount assigned to the card. (To find the "extra," open YNAB and look through each month. Find the amount assigned to the card in excess of any additional monthly spending, which is how much was used to pay the debt on the credit card.) Put this amount in your `Credit Card` category in Actual.
+4. Next, you must assign money each historical month to cover any payments of the `Credit Card` category. Open YNAB and look through each month to find the "extra" amount assigned to the card. (To find the "extra," open YNAB and look through each month. Find the amount assigned to the card in excess of any additional monthly spending, which is how much was used to pay the debt on the credit card.) Put this amount in your `Credit Card` category in Actual CFM.
 5. If your budget isn't zeroing out yet, follow the instructions below in _Hold For Next Month_.
 
 A full description of how to carry over debt can be found in [our Carrying Debt article.](https://actualbudget.org/docs/budgeting/credit-cards/carrying-debt)
@@ -209,21 +209,21 @@ There are two common reasons for leftover money in `To Budget` after a nYNAB imp
 
 #### Credit Cards
 
-nYNAB tracks credit card spending by pulling money for each purchase into a dedicated `Credit Card Payment` category for each card, so it's ready to cover the payment later. Actual does not do this: spending stays in the category you assigned it to, and a credit card payment is a plain transfer between accounts with no category of its own. See [Credit Cards and Actual Budget](../budgeting/credit-cards/index.md) for the full explanation of how Actual handles credit cards.
+nYNAB tracks credit card spending by pulling money for each purchase into a dedicated `Credit Card Payment` category for each card, so it's ready to cover the payment later. Actual CFM does not do this: spending stays in the category you assigned it to, and a credit card payment is a plain transfer between accounts with no category of its own. See [Credit Cards and Actual CFM](../budgeting/credit-cards/index.md) for the full explanation of how Actual CFM handles credit cards.
 
-This matters if Actual shows money available to budget while YNAB shows `$0`, even though every category assignment and available amount already matches between the two, and every account balance matches too. In that case, YNAB's `Credit Card Payment` reserves likely fell out of sync with the real card balances at some point. Since Actual doesn't carry those payment categories, that leftover money has nowhere to go but `To Budget`.
+This matters if Actual CFM shows money available to budget while YNAB shows `$0`, even though every category assignment and available amount already matches between the two, and every account balance matches too. In that case, YNAB's `Credit Card Payment` reserves likely fell out of sync with the real card balances at some point. Since Actual CFM doesn't carry those payment categories, that leftover money has nowhere to go but `To Budget`.
 
-There is nothing to fix here. The money is available to budget, Actual is just showing it to you directly instead of hiding it in a per-card reserve. Budget it like any other `To Budget` balance, or use _Hold for Next Month_ to carry it forward instead.
+There is nothing to fix here. The money is available to budget, Actual CFM is just showing it to you directly instead of hiding it in a per-card reserve. Budget it like any other `To Budget` balance, or use _Hold for Next Month_ to carry it forward instead.
 
 #### Hold for Next Month
 
-nYNAB calculates its `Ready to Assign` value differently than Actual's `To Budget` value.
+nYNAB calculates its `Ready to Assign` value differently than Actual CFM's `To Budget` value.
 There is no need to worry, we can make them match exactly with a simple change.
 This is purely a visual change and doesn't affect the budget itself.
 
 You will likely see money leftover in each of the imported months in your `To Budget`.
 This extra comes from nYNAB including funds budgeted in future months when calculating its `Ready to Assign` value.
-Actual does not include those funds by default, but offers a way to manually reserve funds for use in future months.
+Actual CFM does not include those funds by default, but offers a way to manually reserve funds for use in future months.
 This is effectively the same thing nYNAB does, but in a manual form.
 To `hold` the leftover funds for the next month follow these steps:
 
@@ -237,9 +237,9 @@ A full description of how funds rollover and the `hold` feature can be found in 
 
 ### Duplicate Categories or Groups
 
-Actual does not allow duplicate category groups, or duplicate categories within a group.
+Actual CFM does not allow duplicate category groups, or duplicate categories within a group.
 This happens sometimes in YNAB especially if you have an old hidden category or group that has been forgotten about.
-Actual automatically renames these duplicates by appending a `-1` to the end of the name (potentially higher numbers if you have multiple duplicates).
+Actual CFM automatically renames these duplicates by appending a `-1` to the end of the name (potentially higher numbers if you have multiple duplicates).
 Make sure to show hidden categories to see if you have any of these duplicates.
 To see your hidden categories select the "Toggle Hidden Categories" option in the kebab menu next to the "Categories" header.
 

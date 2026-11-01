@@ -1,34 +1,40 @@
-# Product
-
-## Register
-
-product
+# Actual CFM Product Direction
 
 ## Users
 
-People managing their own household finances: privacy-minded budgeters, self-hosters, and families who want full control of their money data. They use Actual regularly (often daily or weekly check-ins) on desktop and mobile, mid-workflow: reconciling accounts, categorizing transactions, adjusting envelope budgets, reviewing reports. Many migrated from other budgeting apps and value that Actual is local-first, free, and open-source.
+People managing their own finances who want to plan over a full year and understand their longer-term financial position. Their expenses vary by month, they may hold investments and other assets, and they need to know whether cash on hand will cover upcoming obligations. Routine transaction tracking supports that broader view.
 
 ## Product Purpose
 
-Actual Budget is a local-first personal finance tool built around envelope budgeting. It exists so people can track and plan their money without handing data to a third party — everything runs on their own device or server, with optional sync. Success looks like users trusting the numbers, completing routine money tasks quickly, and sticking with their budget over months and years.
+Actual CFM is a personal fork of Actual Budget for cash flow management. It combines annual planning, liquidity forecasting, asset valuation, liabilities, and net equity in a local-first application. The existing ledger and monthly budgeting tools provide the foundation; the CFM additions are planned in [wishlist.md](wishlist.md).
+
+Success means being able to explain the annual plan, compare YTD actuals against seasonal expectations, assess short-term cash coverage, and produce a dated financial statement with traceable balances and valuation assumptions.
+
+## Core Workflows
+
+- Set an annual plan by category, including uneven monthly spending expectations.
+- Review available cash against credit card obligations, bills, receivables, and payables.
+- Update manual account balances and asset valuations without rebuilding transaction history.
+- Track reimbursements and debts through partial settlement, completion, or write-off.
+- Generate consistent period reports and retain the figures and assumptions used at the time.
 
 ## Brand Personality
 
-Calm, trustworthy, practical. The interface should feel like a dependable tool that stays out of the way: quiet confidence, no flash, no urgency theatrics. Money is stressful enough — the UI's job is to make it feel manageable and under control.
-
-## Anti-references
-
-- Fintech-startup gloss: gradient heroes, glassmorphism, crypto-dashboard neon.
-- Corporate banking UI: navy-and-gold, enterprise-portal density, legalese energy.
+Calm, precise, practical. Actual CFM should feel like a dependable personal financial workspace: clear tables, quiet controls, and explicit assumptions. Use the neutral greys from Strømmen's site as the direction for the planned theme refresh.
 
 ## Design Principles
 
-- **The numbers are the interface.** Financial figures are the primary content; typography, alignment, and tabular numerals serve legibility of amounts above all decoration.
-- **Trust through restraint.** No visual tricks that could make users doubt what they're seeing. Boring and correct beats clever.
-- **Fast routine, gentle depth.** Everyday tasks (categorize, reconcile, budget) must be frictionless; power features reveal themselves progressively without cluttering the default view.
-- **Local-first honesty.** The UI reflects the product's values: no dark patterns, no upsells, no attention-grabbing — the user owns the tool, not the other way around.
-- **Consistent across surfaces.** Desktop, web, and mobile share one design language via the shared component library; new work reuses existing components and theme tokens.
+- **Show the planning horizon.** Annual totals, YTD progress, upcoming obligations, and historical comparisons should be easy to find.
+- **Keep the numbers explainable.** Distinguish posted transactions, estimates, valuations, and projected cash flows. Show dates and data freshness.
+- **Separate cash from wealth.** An asset can increase net worth without helping pay next month's credit card bill.
+- **Keep one financial foundation.** Plans and forecasts use the same ledger and account classifications as reports, with explicit adjustments for different views.
+- **Preserve local ownership.** Data stays on the user's device or own server, with optional synchronization and encryption.
+- **Reuse shared components.** Web, desktop, and mobile use the component library and semantic theme tokens.
 
-## Accessibility & Inclusion
+## Accessibility
 
-Target WCAG 2.1 AA: sufficient contrast in all themes (light, dark, midnight), full keyboard navigation, respect for reduced-motion preferences, and color-blind-safe use of color (never color alone to convey positive/negative amounts).
+Retain keyboard navigation, reduced-motion support, tabular financial numerals, and sufficient contrast across light, dark, and midnight themes. Amounts, status, and forecast uncertainty need text or symbols as well as color.
+
+## Data Portability
+
+Returning to upstream Actual Budget without losing transaction or dated balance history is a release requirement. Before any CFM financial schema extension ships, implement and test an upstream-compatible exporter plus an offline recovery path. Preserve CFM-only records in open audit/archive formats. Native database backups alone are not a downgrade guarantee. See [the return guide](packages/docs/docs/migration/return-to-actual-budget.md) and the portability section in [wishlist.md](wishlist.md) for current status and acceptance criteria.

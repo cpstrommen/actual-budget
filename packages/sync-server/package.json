@@ -1,11 +1,12 @@
 {
   "name": "@actual-app/sync-server",
   "version": "26.10.0",
-  "description": "actual syncing server",
+  "private": true,
+  "description": "Actual CFM — annual planning, cash flow management, and financial position",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actualbudget/actual.git",
+    "url": "https://github.com/cpstrommen/actual-budget.git",
     "directory": "packages/sync-server"
   },
   "bin": {

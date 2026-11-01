@@ -9,15 +9,15 @@ If you ever make a mistake, pressing <Key mod="ctrl" k="z" /> will undo, and pre
 
 ## Context Menus
 
-Context menus (right-click menus) are available throughout Actual. Use the method based on your operating system and/or hardware to access them.
+Context menus (right-click menus) are available throughout Actual CFM. Use the method based on your operating system and/or hardware to access them.
 
 ## Keyboard Shortcuts
 
-Actual has a number of keyboard shortcuts that can help you navigate and manage the application more efficiently.
+Actual CFM has a number of keyboard shortcuts that can help you navigate and manage the application more efficiently.
 
 ### The Command Palette
 
-The Command Palette is a powerful tool which allows you to quickly access various features and functions within Actual.
+The Command Palette is a powerful tool which allows you to quickly access various features and functions within Actual CFM.
 
 - Open it by pressing the <Key mod="ctrl" fixed k="k" /> combination.
 - On macOS keyboards, use the <Key mod="cmd" fixed k="k" /> key combination.
@@ -103,7 +103,7 @@ This only controls the _maximum_ number of months. If the app is too small to re
 
 ## Scramble and Hide Data {#scramble-hide}
 
-Actual Budget includes a privacy filter to help you obfuscate sensitive _amounts_ on screen.
+Actual CFM includes a privacy filter to help you obfuscate sensitive _amounts_ on screen.
 
 :::important
 The privacy filter is visual only: it does not encrypt, delete, or alter your saved data or exports.
@@ -141,9 +141,9 @@ A new column should appear which shows the balance of the account after each tra
 
 ![An account register with the Balance column showing the running balance](/img/tips-tricks/tips-tricks-running-balance@2x.webp)
 
-## Using Emojis in Actual
+## Using Emojis in Actual CFM
 
-Actual supports emojis in many places, including payees, categories, and notes. You can use emojis to add visual
+Actual CFM supports emojis in many places, including payees, categories, and notes. You can use emojis to add visual
 flair to your budget and make it more fun to use.
 
 To add an emoji, you can use the emoji picker on your operating system, or you can copy and paste emojis from web sites

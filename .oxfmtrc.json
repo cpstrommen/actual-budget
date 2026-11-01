@@ -20,5 +20,6 @@
       }
     ],
     "newlinesBetween": true
-  }
+  },
+  "ignorePatterns": ["archives/upstream/**"]
 }

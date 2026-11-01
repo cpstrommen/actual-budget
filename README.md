@@ -1,83 +1,77 @@
-<p align="center">
-  <img src="/demo.png" alt="Actualbudget" />
-</p>
+# Actual CFM
 
-## Getting Started
+**Cash flow management for the year ahead and the assets behind it.**
 
-Actual is a local-first personal finance tool. It is 100% free and open-source, written in NodeJS, it has a synchronization element so that all your changes can move between devices without any heavy lifting.
+Actual CFM is a personal fork of [Actual Budget](https://github.com/actualbudget/actual), built on its local-first ledger, account management, reporting, and optional device synchronization. Its focus is long-term annual planning, liquidity, and a clear view of assets, liabilities, and net equity.
 
-If you are interested in contributing, or want to know how development works, see our [contributing](https://actualbudget.org/docs/contributing/) document we would love to have you.
+The aim is to answer practical questions: Are annual expenses on track despite seasonal spending? Can available cash cover upcoming obligations? What are assets worth today, and how does that change the overall financial position?
 
-Want to say thanks? Click the ⭐ at the top of the page.
+## Direction
 
-## Key Links
+- Annual category plans with seasonal allocations and year-to-date comparisons.
+- Liquidity projections that connect cash balances with credit cards, upcoming bills, receivables, and payables.
+- Asset accounts with manual valuations and scheduled depreciation or appreciation.
+- Balance sheets and configurable monthly, quarterly, annual, and YTD report packages, with saved historical snapshots.
+- Simple balance updates for manual off-budget accounts and configurable bank synchronization.
+- A restrained grey visual identity drawn from Strømmen's site (implemented).
 
-- Actual [discord](https://discord.gg/pRYNYr4W5A) community.
-- Actual [Community Documentation](https://actualbudget.org/docs)
-- [Frequently asked questions](https://actualbudget.org/docs/faq)
+The financial additions above are **planned features**. The distinct CFM identity, icons, and neutral theme are implemented. [wishlist.md](wishlist.md) contains the feature requirements, implementation phases, dependencies, and acceptance criteria. The existing application still includes Actual's monthly budgeting workflows while the CFM features are developed.
 
-## Installation
+## Run This Fork
 
-There are four ways to deploy Actual:
+Use the Node version in [.nvmrc](.nvmrc) and the Yarn version declared in [package.json](package.json). Run commands from the repository root:
 
-1. One-click deployment [via PikaPods](https://www.pikapods.com/pods?run=actual) (~2.00 $/month) - recommended for non-technical users
-1. Managed hosting [via Fly.io](https://actualbudget.org/docs/install/fly) (~1.50 $/month)
-1. Self-hosted by using [a Docker image](https://actualbudget.org/docs/install/docker)
-1. Local-only apps - [downloadable Windows, Mac and Linux apps](https://actualbudget.org/download/) you can run on your device
+```sh
+yarn install
+yarn start
+```
 
-Learn more in the [installation instructions docs](https://actualbudget.org/docs/install/).
+Open `http://localhost:3001`. For sample data, choose **Don't use a server**, then **View demo** on the setup screen.
 
-## Ready to Start Budgeting?
+To run the frontend with a local sync server:
 
-Read about [Envelope budgeting](https://actualbudget.org/docs/getting-started/envelope-budgeting) to know more about the idea behind Actual Budget.
+```sh
+yarn start:server-dev
+```
 
-### Are you new to budgeting or want to start fresh?
+To build the browser or server:
 
-Check out the community's [Starting Fresh](https://actualbudget.org/docs/getting-started/starting-fresh) guide so you can quickly get up and running!
+```sh
+yarn build:browser
+yarn build:server
+```
 
-### Are you migrating from other budgeting apps?
+The upstream hosted demo, Docker images, npm packages, and desktop downloads are Actual Budget builds. Build from this checkout to use Actual CFM changes.
 
-Check out the community's [Migration](https://actualbudget.org/docs/migration/) guide to start jumping on the Actual Budget train!
+## Project Layout
 
-## Documentation
+| Package                         | Purpose                                                                |
+| ------------------------------- | ---------------------------------------------------------------------- |
+| `packages/loot-core`            | Ledger, calculations, persistence, synchronization, and business logic |
+| `packages/desktop-client`       | React web interface shared with the desktop app                        |
+| `packages/component-library`    | Shared components and theme tokens                                     |
+| `packages/desktop-electron`     | Electron desktop wrapper                                               |
+| `packages/sync-server`          | Optional sync server and bank-provider integrations                    |
+| `packages/api` / `packages/cli` | Programmatic access and automation                                     |
+| `packages/docs`                 | Local documentation site                                               |
 
-We have a wide range of documentation on how to use Actual, this is all available in our [Community Documentation](https://actualbudget.org/docs), this includes topics on Budgeting, Account Management, Tips & Tricks and some documentation for developers.
+See [PRODUCT.md](PRODUCT.md) for product direction, [DESIGN.md](DESIGN.md) for interface context, and [AGENTS.md](AGENTS.md) for development context. Package identifiers, commands, and data formats retain their existing Actual names for compatibility.
 
-## Contributing
+## Development
 
-Actual is a community driven product. Learn more about [contributing to Actual](https://actualbudget.org/docs/contributing/).
+```sh
+yarn typecheck
+yarn lint
+yarn test
+yarn start:docs
+```
 
-### Code structure
+Technical setup and architecture notes are in [the development documentation](packages/docs/docs/development/index.md). This personal fork does not use the upstream contribution policies, PR templates, or contributor-management workflow.
 
-The Actual app is split up into a few packages:
+## Origin and License
 
-- loot-core - The core application that runs on any platform
-- desktop-client - The desktop UI
-- desktop-electron - The desktop app
+Actual CFM is derived from Actual Budget and retains its [MIT license](LICENSE.txt) and copyright notices. [Upstream documentation](https://actualbudget.org/docs/) remains useful for inherited functionality; CFM-specific behavior is documented in this repository.
 
-More information on the project structure is available in our [community documentation](https://actualbudget.org/docs/contributing/project-details).
+## Data Portability
 
-### Feature Requests
-
-Current feature requests can be seen [here](https://github.com/actualbudget/actual/issues?q=is%3Aissue+label%3A%22needs+votes%22+sort%3Areactions-%2B1-desc).
-Vote for your favorite requests by reacting :+1: to the top comment of the request.
-
-To add new feature requests, open a new Issue of the "Feature Request" type.
-
-### Translation
-
-Make Actual Budget accessible to more people by helping with the [Internationalization](https://actualbudget.org/docs/contributing/i18n/) of Actual. We are using a crowd sourcing tool to manage the translations, see our [Weblate Project](https://hosted.weblate.org/projects/actualbudget/). Weblate proudly supports open-source software projects through their [Libre plan](https://weblate.org/en/hosting/#libre).
-
-<a href="https://hosted.weblate.org/engage/actualbudget/">
-<img src="https://hosted.weblate.org/widget/actualbudget/actual/287x66-grey.png" alt="Translation status" />
-</a>
-
-## Sponsors
-
-Thanks to our wonderful sponsors who make Actual Budget possible!
-
-<a href="https://www.netlify.com"><img src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg" alt="Deploys by Netlify" /></a>
-<a href="https://depot.dev"><img src="https://depot.dev/badges/built-with-depot.svg" alt="Built with Depot" /></a>
-<a href="https://www.docker.com"><img src="https://www.docker.com/app/uploads/2023/05/symbol_blue-docker-logo.png" alt="Docker" height="48" /></a>
-<a href="https://github.com"><img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="GitHub" height="48" /></a>
-<a href="https://www.anthropic.com"><img src="https://avatars.githubusercontent.com/u/76263028?s=200&v=4" alt="Anthropic" height="48" /></a>
+Returning to upstream Actual Budget without losing transaction or dated balance history is a release requirement. Before any CFM financial schema extension ships, implement and test an upstream-compatible exporter plus an offline recovery path. Preserve CFM-only records in open audit/archive formats. Native database backups alone are not a downgrade guarantee. See [the return guide](packages/docs/docs/migration/return-to-actual-budget.md) and the portability section in [wishlist.md](wishlist.md) for current status and acceptance criteria.

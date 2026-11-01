@@ -1,6 +1,6 @@
 # Payee Locations
 
-Payee Locations let Actual remember where you shop. Once you save a location for a payee, Actual can suggest nearby payees in the payee autocomplete the next time you record a transaction at that spot. It can also fill in the nearest payee with a single tap. This is handy for places you visit often, such as a local grocery store or coffee shop.
+Payee Locations let Actual CFM remember where you shop. Once you save a location for a payee, Actual CFM can suggest nearby payees in the payee autocomplete the next time you record a transaction at that spot. It can also fill in the nearest payee with a single tap. This is handy for places you visit often, such as a local grocery store or coffee shop.
 
 Payee Locations is only available on the mobile transaction screen, not the table-based ledger used on larger screens and desktops.
 
@@ -10,7 +10,7 @@ Before you can use any of the payee location functionality, you need to give you
 
 :::caution
 
-If you decline the geolocation permission prompt, Actual cannot ask again. You will need to update the location permission for the site manually in your browser settings; the exact location of this setting varies from browser to browser.
+If you decline the geolocation permission prompt, Actual CFM cannot ask again. You will need to update the location permission for the site manually in your browser settings; the exact location of this setting varies from browser to browser.
 
 :::
 
@@ -32,7 +32,7 @@ Your location is only captured when you tap **Save**. It is stored in your budge
 
 ## Using the Nearest Payee
 
-Once you have saved one or more payee locations, Actual can suggest the nearest one as you enter a transaction, or set it for you with a single tap.
+Once you have saved one or more payee locations, Actual CFM can suggest the nearest one as you enter a transaction, or set it for you with a single tap.
 
 1. Begin entering a new transaction.
 2. If any saved payees are within 500 meters of your current location, a **Nearby Payees** section appears in the payee autocomplete, and a **Nearby** geolocation button appears in the payee field.
@@ -54,4 +54,4 @@ There is no dedicated screen for managing all of your saved payee locations. Ins
 
 ## Troubleshooting Location Permissions
 
-If the location prompt never appears, your browser may not consider the connection secure. Browsers only allow access to sensitive APIs like geolocation in [secure contexts](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts). When you reach your server over an IP address such as `http://192.168.x.x`, the connection is plain HTTP rather than HTTPS, so the browser silently refuses to even prompt for location permission. Serving Actual over HTTPS resolves this.
+If the location prompt never appears, your browser may not consider the connection secure. Browsers only allow access to sensitive APIs like geolocation in [secure contexts](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts). When you reach your server over an IP address such as `http://192.168.x.x`, the connection is plain HTTP rather than HTTPS, so the browser silently refuses to even prompt for location permission. Serving Actual CFM over HTTPS resolves this.

@@ -155,7 +155,7 @@ app.combine(
 );
 
 export function getDefaultDocumentDir() {
-  return fs.join(process.env.ACTUAL_DOCUMENT_DIR, 'Actual');
+  return fs.join(process.env.ACTUAL_DOCUMENT_DIR, 'Actual CFM');
 }
 
 async function setupDocumentsDir() {

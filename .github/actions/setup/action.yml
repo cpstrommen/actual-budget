@@ -7,9 +7,9 @@ inputs:
     required: false
     default: '.'
   download-translations:
-    description: 'Whether to download translations as part of setup, default true'
+    description: 'Whether to download optional upstream translations, default false'
     required: false
-    default: 'true'
+    default: 'false'
   cache:
     description: 'Whether to restore and save dependency and Lage caches, default true'
     required: false

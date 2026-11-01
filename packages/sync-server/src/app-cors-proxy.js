@@ -126,7 +126,7 @@ app.use('/', async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type, X-Actual-Token');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, X-Actual CFM-Token');
     res.set('Access-Control-Max-Age', '600');
     return res.status(204).end();
   }
@@ -204,7 +204,7 @@ app.use('/', async (req, res) => {
         (url.hostname === 'github.com' && url.pathname.includes('/releases/')))
     ) {
       requestHeaders['Authorization'] = `Bearer ${githubToken}`;
-      requestHeaders['User-Agent'] = 'Actual-Budget-Plugin-System';
+      requestHeaders['User-Agent'] = 'Actual CFM-Budget-Plugin-System';
       console.log(
         `Using GitHub authentication for request to: ${url.hostname}`,
       );

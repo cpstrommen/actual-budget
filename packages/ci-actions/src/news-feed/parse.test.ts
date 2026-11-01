@@ -9,7 +9,7 @@ import {
 } from './parse';
 import type { NewsEntry } from './parse';
 
-const siteUrl = 'https://actualbudget.org';
+const siteUrl = 'https://cfm.example';
 
 describe('stripHtmlComments', () => {
   it('removes comments, including nested or overlapping markers', () => {
@@ -26,7 +26,7 @@ describe('absolutizeLinks', () => {
     const input =
       '[a](../../docs/transactions/payee-locations) [b](/docs/reports/) [c](https://example.com) [d](#anchor) ![img](./img/x.png) [e](//example.com/page) [f](mailto:hi@example.com)';
     expect(absolutizeLinks(input, siteUrl, '/blog/')).toBe(
-      '[a](https://actualbudget.org/docs/transactions/payee-locations) [b](https://actualbudget.org/docs/reports) [c](https://example.com) [d](#anchor) ![img](https://actualbudget.org/blog/img/x.png) [e](//example.com/page) [f](mailto:hi@example.com)',
+      '[a](https://cfm.example/docs/transactions/payee-locations) [b](https://cfm.example/docs/reports) [c](https://example.com) [d](#anchor) ![img](https://cfm.example/blog/img/x.png) [e](//example.com/page) [f](mailto:hi@example.com)',
     );
   });
 
@@ -47,7 +47,7 @@ describe('parsePost', () => {
   describe('release posts', () => {
     const releasePost = `---
 title: Release 26.8.0
-description: New release of Actual.
+description: New release of Actual CFM.
 date: 2026-08-02T10:00
 slug: release-26.8.0
 tags: [announcement, release]
@@ -82,13 +82,13 @@ This release promotes [Payee Locations](../../docs/transactions/payee-locations)
         title: 'Release 26.8.0',
         date: '2026-08-02',
         version: '26.8.0',
-        url: 'https://actualbudget.org/blog/release-26.8.0',
+        url: 'https://cfm.example/blog/release-26.8.0',
       });
       expect(entry?.body).toBe(
-        `This release promotes [Payee Locations](https://actualbudget.org/docs/transactions/payee-locations) to stable.
+        `This release promotes [Payee Locations](https://cfm.example/docs/transactions/payee-locations) to stable.
 
 - Age of Money report released
-- Day-level date ranges in [reports](https://actualbudget.org/docs/reports)`,
+- Day-level date ranges in [reports](https://cfm.example/docs/reports)`,
       );
       expect(entry?.details).toBe(
         `#### Features
@@ -185,14 +185,14 @@ More text.
         type: 'post',
         title: 'Design Competition: Reimagine the Sidenav',
         date: '2026-06-27',
-        url: 'https://actualbudget.org/blog/design-competition-sidenav',
+        url: 'https://cfm.example/blog/design-competition-sidenav',
       });
       expect(entry?.body).not.toContain('truncate');
       expect(entry?.body).toContain(
-        '[link](https://actualbudget.org/blog/sidenav-voting-open)',
+        '[link](https://cfm.example/blog/sidenav-voting-open)',
       );
       expect(entry?.body).toContain(
-        '[docs](https://actualbudget.org/docs/settings)',
+        '[docs](https://cfm.example/docs/settings)',
       );
     });
 
@@ -221,7 +221,7 @@ Start [here](./2023-12-15-automate.md#month-ahead).
         { siteUrl, postSlugs },
       );
       expect(entry?.body).toBe(
-        'Start [here](https://actualbudget.org/blog/2023-12-15-automate-your-budget-with-goal-templates#month-ahead).',
+        'Start [here](https://cfm.example/blog/2023-12-15-automate-your-budget-with-goal-templates#month-ahead).',
       );
     });
 
@@ -263,7 +263,7 @@ Body text.
       expect(entry).toMatchObject({
         id: 'post-automate-twist',
         date: '2024-03-25',
-        url: 'https://actualbudget.org/blog/automate-twist',
+        url: 'https://cfm.example/blog/automate-twist',
         body: 'Body text.',
       });
     });

@@ -42,7 +42,7 @@ const syncNotifications: Partial<
     sticky: true,
     title: t('Update available'),
     message: t(
-      'Some synced changes were made with a newer version of Actual. ' +
+      'Some synced changes were made with a newer version of Actual CFM. ' +
         'They will show up here once you update this app.',
     ),
   }),
@@ -173,9 +173,9 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
       }
     } else if (event.type === 'error') {
       let notif: Notification | null = null;
-      const learnMore = `[${t('Learn more')}](https://actualbudget.org/docs/getting-started/sync/#debugging-sync-issues)`;
+      const learnMore = `[${t('Learn more')}](https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/sync.md#debugging-sync-issues)`;
       const githubIssueLink =
-        'https://github.com/actualbudget/actual/issues/new?assignees=&labels=bug&template=bug-report.yml&title=%5BBug%5D%3A+';
+        'https://github.com/cpstrommen/actual-budget/issues';
 
       switch (event.subtype) {
         case 'out-of-sync':
@@ -227,12 +227,12 @@ export function listenForSyncEvent(store: AppStore, queryClient: QueryClient) {
           // Tell the user something is wrong with the key state on
           // the server and the key needs to be recreated
           notif = {
-            title: t('Actual has updated the syncing format'),
+            title: t('Actual CFM has updated the syncing format'),
             message: t(
               'This happens rarely (if ever again). The internal syncing format ' +
                 'has changed and you need to reset sync. This will upload data from ' +
                 'this device and revert all other devices. ' +
-                '[Learn more about what this means](https://actualbudget.org/docs/getting-started/sync/#what-does-resetting-sync-mean).' +
+                '[Learn more about what this means](https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/sync.md#what-does-resetting-sync-mean).' +
                 '\n\n' +
                 'Old encryption keys are not migrated. If using encryption, [reset encryption here](#makeKey).',
             ),

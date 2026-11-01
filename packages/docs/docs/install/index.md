@@ -1,31 +1,37 @@
-# Installing Actual
+# Installing Actual CFM
 
-The Actual Budget project is made up of two parts: the client and the server. A server is not required for Actual to function but it is strongly recommended as it provides increased functionality. Below is a table of features of Actual and if those features work with just a client or if a server is needed.
+:::note
+
+This page includes upstream Actual Budget distribution options. To use Actual CFM changes, [build this fork from source](./build-from-source.md). Upstream installers and hosted services do not include this fork.
+
+:::
+
+The Actual CFM project is made up of two parts: the client and the server. A server is not required for Actual CFM to function but it is strongly recommended as it provides increased functionality. Below is a table of features of Actual CFM and if those features work with just a client or if a server is needed.
 
 | Feature                                                   | Without Server | Needs Server |
 | :-------------------------------------------------------- | :------------: | :----------: |
 | Import transactions from files                            |       X        |              |
 | All budgeting features (budgets, reports, schedules, etc) |       X        |              |
 | Import or Export budget files                             |       X        |              |
-| Use Actual on a mobile device                             |                |    X[^1]     |
-| Use Actual in a web browser                               |                |    X[^1]     |
+| Use Actual CFM on a mobile device                         |                |    X[^1]     |
+| Use Actual CFM in a web browser                           |                |    X[^1]     |
 | Sync budget between devices                               |                |      X       |
 | Use bank syncing (GoCardless or SimpleFIN)                |                |      X       |
-| Use the Actual API                                        |                |      X       |
+| Use the Actual CFM API                                    |                |      X       |
 
-The standard way of using Actual is to set up a personal server and use a web browser for the application. For quick testing or getting to know Actual before setting up a server, the [demo](https://demo.actualbudget.org) or a [desktop application](https://github.com/actualbudget/actual/releases) are a good place to start.
+The standard way of using Actual CFM is to set up a personal server and use a web browser for the application. For quick testing or getting to know Actual CFM before setting up a server, the [demo](https://demo.actualbudget.org) or a [desktop application](https://github.com/actualbudget/actual/releases) are a good place to start.
 
-## Using Actual locally in the browser
+## Using Actual CFM locally in the browser
 
-If you are okay with not having sync, auto-save, or backups then the easiest and fastest way to get started is by using the Actual [web app](https://app.actualbudget.org). This solution requires less setup but more maintenance.
+If you are okay with not having sync, auto-save, or backups then the easiest and fastest way to get started is by using the Actual CFM [web app](https://app.actualbudget.org). This solution requires less setup but more maintenance.
 
-All data is saved to your local browser. The Actual web app never has access to any of your personal data. It is recommended that you save your data (from the [settings](../backup-restore/backup.md) menu) after every session. If your browser memory is cleared, your data will be lost, so a backup is crucial.
+All data is saved to your local browser. The Actual CFM web app never has access to any of your personal data. It is recommended that you save your data (from the [settings](../backup-restore/backup.md) menu) after every session. If your browser memory is cleared, your data will be lost, so a backup is crucial.
 
 Using a new device or browser requires you to [restore](../backup-restore/restore.md) the saved file for each new device or browser. Remember that these new devices and browsers will not sync without a server set up, so anything you modify on one browser will not appear on others.
 
 :::caution
 
-This solution is not recommended for long-term use due to the maintenance required and the high probability of data loss. It's intended as a quick start. If you'd like to continue using Actual long-term, please use one of the server options [below](#running-a-server).
+This solution is not recommended for long-term use due to the maintenance required and the high probability of data loss. It's intended as a quick start. If you'd like to continue using Actual CFM long-term, please use one of the server options [below](#running-a-server).
 
 :::
 
@@ -37,26 +43,26 @@ Desktop applications are available for Windows, Mac, and Linux. These can be [do
 - Automated backups
 - Offline use is ready out of the box
 
-If you want to preview upcoming features before they reach an official release, [nightly builds of the desktop app](../contributing/preview-builds.md#nightly-desktop-builds) are also available.
+If you want to preview upcoming features before they reach an official release, [nightly builds of the desktop app](../development/preview-builds.md#nightly-desktop-builds) are also available.
 
 ## Server-Based Client Options
 
-The server provides a web-based version of Actual. This web app can be used in a browser as a standard web page to view and edit your budget. The web page can also be installed on your device. For mobile devices, an installed web page will work offline.
+The server provides a web-based version of Actual CFM. This web app can be used in a browser as a standard web page to view and edit your budget. The web page can also be installed on your device. For mobile devices, an installed web page will work offline.
 
 ## Running a Server
 
 While running a server can be a complicated endeavor, we've tried to make it fairly easy to set up and hands-off to maintain. Choose one of the following options to get started:
 
-- If you're not comfortable with the command line and are willing to pay a small amount of money to have your version of Actual hosted on the cloud for you, we recommend [PikaPods](./pikapods.md).[^2]
+- If you're not comfortable with the command line and are willing to pay a small amount of money to have your version of Actual CFM hosted on the cloud for you, we recommend [PikaPods](./pikapods.md).[^2]
 - If you're willing to run a few commands in the terminal:
   - You can run the server with a simple command using the [Server CLI](./cli-tool.md)
   - [Fly.io](./fly.md) also offers cloud hosting for a similar amount of money.
   - If you want to use Docker, we have instructions for [using our provided Docker containers](./docker.md).
-  - You could [build Actual from source](./build-from-source.md) on macOS, Windows, or Linux if you don't want to use a tool like Docker. (This method is the best option if you want to contribute to Actual's development!)
+  - You could [build Actual CFM from source](./build-from-source.md) on macOS, Windows, or Linux if you don't want to use a tool like Docker. (Build from this fork to use Actual CFM changes.)
 
 Once you've set up your server, you can [configure it](../config/index.md) to change a few of the ways it works.
 
-If you're coming from the original, managed Actual subscription service, you may want to [migrate your data](../migration/index.md).
+If you're coming from the original, managed Actual CFM subscription service, you may want to [migrate your data](../migration/index.md).
 
 ## Additional Installation Options
 
@@ -64,7 +70,7 @@ In addition to our officially supported options listed above, some community mem
 
 :::caution
 
-Content contained on external links is not managed or maintained by the Actual Budget team, if you run into issues with instructions on a third party site, please contact the author in the first instance or ask in discord where a member of the community may be able to help.
+Content contained on external links is not managed or maintained by the Actual CFM team, if you run into issues with instructions on a third party site, please contact the author in the first instance or ask in discord where a member of the community may be able to help.
 
 :::
 
@@ -72,7 +78,7 @@ Content contained on external links is not managed or maintained by the Actual B
 - [Google Cloud Run (serverless)](https://github.com/daniefdz/actual-run)
 - [Home Assistant](https://github.com/sztupy/hassio-actualbudget/blob/main/README.md)
 - [Hostim](https://hostim.dev/docs/templates/actual) - one-click managed Docker hosting with a persistent volume and free SSL.
-- [MASH](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/actual.md) - Ansible playbook that deploys Actual (and 250+ other self-hosted services) as Docker containers.
+- [MASH](https://github.com/mother-of-all-self-hosting/mash-playbook/blob/main/docs/services/actual.md) - Ansible playbook that deploys Actual CFM (and 250+ other self-hosted services) as Docker containers.
 - [Pethost](https://pethost.dev/templates/actual-budget/) - one-click template on managed Docker hosting, with a persistent volume and nightly backups.
 - [Proxmox VE Helper-Scripts](https://community-scripts.github.io/ProxmoxVE/scripts?id=actualbudget)
 - [Syncloud](https://syncloud.org/en/actual-budget)
@@ -87,4 +93,4 @@ Content contained on external links is not managed or maintained by the Actual B
 
 [^1]: You technically don't need a server instance for this. You need to run either a web-based client or a server, but a server is the same effort.
 
-[^2]: A portion of the cost to host on PikaPods is donated to the Actual Budget Project. With that said, PikaPods is a very simple, and cost-effective way to host your server.
+[^2]: A portion of the cost to host on PikaPods is donated to the Actual CFM Project. With that said, PikaPods is a very simple, and cost-effective way to host your server.

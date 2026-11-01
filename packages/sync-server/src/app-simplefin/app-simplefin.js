@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(validateSessionMiddleware);
 
 app.use((req, res, next) => {
-  const fileId = req.get('X-Actual-File-Id');
+  const fileId = req.get('X-Actual CFM-File-Id');
   if (fileId != null) {
     if (!isValidFileId(fileId)) {
       res.status(400).send({ status: 'error', reason: 'invalid-file-id' });

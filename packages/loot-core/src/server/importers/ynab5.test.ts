@@ -33,7 +33,7 @@ function makePayee(overrides: Partial<Payee> = {}): Payee {
 }
 
 describe('importPayees', () => {
-  it('does not create an Actual payee for a YNAB transfer-linked payee', async () => {
+  it('does not create an Actual CFM payee for a YNAB transfer-linked payee', async () => {
     vi.mocked(send).mockResolvedValue('created-payee-id');
 
     const transferPayee = makePayee({

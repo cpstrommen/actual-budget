@@ -1,6 +1,6 @@
 # Settings
 
-The Settings screen in Actual provides you with a number of options for managing the look and feel of your budget along with some more system specific settings. Most settings are self-explanatory.
+The Settings screen in Actual CFM provides you with a number of options for managing the look and feel of your budget along with some more system specific settings. Most settings are self-explanatory.
 
 You can access the Settings screen by clicking the down arrow by your budget name or by clicking **Settings** at the bottom of the sidebar. Settings are split into pages that you switch between using the navigation on the left of the Settings screen.
 
@@ -8,9 +8,9 @@ You can access the Settings screen by clicking the down arrow by your budget nam
 
 ### Notifications
 
-The option **Display a notification when updates are available** shows a notice in the app when a new version of Actual is released.
+The option **Display a notification when updates are available** shows a notice in the app when a new version of Actual CFM is released.
 
-The option **Show in-app notifications (release notes and announcements)** controls whether Actual shows you news from the project inside the app: the notification bell in the top bar, the Notifications page, and the message that appears after an update. It is on by default and applies to the device you change it on. See [Notifications](../notifications.md) for the full guide.
+The option **Show in-app notifications (release notes and announcements)** controls whether Actual CFM shows you news from the project inside the app: the notification bell in the top bar, the Notifications page, and the message that appears after an update. It is on by default and applies to the device you change it on. See [Notifications](../notifications.md) for the full guide.
 
 ### Themes
 
@@ -18,7 +18,7 @@ Themes change the user interface colors. Pick from the built-in **Light**, **Dar
 
 ### Sidebar
 
-By default the sidebar shows **Budget**, **Reports** and **Schedules**. The **Sidebar** section lets you choose which pages appear there, drag them into order, and pick the **Start page**, the page Actual shows when it opens or when you go to its home page. Pages that are switched off, such as Payees, Rules and Tags, are listed in the Settings navigation instead. These settings are stored in your budget file, so they apply on every device that opens it. The mobile layout does not use these settings yet, but support for it is planned.
+By default the sidebar shows **Budget**, **Reports** and **Schedules**. The **Sidebar** section lets you choose which pages appear there, drag them into order, and pick the **Start page**, the page Actual CFM shows when it opens or when you go to its home page. Pages that are switched off, such as Payees, Rules and Tags, are listed in the Settings navigation instead. These settings are stored in your budget file, so they apply on every device that opens it. The mobile layout does not use these settings yet, but support for it is planned.
 
 ### Formatting
 
@@ -51,7 +51,7 @@ End-to-end encryption allows you to encrypt your budget data on the remote serve
 
 ### Budgeting Method
 
-Either Envelope or Tracking Budgeting methods are available in Actual. Envelope Budgeting is recommended and most of the documentation refers to this method.
+Either Envelope or Tracking Budgeting methods are available in Actual CFM. Envelope Budgeting is recommended and most of the documentation refers to this method.
 
 [Learn more about Envelope Budgeting](../getting-started/envelope-budgeting.md)
 <br />
@@ -72,8 +72,8 @@ Click **Advanced** in the settings navigation to open the advanced section of th
 
 ### Budget ID
 
-You can have many budgets per install of Actual, each has it's own IDs.
-IDs are the names Actual uses to identify your budget internally. The Budget ID is used to identify your budget file. If you are using a server, the Sync ID is used to access the budget on the server.
+You can have many budgets per install of Actual CFM, each has it's own IDs.
+IDs are the names Actual CFM uses to identify your budget internally. The Budget ID is used to identify your budget file. If you are using a server, the Sync ID is used to access the budget on the server.
 
 <img width="664" alt="The Budget file section showing the Budget ID and the Sync ID" src="/img/settings/settings-budget-id@2x.webp" />
 
@@ -85,9 +85,9 @@ IDs are the names Actual uses to identify your budget internally. The Budget ID 
 
 ### Reset Sync
 
-Actual's sync function is quite complicated and is covered in detail [here](../getting-started/sync.md#what-does-resetting-sync-mean). Use this if there is a problem with syncing and you want to start fresh.
+Actual CFM's sync function is quite complicated and is covered in detail [here](../getting-started/sync.md#what-does-resetting-sync-mean). Use this if there is a problem with syncing and you want to start fresh.
 
-**Note:** Resetting sync will also significantly reduce your budget file size. This is because Actual stores all mutations in the budget file by default, causing it to grow over time. When you reset sync, all those historical changes are compressed into a single file.
+**Note:** Resetting sync will also significantly reduce your budget file size. This is because Actual CFM stores all mutations in the budget file by default, causing it to grow over time. When you reset sync, all those historical changes are compressed into a single file.
 
 <img width="662" alt="The Sync row with the Reset sync button" src="/img/settings/settings-reset-sync@2x.webp" />
 

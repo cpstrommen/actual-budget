@@ -1,6 +1,6 @@
 # Custom Themes
 
-Custom themes allow you to personalize the appearance of Actual by installing custom color schemes. You can choose from a catalog of community-created themes or create your own by defining CSS variables that override the default theme colors.
+Custom themes allow you to personalize the appearance of Actual CFM by installing custom color schemes. You can choose from a catalog of community-created themes or create your own by defining CSS variables that override the default theme colors.
 
 ## Using Custom Themes
 
@@ -32,7 +32,7 @@ The **Custom CSS is active** button below the theme selectors opens the editor w
 
 ## Publishing Custom Themes
 
-If you want to create your own custom theme and publish it for the community to use, you'll need to understand how Actual's theming system works.
+If you want to create your own custom theme and publish it for the community to use, you'll need to understand how Actual CFM's theming system works.
 
 ### Theme Format
 
@@ -50,7 +50,7 @@ Custom themes must be written as CSS using the `:root` selector with CSS custom 
 **Important requirements:**
 
 - The CSS must contain **exactly** `:root { ... }` and nothing else
-- Only custom properties starting with `--` are allowed; Actual uses `--color-*` variables for theming
+- Only custom properties starting with `--` are allowed; Actual CFM uses `--color-*` variables for theming
 - **Values** may use `var(--custom-property-name)` to reference other variables (e.g. to reuse existing theme variables). Only this form is allowed; fallbacks like `var(--name, value)` are not supported.
 - No other selectors, at-rules (@import, @media, etc.), or nested blocks are allowed
 - Comments are allowed and will be stripped during validation
@@ -68,7 +68,7 @@ Example using variables:
 
 ### Available CSS Variables
 
-Custom themes can override any of the CSS variables defined in Actual's base themes. These variables correspond to the theme color keys found in the theme files:
+Custom themes can override any of the CSS variables defined in Actual CFM's base themes. These variables correspond to the theme color keys found in the theme files:
 
 - `packages/desktop-client/src/style/themes/light.ts`
 - `packages/desktop-client/src/style/themes/dark.ts`
@@ -125,7 +125,7 @@ And many more! To see all available variables, check the theme files in the sour
 When you paste CSS or install from a catalog, the theme is validated to ensure it meets the requirements:
 
 1. Must contain exactly `:root { ... }`
-2. Only custom properties starting with `--` are allowed; Actual uses `--color-*` variables for theming
+2. Only custom properties starting with `--` are allowed; Actual CFM uses `--color-*` variables for theming
 3. Values may be literals (colors, lengths, etc.) or `var(--name)` references (no fallbacks)
 4. No at-rules (@import, @media, @keyframes, etc.)
 5. No nested selectors or blocks
@@ -178,7 +178,7 @@ You can use this as a template for creating your own themes.
 
 ### Tips for Theme Development
 
-1. **Start with a base theme**: Copy the CSS variables from one of Actual's built-in themes (light, dark, or midnight) and modify the colors you want to change
+1. **Start with a base theme**: Copy the CSS variables from one of Actual CFM's built-in themes (light, dark, or midnight) and modify the colors you want to change
 2. **Test incrementally**: Make small changes and test them in the app to see the results
 3. **Use the paste CSS feature**: During development, use the paste CSS feature to quickly test your theme without needing to host it on GitHub
 4. **Check variable names**: Make sure variable names match exactly (case-sensitive) - they should start with `--color-` followed by the theme key name
@@ -189,7 +189,7 @@ You can use this as a template for creating your own themes.
 To have your theme added to the official catalog, you'll need to:
 
 1. Host your theme on GitHub following the structure above
-2. Open an issue or pull request on the Actual repository requesting your theme be added to the catalog
+2. Open an issue or pull request on the Actual CFM repository requesting your theme be added to the catalog
 3. Provide the repository name in `owner/repo` format
 4. Include 6 representative colors for the color palette preview (as an array of hex color values)
 

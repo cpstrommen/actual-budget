@@ -13,7 +13,7 @@ if (needsBootstrap()) {
     if (error) {
       console.log('Error setting password:', error);
       console.log(
-        'Please report this as an issue: https://github.com/actualbudget/actual-server/issues',
+        'Please report this as an issue: https://github.com/cpstrommen/actual-budget/issues',
       );
       process.exit(1);
     }
@@ -21,7 +21,7 @@ if (needsBootstrap()) {
   } catch (err) {
     console.log('Unexpected error:', err);
     console.log(
-      'Please report this as an issue: https://github.com/actualbudget/actual-server/issues',
+      'Please report this as an issue: https://github.com/cpstrommen/actual-budget/issues',
     );
     process.exit(1);
   }
@@ -33,7 +33,7 @@ if (needsBootstrap()) {
     if (error) {
       console.log('Error changing password:', error);
       console.log(
-        'Please report this as an issue: https://github.com/actualbudget/actual-server/issues',
+        'Please report this as an issue: https://github.com/cpstrommen/actual-budget/issues',
       );
       process.exit(1);
     }
@@ -44,7 +44,7 @@ if (needsBootstrap()) {
   } catch (err) {
     console.log('Unexpected error:', err);
     console.log(
-      'Please report this as an issue: https://github.com/actualbudget/actual-server/issues',
+      'Please report this as an issue: https://github.com/cpstrommen/actual-budget/issues',
     );
     process.exit(1);
   }

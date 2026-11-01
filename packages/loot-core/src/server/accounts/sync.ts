@@ -208,7 +208,7 @@ async function downloadSimpleFinTransactions(
       },
       {
         'X-ACTUAL-TOKEN': userToken,
-        ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+        ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
       },
       // 5 minute timeout for batch sync, one minute for individual accounts
       Array.isArray(acctId) ? 300000 : 60000,
@@ -295,7 +295,7 @@ async function downloadPluggyAiTransactions(
     },
     {
       'X-ACTUAL-TOKEN': userToken,
-      ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+      ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
     },
     60000,
   );

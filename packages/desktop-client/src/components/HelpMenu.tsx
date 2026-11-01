@@ -19,35 +19,35 @@ import { useTour } from './tour/TourProvider';
 const getPageDocs = (page: string) => {
   switch (page) {
     case '/budget':
-      return 'https://actualbudget.org/docs/getting-started/envelope-budgeting';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/envelope-budgeting.md';
     case '/reports':
-      return 'https://actualbudget.org/docs/reports/';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/reports/index.md';
     case '/schedules':
     case '/settings/schedules':
-      return 'https://actualbudget.org/docs/schedules';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/schedules.md';
     case '/payees':
     case '/settings/payees':
-      return 'https://actualbudget.org/docs/transactions/payees';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/transactions/payees.md';
     case '/rules':
     case '/settings/rules':
-      return 'https://actualbudget.org/docs/budgeting/rules';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/budgeting/rules/index.md';
     case '/tags':
     case '/settings/tags':
-      return 'https://actualbudget.org/docs/transactions/tags';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/transactions/tags.md';
     case '/bank-sync':
     case '/settings/bank-sync':
-      return 'https://actualbudget.org/docs/advanced/bank-sync';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/advanced/bank-sync.md';
     case '/settings/experimental':
-      return 'https://actualbudget.org/docs/experimental';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/experimental/index.md';
     case '/settings':
     case '/settings/general':
     case '/settings/advanced':
-      return 'https://actualbudget.org/docs/settings';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/settings/index.md';
     case '/notifications':
-      return 'https://actualbudget.org/docs/notifications';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/notifications.md';
     default:
       // All pages under /accounts, plus any missing pages
-      return 'https://actualbudget.org/docs';
+      return 'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/index.md';
   }
 };
 
@@ -106,7 +106,9 @@ export const HelpMenu = () => {
         openDocsForCurrentPage();
         break;
       case 'discord':
-        window.Actual.openURLInBrowser('https://discord.gg/pRYNYr4W5A');
+        window.Actual.openURLInBrowser(
+          'https://github.com/cpstrommen/actual-budget/issues',
+        );
         break;
       case 'keyboard-shortcuts':
         dispatch(pushModal({ modal: { name: 'keyboard-shortcuts' } }));

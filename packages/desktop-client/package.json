@@ -1,10 +1,11 @@
 {
   "name": "@actual-app/web",
   "version": "26.10.0",
+  "private": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actualbudget/actual.git",
+    "url": "https://github.com/cpstrommen/actual-budget.git",
     "directory": "packages/desktop-client"
   },
   "files": [

@@ -23,18 +23,11 @@ const outputPath = join(
   'packages/docs/docs/upcoming-release-notes.md',
 );
 
-const intro = `:::info
-
-These changes have been merged but are **not yet part of a stable release**. They
-ship in the nightly builds — try them via the \`nightly\` Docker image tag, or the
-hosted demo at [nightly.actualbudget.org](https://nightly.actualbudget.org).
-For changes in stable releases, see the [Release Notes](./releases.md).
-
-:::`;
+const intro = `These notes concern Actual CFM only. Planned work is recorded in the repository's wishlist. No upstream releases or nightly builds are implied.`;
 
 const header = `---
 title: Upcoming Release
-description: Release notes for changes that are merged but not yet released, available in the nightly builds.
+description: Release notes for changes that are merged but not yet released, for Actual CFM.
 sidebar_label: Upcoming Release
 ---
 
@@ -46,13 +39,13 @@ ${intro}`;
 
 const { notesByCategory, files } = await parseReleaseNotes(
   notesDir,
-  'actualbudget',
-  'actual',
+  'cpstrommen',
+  'actual-budget',
 );
 
 const body =
   files.length === 0
-    ? `There are no unreleased changes right now — everything has shipped in a stable [release](./releases.md).`
+    ? `There are no unreleased changes right now recorded. See [CFM release status](./releases.md).`
     : formatNotes(notesByCategory);
 
 await fs.writeFile(outputPath, `${header}\n\n${body}\n`);

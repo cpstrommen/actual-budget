@@ -743,7 +743,7 @@ async function setSecret({
 
   const headers = {
     'X-ACTUAL-TOKEN': userToken,
-    ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+    ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
   };
 
   try {
@@ -913,7 +913,7 @@ async function simpleFinStatus(): Promise<BankSyncProviderStatus> {
     {},
     {
       'X-ACTUAL-TOKEN': userToken,
-      ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+      ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
     },
   );
 }
@@ -936,7 +936,7 @@ async function pluggyAiStatus(): Promise<BankSyncProviderStatus> {
     {},
     {
       'X-ACTUAL-TOKEN': userToken,
-      ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+      ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
     },
   );
 }
@@ -981,7 +981,7 @@ async function simpleFinAccounts() {
       {},
       {
         'X-ACTUAL-TOKEN': userToken,
-        ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+        ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
       },
       60000,
     );
@@ -1009,7 +1009,7 @@ async function pluggyAiAccounts() {
       {},
       {
         'X-ACTUAL-TOKEN': userToken,
-        ...(fileId ? { 'X-Actual-File-Id': fileId } : {}),
+        ...(fileId ? { 'X-Actual CFM-File-Id': fileId } : {}),
       },
       60000,
     );
@@ -1389,7 +1389,7 @@ function handleSyncError(
   return {
     accountId: acct.id,
     message:
-      'There was an internal error. Please get in touch https://actualbudget.org/contact for support.',
+      'There was an internal error. Please get in touch https://github.com/cpstrommen/actual-budget/issues for support.',
     internal: err.stack,
   };
 }

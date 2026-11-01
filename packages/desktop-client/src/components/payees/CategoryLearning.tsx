@@ -32,7 +32,7 @@ export function CategoryLearning() {
               the category for the payee.{' '}
               <Link
                 variant="external"
-                to="https://actualbudget.org/docs/budgeting/rules/#automatic-rules"
+                to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/budgeting/rules/index.md#automatic-rules"
                 linkColor="purple"
               >
                 Learn more

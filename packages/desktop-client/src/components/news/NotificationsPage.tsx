@@ -17,9 +17,11 @@ import { getUnseenEntries } from '#news/utils';
 
 import { NewsEntryCard } from './NewsEntryCard';
 
-const RELEASE_NOTES_URL = 'https://actualbudget.org/docs/releases';
-const BLOG_URL = 'https://actualbudget.org/blog';
-const DISCORD_URL = 'https://discord.gg/pRYNYr4W5A';
+const RELEASE_NOTES_URL =
+  'https://github.com/cpstrommen/actual-budget/releases';
+const BLOG_URL =
+  'https://github.com/cpstrommen/actual-budget/blob/master/wishlist.md';
+const DISCORD_URL = 'https://github.com/cpstrommen/actual-budget/issues';
 
 export function NotificationsPage() {
   const { t } = useTranslation();
@@ -84,9 +86,9 @@ export function NotificationsPage() {
             <Text>
               <Trans>
                 <strong>Notifications aren't available right now.</strong>{' '}
-                Actual couldn't load them, which usually means you're offline.
-                Everything else keeps working, and they'll load next time you're
-                connected.
+                Actual CFM couldn't load them, which usually means you're
+                offline. Everything else keeps working, and they'll load next
+                time you're connected.
               </Trans>
             </Text>
           </Setting>
@@ -96,7 +98,9 @@ export function NotificationsPage() {
           <Setting>
             <Text>
               <Trans>
-                <strong>Update Actual to see the latest notifications.</strong>{' '}
+                <strong>
+                  Update Actual CFM to see the latest notifications.
+                </strong>{' '}
                 This version can't read the newest notifications format.
               </Trans>
             </Text>
@@ -131,10 +135,10 @@ export function NotificationsPage() {
             <Trans>All release notes</Trans>
           </Link>
           <Link variant="external" to={BLOG_URL} linkColor="purple">
-            <Trans>Blog</Trans>
+            <Trans>CFM roadmap</Trans>
           </Link>
           <Link variant="external" to={DISCORD_URL} linkColor="purple">
-            <Trans>Community (Discord)</Trans>
+            <Trans>CFM support</Trans>
           </Link>
         </View>
       </View>

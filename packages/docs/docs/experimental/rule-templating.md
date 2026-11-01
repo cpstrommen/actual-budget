@@ -20,7 +20,7 @@ Setting the following fields with a rule template is currently supported:
 - payee (name)
 - cleared (although no boolean helper functions are currently supported)
 
-Actual uses [handlebars](https://handlebarsjs.com/) under the hood to process the rule templates. You can find more in depth information about how this works in [their guide](https://handlebarsjs.com/guide).
+Actual CFM uses [handlebars](https://handlebarsjs.com/) under the hood to process the rule templates. You can find more in depth information about how this works in [their guide](https://handlebarsjs.com/guide).
 
 ## Using rule action templating
 

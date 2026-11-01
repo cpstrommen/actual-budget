@@ -7,7 +7,7 @@ The **Tracking budget** won't automatically rollover funds from month to month, 
 Instead of working with what funds you have _now_, you can forecast expenses and income.
 All transactions do still need to be categorized.
 
-We, the Actual team, suggest that you try to use the **Envelope Budget** if you haven't already as we believe it to be a more capable style of budgeting than the **Tracking Budget**. However, if you would prefer the more traditional style, then the **Tracking Budget** is for you.
+We, the Actual CFM team, suggest that you try to use the **Envelope Budget** if you haven't already as we believe it to be a more capable style of budgeting than the **Tracking Budget**. However, if you would prefer the more traditional style, then the **Tracking Budget** is for you.
 
 ## Enabling the Tracking Budget
 
@@ -38,7 +38,7 @@ As you can see in the following example, your total budgeted items show in the r
 
 <img width="321" alt="The October summary with the actual amounts and the budgeted amounts labeled" src="/img/getting-started/tracking-budget-summary@2x.webp" />
 
-- **A. Actual.** The income received and the amount spent so far this month.
+- **A. Actual CFM.** The income received and the amount spent so far this month.
 - **B. Budgeted.** The income and expenses you budgeted for the month.
 
 There are useful pie charts next to **Income** and **Expenses** to track your progress visually.
@@ -79,7 +79,7 @@ This is useful when you add or change a recurring expense and want to update all
 
 ## Working With the Budget
 
-All the non-budgeting features of Actual can be used with the **Tracking Budget** the same as the **Envelope Budget**.
+All the non-budgeting features of Actual CFM can be used with the **Tracking Budget** the same as the **Envelope Budget**.
 Experimental features may not work with the **Tracking Budget** yet.
 If not please let us know in the feature feedback.
 

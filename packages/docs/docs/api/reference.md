@@ -801,7 +801,7 @@ Every recurrence setting is taken into account: `frequency`, `interval`, `patter
 - `end`: last date to include.
 - `count`: maximum number of dates to return.
 
-The window applies to the dates after the weekend move, so the result matches the dates Actual shows for the schedule. A date that several occurrences move onto (a daily schedule's Saturday and Sunday both landing on Monday) is listed once, and `count` counts distinct dates. A recurrence that never ends needs an `end` or a `count`.
+The window applies to the dates after the weekend move, so the result matches the dates Actual CFM shows for the schedule. A date that several occurrences move onto (a daily schedule's Saturday and Sunday both landing on Monday) is listed once, and `count` counts distinct dates. A recurrence that never ends needs an `end` or a `count`.
 
 ```js
 const [rent] = await api.getSchedules();
@@ -859,7 +859,7 @@ Sets the note on the entity with the given ID. Pass an empty string to clear the
 
 <Method name="init" args={[{ name: 'config', type: 'InitConfig?' }]} returns="Promise<void>" />
 
-Initializes the API by connecting to an Actual Budget server. The config parameter is optional and defaults to `{}` (local-only mode).
+Initializes the API by connecting to an Actual CFM server. The config parameter is optional and defaults to `{}` (local-only mode).
 
 #### `shutdown`
 
@@ -923,7 +923,7 @@ Load a budget file. If the file exists locally, it will load from there. Otherwi
 
 <Method name="importBudget" args={[{ name: 'input', type: 'string | ArrayBuffer | Uint8Array' }, { name: 'options', type: "{ type?: 'actual' | 'ynab4' | 'ynab5', filename?: string }?" }]} returns="Promise<{ id: string }>" />
 
-Import a budget from an exported file and load it. `input` is either a path to the file or the raw file contents. By default the file is treated as an Actual export (a `.zip` file containing `db.sqlite` and `metadata.json`); pass `type: 'ynab4'` or `type: 'ynab5'` to import a YNAB export instead. When passing raw contents, you can supply the original file name with `filename` — some import types use it to derive the budget name. Returns the id of the imported budget, which is now the loaded budget.
+Import a budget from an exported file and load it. `input` is either a path to the file or the raw file contents. By default the file is treated as an Actual CFM export (a `.zip` file containing `db.sqlite` and `metadata.json`); pass `type: 'ynab4'` or `type: 'ynab5'` to import a YNAB export instead. When passing raw contents, you can supply the original file name with `filename` — some import types use it to derive the budget name. Returns the id of the imported budget, which is now the loaded budget.
 
 #### `exportBudget`
 

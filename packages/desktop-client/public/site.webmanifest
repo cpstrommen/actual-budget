@@ -1,7 +1,7 @@
 {
-  "name": "Actual",
-  "short_name": "Actual",
-  "description": "A local-first personal finance tool",
+  "name": "Actual CFM",
+  "short_name": "Actual CFM",
+  "description": "Annual planning, liquidity, and asset valuation",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -66,24 +66,9 @@
       ]
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshot_wide.png",
-      "form_factor": "wide",
-      "label": "Actual Budget Homepage",
-      "type": "image/png",
-      "sizes": "1280x720"
-    },
-    {
-      "src": "/screenshot_narrow.png",
-      "form_factor": "narrow",
-      "label": "Actual Budget Mobile Homepage",
-      "type": "image/png",
-      "sizes": "350x600"
-    }
-  ],
-  "theme_color": "#5c3dbb",
-  "background_color": "#5c3dbb",
+  "theme_color": "#1f1f1f",
+  "background_color": "#1f1f1f",
   "display": "standalone",
-  "start_url": "./"
+  "start_url": "./",
+  "id": "actual-cfm"
 }

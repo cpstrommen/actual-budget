@@ -5,7 +5,7 @@ Client Version 24.10.0 and
 Server Version 24.10.0 or higher are required for this feature.
 :::
 
-### Generate Setup Token for Actual
+### Generate Setup Token for Actual CFM
 
 1. Create an account with SimpleFIN Bridge - https://beta-bridge.simplefin.org/ , by clicking "Get Started" and entering your email address.
 
@@ -31,7 +31,7 @@ Server Version 24.10.0 or higher are required for this feature.
 
    ![](/img/connecting-your-bank/connecting-your-bank-simplefin-04.webp)
 
-7. Back in Actual, click on "+ Add account" at the bottom of the sidebar.
+7. Back in Actual CFM, click on "+ Add account" at the bottom of the sidebar.
 
    <img width="240" alt="The sidebar with the Add account button at the bottom highlighted" src="/img/advanced/bank-sync/bank-sync-add-account@2x.webp" />
 
@@ -66,16 +66,16 @@ Budget-specific credentials take precedence over global credentials. Resetting t
 
    <img width="662" alt="The Link account dialog with Link bank account on the SimpleFIN card highlighted" src="/img/advanced/bank-sync/simplefin-link-bank-account@2x.webp" />
 
-3. A Link Accounts box will pop up. To link a SimpleFIN account to an Actual account, click the "Set up bank sync" button in the same row.
+3. A Link Accounts box will pop up. To link a SimpleFIN account to an Actual CFM account, click the "Set up bank sync" button in the same row.
    - The "Bank Account To Sync" column contains the names of the accounts found via SimpleFIN
-   - The "Account in Actual" column contains the name of the Actual account it is linked to.
-   - You can also click in the "Account in Actual" column, instead of clicking the "Set up bank sync" button.
+   - The "Account in Actual CFM" column contains the name of the Actual CFM account it is linked to.
+   - You can also click in the "Account in Actual CFM" column, instead of clicking the "Set up bank sync" button.
 
    <img width="988" alt="The Link Accounts dialog listing SimpleFIN accounts, with one Set up bank sync button highlighted" src="/img/advanced/bank-sync/simplefin-link-accounts@2x.webp" />
 
-4. Either select an existing Actual account to link to, or create a new one.
+4. Either select an existing Actual CFM account to link to, or create a new one.
 
-   <img width="988" alt="The account picker open in the Account in Actual column, listing existing accounts and Create new account" src="/img/advanced/bank-sync/simplefin-account-picker@2x.webp" />
+   <img width="988" alt="The account picker open in the Account in Actual CFM column, listing existing accounts and Create new account" src="/img/advanced/bank-sync/simplefin-account-picker@2x.webp" />
 
 5. When you've mapped all your accounts that you wish to, click the "Link accounts" button.
 
@@ -95,4 +95,4 @@ To reset your SimpleFIN setup token:
 
 3. Click "Reset SimpleFIN credentials".
 
-You will then need to obtain a new setup token from SimpleFIN and enter it into Actual.
+You will then need to obtain a new setup token from SimpleFIN and enter it into Actual CFM.

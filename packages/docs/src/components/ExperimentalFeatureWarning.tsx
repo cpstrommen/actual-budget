@@ -22,15 +22,15 @@ export function ExperimentalFeatureWarning({
           <>
             comment on the{' '}
             <a
-              href={`https://github.com/actualbudget/actual/issues/${issueId}`}
+              href="https://github.com/cpstrommen/actual-budget/issues"
               rel="noopener noreferrer"
             >
-              dedicated feedback issue
+              Actual CFM feedback tracker
             </a>
           </>
         ) : (
           <a
-            href="https://github.com/actualbudget/actual/issues"
+            href="https://github.com/cpstrommen/actual-budget/issues"
             rel="noopener noreferrer"
           >
             open an issue

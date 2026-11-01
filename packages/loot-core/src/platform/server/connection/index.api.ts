@@ -16,7 +16,7 @@ export const send: T.Send = function (type, args) {
   const event = args as ServerEvents['sync-event'];
   if (event.type === 'deferred-messages') {
     logger.warn(
-      'Some synced changes were made with a newer version of Actual and will apply once @actual-app/api is updated',
+      'Some synced changes were made with a newer version of Actual CFM and will apply once @actual-app/api is updated',
     );
   } else if (event.type === 'dropped-messages') {
     logger.warn(

@@ -346,7 +346,7 @@ describe('goCardlessService', () => {
         ...mockAccountDetails,
         account: {
           ...mockAccountDetails.account,
-          name: 'An Actual Account Name',
+          name: 'An Actual CFM Account Name',
         },
       });
 
@@ -358,7 +358,7 @@ describe('goCardlessService', () => {
       expect(await goCardlessService.getDetailedAccount(accountId)).toEqual({
         ...mockAccountMetaData,
         ...mockAccountDetails.account,
-        name: 'An Actual Account Name',
+        name: 'An Actual CFM Account Name',
       });
     });
   });

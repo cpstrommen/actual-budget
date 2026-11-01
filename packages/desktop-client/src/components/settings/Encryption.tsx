@@ -57,7 +57,7 @@ export function EncryptionSettings() {
           </Trans>{' '}
           <Link
             variant="external"
-            to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
+            to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/sync.md#end-to-end-encryption"
             linkColor="purple"
           >
             <Trans>Learn more</Trans>
@@ -82,11 +82,11 @@ export function EncryptionSettings() {
             <span>End-to-end encryption</span> is not available when making an
             unencrypted connection to a remote server. You'll need to enable
             HTTPS on your server to use end-to-end encryption. This problem may
-            also occur if your browser is too old to work with Actual.
+            also occur if your browser is too old to work with Actual CFM.
           </Trans>{' '}
           <Link
             variant="external"
-            to="https://actualbudget.org/docs/config/https"
+            to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/config/https.md"
             linkColor="purple"
           >
             <Trans>Learn more</Trans>

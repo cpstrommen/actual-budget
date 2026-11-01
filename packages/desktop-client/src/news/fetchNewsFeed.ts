@@ -4,40 +4,22 @@ import { newsFeedFixture } from './fixtures';
 import { NEWS_FEED_SCHEMA_VERSION } from './types';
 import type { NewsEntry, NewsFeed } from './types';
 
-// Released builds read the file committed on `master`, the same way the custom
-// theme catalog is fetched (hooks/useThemeCatalog.ts).
+// Each build carries its own CFM announcements and does not read upstream news.
 /**
  * Message of the error thrown when the feed loaded but isn't in a format this
  * version understands, so callers can tell it apart from a failed download.
  */
 export const UNSUPPORTED_NEWS_FEED_FORMAT = 'Unsupported news feed format';
 
-const REPO_NEWS_FEED_URL =
-  'https://raw.githubusercontent.com/actualbudget/actual/master/packages/desktop-client/src/data/news.json';
-
-/**
- * Where to load `news.json` from, in priority order:
- *
- * 1. `REACT_APP_NEWS_FEED_URL` - explicit override, e.g. in a local `.env`
- *    file in `packages/desktop-client`.
- * 2. Netlify PR previews (`REACT_APP_REVIEW_ID` is set) serve the copy in
- *    their own build, i.e. exactly the file committed on the PR branch. This
- *    also works for PRs from forks, whose branches aren't on GitHub upstream.
- * 3. The committed file on `master`.
- */
+/** Load the release's bundled CFM announcements unless explicitly overridden. */
 export async function getNewsFeedUrl(): Promise<string> {
   const override = import.meta.env.REACT_APP_NEWS_FEED_URL;
   if (override) {
     return override;
   }
 
-  if (import.meta.env.REACT_APP_REVIEW_ID) {
-    // `?url` makes Vite emit the file as a static asset and hand back its URL.
-    const { default: bundledUrl } = await import('../data/news.json?url');
-    return bundledUrl;
-  }
-
-  return REPO_NEWS_FEED_URL;
+  const { default: bundledUrl } = await import('../data/news.json?url');
+  return bundledUrl;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

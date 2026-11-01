@@ -1,16 +1,16 @@
 :root {
-  --palette-gray50: #f6f8fa;
-  --palette-gray80: #f0f4f6;
-  --palette-gray100: #e8ecf0;
-  --palette-gray150: #d4dae0;
-  --palette-gray200: #bdc5cf;
-  --palette-gray300: #98a1ae;
-  --palette-gray400: #747c8b;
-  --palette-gray500: #4d5768;
-  --palette-gray600: #373b4a;
-  --palette-gray700: #242733;
-  --palette-gray800: #141520;
-  --palette-gray900: #080811;
+  --palette-gray50: #fafafa;
+  --palette-gray80: #f5f5f5;
+  --palette-gray100: #f2f2f2;
+  --palette-gray150: #e0e0e0;
+  --palette-gray200: #c6c6c6;
+  --palette-gray300: #a3a3a3;
+  --palette-gray400: #808080;
+  --palette-gray500: #666666;
+  --palette-gray600: #444444;
+  --palette-gray700: #2e2e2e;
+  --palette-gray800: #242424;
+  --palette-gray900: #1f1f1f;
 
   --palette-navy50: #f7fafc;
   --palette-navy100: #e8ecf0;
@@ -88,8 +88,8 @@
   --palette-white: #ffffff;
   --palette-black: #000000;
   --palette-hover: #fafafa;
-  --palette-border: #e8ecf0;
-  --palette-selected: #b3d9ff;
+  --palette-border: #e0e0e0;
+  --palette-selected: #c6c6c6;
 
   --palette-chartQual1: #45b29d;
   --palette-chartQual2: #efc94c;

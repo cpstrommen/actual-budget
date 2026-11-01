@@ -34,7 +34,7 @@ const sidebars = {
         'getting-started/roadmap-for-new-users',
         {
           type: 'category',
-          label: 'Installing Actual',
+          label: 'Installing Actual CFM',
           collapsed: true,
           link: {
             type: 'doc',
@@ -72,7 +72,11 @@ const sidebars = {
             type: 'doc',
             id: 'migration/index',
           },
-          items: ['migration/ynab4', 'migration/nynab'],
+          items: [
+            'migration/ynab4',
+            'migration/nynab',
+            'migration/return-to-actual-budget',
+          ],
         },
         'getting-started/tips-tricks',
       ],
@@ -80,7 +84,7 @@ const sidebars = {
 
     {
       type: 'category',
-      label: 'Using Actual',
+      label: 'Using Actual CFM',
       collapsed: true,
       className: 'no-indent section-header',
       items: [
@@ -315,84 +319,26 @@ const sidebars = {
       ],
     },
   ],
-  communitySidebar: [
-    'community/index',
-    'vision',
-    'community-repos',
-    {
-      type: 'link',
-      label: 'Open Bug Reports',
-      href: 'https://github.com/actualbudget/actual/issues',
-    },
-    {
-      type: 'link',
-      label: 'Feature Requests',
-      href: 'https://github.com/actualbudget/actual/issues?q=label%3A%22needs+votes%22+sort%3Areactions-%2B1-desc+',
-    },
+  developmentSidebar: [
+    'development/index',
+    'development/development-setup',
+    'development/testing',
+    'development/troubleshooting',
+    'development/windows',
     {
       type: 'category',
-      label: 'Contributing',
-      link: {
-        type: 'doc',
-        id: 'contributing/index',
-      },
-      collapsed: true,
+      label: 'Project Structure',
+      link: { type: 'doc', id: 'development/project-details/index' },
       items: [
-        {
-          type: 'category',
-          label: 'The Actual Project Structure',
-          link: {
-            type: 'doc',
-            id: 'contributing/project-details/index',
-          },
-          items: [
-            'contributing/project-details/database',
-            'contributing/project-details/architecture',
-            'contributing/project-details/feature-flags',
-            'contributing/project-details/electron',
-            'contributing/project-details/migrations',
-            'contributing/project-details/advice',
-          ],
-        },
-        'contributing/ai-usage-policy',
-        'contributing/development-setup',
-        'contributing/testing',
-        'contributing/code-style',
-        'contributing/troubleshooting',
-        'contributing/i18n',
-        'contributing/preview-builds',
-        'contributing/releasing',
-        'contributing/windows',
-        {
-          type: 'category',
-          label: 'Documentation',
-          collapsible: false,
-          className: 'no-indent',
-          items: ['contributing/writing-docs'],
-        },
-        {
-          type: 'category',
-          label: 'Project Leadership',
-          collapsible: false,
-          className: 'no-indent',
-          items: [
-            'contributing/leadership/funding',
-            'contributing/leadership/triaging-issues',
-            'contributing/leadership/new-core-contributors-guide',
-            'contributing/leadership/architecture-decision-records',
-            'contributing/leadership/cursor-ide',
-            'contributing/leadership/paying-contributors',
-          ],
-        },
+        'development/project-details/database',
+        'development/project-details/architecture',
+        'development/project-details/feature-flags',
+        'development/project-details/electron',
+        'development/project-details/migrations',
+        'development/project-details/advice',
       ],
     },
-    'releases',
-    'upcoming-release-notes',
-    {
-      type: 'link',
-      label: 'Chat with us on Discord',
-      href: 'https://discord.gg/8JfAXSgfRf',
-    },
+    'development/preview-builds',
   ],
 };
 module.exports = sidebars;

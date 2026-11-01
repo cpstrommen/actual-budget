@@ -2,7 +2,7 @@
 title: Configuring the Server
 ---
 
-When it starts up, Actual looks for an optional `config.json` file in the same directory as the sync-server's `package.json`. If you are [building from source](../install/build-from-source.md) this will be in `packages/sync-server/`. If present, any keys you define there will override the default values. All values can also be specified as environment variables, which will override the values in the `config.json` file.
+When it starts up, Actual CFM looks for an optional `config.json` file in the same directory as the sync-server's `package.json`. If you are [building from source](../install/build-from-source.md) this will be in `packages/sync-server/`. If present, any keys you define there will override the default values. All values can also be specified as environment variables, which will override the values in the `config.json` file.
 
 :::caution
 Observe that the environmental variables do not map 1:1 to keys in the config.json file. In case of doubt, check the source schema at [/packages/sync-server/src/load-config.js](https://github.com/actualbudget/actual/blob/45530638feaacf74c28fddb846ae91170a99d94e/packages/sync-server/src/load-config.js#L43)
@@ -55,7 +55,7 @@ The default value is `20`.
 
 ## `https`
 
-If you want Actual to serve over HTTPS, you can set this key to an object with the following keys:
+If you want Actual CFM to serve over HTTPS, you can set this key to an object with the following keys:
 
 - `key`: The path to the private key file. (environment variable: `ACTUAL_HTTPS_KEY`)
 - `cert`: The path to the certificate file. (environment variable: `ACTUAL_HTTPS_CERT`)
@@ -95,7 +95,7 @@ If you're providing a custom frontend, make sure you provide an `index.html` in 
 
 ## `loginMethod`
 
-Change the default authentication method for Actual (environment variable: `ACTUAL_LOGIN_METHOD`). The valid values are:
+Change the default authentication method for Actual CFM (environment variable: `ACTUAL_LOGIN_METHOD`). The valid values are:
 
 - `"password"` (default) - This is standard password authentication
 - `"header"` - Use the HTTP header `x-actual-password` to automatically login. This is for advanced use and if not done correctly could have security implications.
@@ -117,7 +117,7 @@ Configure the clients that are allowed to authenticate with HTTP headers. This d
 
 ## `ACTUAL_SIMPLEFIN_ALLOWED_NETWORKS` (config.json: `simplefinAllowedNetworks`)
 
-SimpleFIN connections to private networks and localhost are blocked by default. If you run a private SimpleFIN bridge, add its IP address or CIDR range to this setting and restart the Actual server. Public SimpleFIN bridges do not need this setting.
+SimpleFIN connections to private networks and localhost are blocked by default. If you run a private SimpleFIN bridge, add its IP address or CIDR range to this setting and restart the Actual CFM server. Public SimpleFIN bridges do not need this setting.
 
 Use a comma-separated list in the environment variable, for example `ACTUAL_SIMPLEFIN_ALLOWED_NETWORKS=192.168.1.20,fd12:3456::/64`, or an array in `config.json`:
 

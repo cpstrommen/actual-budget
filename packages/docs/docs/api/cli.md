@@ -4,10 +4,10 @@ title: 'CLI'
 
 # CLI Tool
 
-The `@actual-app/cli` package provides a command-line interface for interacting with your Actual Budget data. It connects to your sync server and lets you query and modify budgets, accounts, transactions, categories, payees, rules, schedules, and more — all from the terminal.
+The `@actual-app/cli` package provides a command-line interface for interacting with your Actual CFM data. It connects to your sync server and lets you query and modify budgets, accounts, transactions, categories, payees, rules, schedules, and more — all from the terminal.
 
 :::note
-This is different from the [Server CLI](../install/cli-tool.md) (`@actual-app/sync-server`), which is used to host and manage the Actual server itself.
+This is different from the [Server CLI](../install/cli-tool.md) (`@actual-app/sync-server`), which is used to host and manage the Actual CFM server itself.
 :::
 
 ## Installation
@@ -26,13 +26,13 @@ npm install --location=global @actual-app/cli
 
 ## Configuration
 
-The CLI requires a connection to a running Actual sync server. Configuration can be provided via environment variables, CLI flags, or a config file.
+The CLI requires a connection to a running Actual CFM sync server. Configuration can be provided via environment variables, CLI flags, or a config file.
 
 ### Environment Variables
 
 | Variable                     | Description                                           |
 | ---------------------------- | ----------------------------------------------------- |
-| `ACTUAL_SERVER_URL`          | URL of the Actual sync server (required)              |
+| `ACTUAL_SERVER_URL`          | URL of the Actual CFM sync server (required)          |
 | `ACTUAL_SYNC_ID`             | Budget Sync ID (required for most commands)           |
 | `ACTUAL_PASSWORD`            | Server password (one of password or token required)   |
 | `ACTUAL_SESSION_TOKEN`       | Session token (alternative to password)               |
@@ -439,7 +439,7 @@ actual transactions add --account <id> --data '[{"date":"2026-03-14","amount":-2
 
 ## Self-Signed SSL Certificates
 
-If your Actual sync server uses a self-signed SSL certificate, the CLI will reject the connection by default. You can address this by adding your CA certificate to the system's trusted certificates, though the details are beyond the scope of this document.
+If your Actual CFM sync server uses a self-signed SSL certificate, the CLI will reject the connection by default. You can address this by adding your CA certificate to the system's trusted certificates, though the details are beyond the scope of this document.
 
 Alternatively, you can allow connections to a server that uses a self-signed certificate by setting the `NODE_TLS_REJECT_UNAUTHORIZED` environment variable:
 

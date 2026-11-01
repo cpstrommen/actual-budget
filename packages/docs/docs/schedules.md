@@ -1,6 +1,6 @@
 # Schedules
 
-Schedules in Actual are a versatile tool designed to help you stay on top of your finances by supporting planning and automation.
+Schedules in Actual CFM are a versatile tool designed to help you stay on top of your finances by supporting planning and automation.
 
 Schedules are a powerful planning tool that helps you stay ahead of your finances. Many users rely on them to anticipate upcoming expenses, avoid missed payments, and ensure money is available where it's needed. While they also automate recurring transactions to keep your budget accurate and save time, their real strength lies in helping you prepare for what's ahead.
 
@@ -89,7 +89,7 @@ The **Amount** field allows you to enter the amount of the transaction.
 
 Next to the amount field, you can select if the amount is the exact number, an approximate value, or a range between two amounts. This is useful if you want to track a range of expected amounts for a transaction, such as a utility bill that may vary slightly each month.
 
-If you choose _is approximately_, the amount will be treated as an estimate, and Actual will match transactions that are plus/minus 7.5% of the amount entered. This means that if you enter $100, Actual will match transactions that are between $92.50 and $107.50.
+If you choose _is approximately_, the amount will be treated as an estimate, and Actual CFM will match transactions that are plus/minus 7.5% of the amount entered. This means that if you enter $100, Actual CFM will match transactions that are between $92.50 and $107.50.
 
 Enable the **Automatically add transaction** checkbox if you want the schedule to automatically enter the transaction into your account register.
 This means that the transaction will be automatically entered into the account register on all scheduled dates without requiring manual approval.
@@ -98,11 +98,11 @@ It may also be useful to link the schedule to transactions.
 
 <img width="695" alt="A schedule with Automatically add transaction ticked and three matching transactions" src="/img/schedules/schedules-add-with-repeat-and-autoadd@2x.webp" />
 
-Once a schedule is started, Actual will search the transaction history for entries that match the schedule. You can then select the matches, and will have the option to link those transactions to the current schedule. You can click on the **Find matching transactions** button to have Actual look for matches.
+Once a schedule is started, Actual CFM will search the transaction history for entries that match the schedule. You can then select the matches, and will have the option to link those transactions to the current schedule. You can click on the **Find matching transactions** button to have Actual CFM look for matches.
 
 ## Converting Future Transactions to Schedules
 
-When you add a transaction with a future date, Actual can turn it into a single-time schedule instead of posting it to your register right away.
+When you add a transaction with a future date, Actual CFM can turn it into a single-time schedule instead of posting it to your register right away.
 
 1. Navigate to the account where you want to add the transaction.
 2. Click **Add transaction** and enter a future date along with the other details of the transaction.
@@ -119,15 +119,15 @@ The **Schedule** button only appears for future-dated transactions. For transact
 
 On mobile, a **Schedule** button also appears in the transaction editor when you add a new future-dated transaction or edit an existing future-dated transaction. Converting an existing transaction creates the schedule and then deletes the original transaction.
 
-## Let Actual Find Scheduled Transactions
+## Let Actual CFM Find Scheduled Transactions
 
-Instead of manually entering each schedule, you can let Actual find and suggest schedules for you.
+Instead of manually entering each schedule, you can let Actual CFM find and suggest schedules for you.
 
-Click the **Find schedules** button in the bottom left corner of the Schedules page to let Actual automatically search for transactions that appear to be recurring.
+Click the **Find schedules** button in the bottom left corner of the Schedules page to let Actual CFM automatically search for transactions that appear to be recurring.
 
 <img width="848" alt="The Found Schedules dialog with three suggested schedules" src="/img/schedules/schedules-find-matches@2x.webp" />
 
-Select the suggested schedules you want to add, and click the **Create schedules** button. Actual will then create schedules based on the selected transactions. You may need to adjust the dates and other settings for the schedules to fit your needs after they have been created.
+Select the suggested schedules you want to add, and click the **Create schedules** button. Actual CFM will then create schedules based on the selected transactions. You may need to adjust the dates and other settings for the schedules to fit your needs after they have been created.
 
 If a schedule you expect does not appear, it may be because the payees on the transactions do not match. Ensure all transactions for a schedule use the same payee name.
 
@@ -161,15 +161,15 @@ If you click on the ellipsis at the end of the schedule line, you will see vario
 
 <img width="826" alt="The menu of a schedule with options to post, skip, complete or delete it" src="/img/schedules/schedules-manage@2x.webp" />
 
-## How Actual Finds Schedules
+## How Actual CFM Finds Schedules
 
 In addition to the requirements you have specified when creating a schedule, a transaction must also meet the date requirements to be matched to a schedule. Transactions must be dated within 2 days before or after the scheduled date.
 
-For example, you have a schedule set up for your power bill to be paid on the 15th of every month. Today is the 10th of the month, and you can see an upcoming scheduled transaction of your bill in Actual.
-The utility company decided to withdraw the funds on the 10th of this month. Therefore, post the transaction to Actual early and update the transaction date to match your bank statement.
+For example, you have a schedule set up for your power bill to be paid on the 15th of every month. Today is the 10th of the month, and you can see an upcoming scheduled transaction of your bill in Actual CFM.
+The utility company decided to withdraw the funds on the 10th of this month. Therefore, post the transaction to Actual CFM early and update the transaction date to match your bank statement.
 
 A problem has occurred because the posted transaction is now outside the 2-day window to match scheduled transactions.
-You'll see your bill posted in the Actual account ledger, but you'll also see an upcoming transaction for the power bill on the 15th, even though you just entered it. This is the expected behaviour when using schedules.
+You'll see your bill posted in the Actual CFM account ledger, but you'll also see an upcoming transaction for the power bill on the 15th, even though you just entered it. This is the expected behaviour when using schedules.
 
 You can resolve this issue in one of two ways.
 

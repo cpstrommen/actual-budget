@@ -2,11 +2,17 @@
 title: 'PikaPods'
 ---
 
-[PikaPods](https://www.pikapods.com/) offers one click "instant open source app hosting", allowing you to run Actual for about $ 1.50 per month (as of November 2025).
+:::note
 
-Using PikaPods is also a simple way to support the development of Actual Budget, as PikaPods will share some of its revenues with Actual for customers using their Actual Budget Pods.
+This guide describes an upstream distribution or hosting workflow. It does not install Actual CFM unless you build and supply this fork yourself. Use [Build from Source](./build-from-source.md) for CFM. There is no published CFM Docker/npm/hosting release configured in this repository.
 
-You get a $ 5.00 credit when you sign up, which means that you should be able to run Actual for 3 months before your credit runs out.
+:::
+
+[PikaPods](https://www.pikapods.com/) offers one click "instant open source app hosting", allowing you to run Actual CFM for about $ 1.50 per month (as of November 2025).
+
+Using PikaPods is also a simple way to support the development of Actual CFM, as PikaPods will share some of its revenues with Actual CFM for customers using their Actual CFM Pods.
+
+You get a $ 5.00 credit when you sign up, which means that you should be able to run Actual CFM for 3 months before your credit runs out.
 
 For web clients, PikaPods will automatically update about a week or so after the latest monthly release is deployed. PikaPods tests each new release before deploying it. If you have the Notification setting in PikaPods checked, you will get an email notifying you that the server has been updated.
 
@@ -15,26 +21,26 @@ First check on the web client to see if PikaPods has updated, then reinstall the
 
 :::caution[Desktop App Not Recommended with PikaPods]
 
-Using the Actual desktop app with PikaPods is not recommended. The desktop client version can fall out of sync with the server version, causing compatibility issues.
+Using the Actual CFM desktop app with PikaPods is not recommended. The desktop client version can fall out of sync with the server version, causing compatibility issues.
 
-It is best to install Actual as a PWA (Progressive Web App) instead. See the [Using a PWA](#using-a-pwa) section below for step-by-step instructions for Chrome, Firefox, Safari, and other browsers.
+It is best to install Actual CFM as a PWA (Progressive Web App) instead. See the [Using a PWA](#using-a-pwa) section below for step-by-step instructions for Chrome, Firefox, Safari, and other browsers.
 
 :::
 
-## Deploying Actual on PikaPods
+## Deploying Actual CFM on PikaPods
 
-If you are technically inclined, just [Click here to create an account and run Actual on PikaPods](https://www.pikapods.com/pods?run=actual).
+If you are technically inclined, just [Click here to create an account and run Actual CFM on PikaPods](https://www.pikapods.com/pods?run=actual).
 
 You can leave the resources at their lowest setting (although you will need a non-zero amount of storage for your budget files).
 
-_Your browser does most of Actual's computation,_ so purchasing more resources for the server won't necessarily result in a better experience.
+_Your browser does most of Actual CFM's computation,_ so purchasing more resources for the server won't necessarily result in a better experience.
 
 After setting up your Pod, head over to our [Starting Fresh](../getting-started/starting-fresh.md) guide to get started with
-Actual Budget.
+Actual CFM.
 
-## A step by step guide to setting up Actual Budget with PikaPods
+## A step by step guide to setting up Actual CFM with PikaPods
 
-[Click here to go to PikaPods setup for Actual](https://www.pikapods.com/pods?run=actual).
+[Click here to go to PikaPods setup for Actual CFM](https://www.pikapods.com/pods?run=actual).
 
 You will be greeted with the following screen.
 
@@ -62,11 +68,11 @@ Enter _your_ registration email address and password.
 
 ## Naming your Pod
 
-Simply put, _a Pod is a very tiny computer running in the cloud_. Typically, a Pod only runs one application - like Actual Budget Server.
+Simply put, _a Pod is a very tiny computer running in the cloud_. Typically, a Pod only runs one application - like Actual CFM Server.
 
 :::info
 
-Multiple budgets can reside in one Pod running Actual. You do not need to set up a new Pod for each budget you create. The number of budgets is limited only by the storage capacity you assign to your Pod.
+Multiple budgets can reside in one Pod running Actual CFM. You do not need to set up a new Pod for each budget you create. The number of budgets is limited only by the storage capacity you assign to your Pod.
 
 If you [connect to your bank](../advanced/bank-sync.md), note that all budgets in the same Pod share a single bank sync key.
 
@@ -92,29 +98,29 @@ Your Pod will be created when you click on the green **ADD POD** button. This st
 
 Click on the green **OPEN POD** button to be taken to your Pod.
 
-The address for your Actual Budget is found in the Domain field. In the screenshot example, this is `https://berserk-bullmastiff.pikapod.net/budget/`. Yours will be something completely different.
+The address for your Actual CFM is found in the Domain field. In the screenshot example, this is `https://berserk-bullmastiff.pikapod.net/budget/`. Yours will be something completely different.
 
 ![Image pikapod pod url](/img/pikapods-setup/pikapods-8-running-pod.webp)
 
-## Setting a password for your Actual Budget
+## Setting a password for your Actual CFM
 
-Before you can start using Actual, you need to set a password for your server. This password is used the next time you log into your server - and should never be the same as your PikaPods account password.
+Before you can start using Actual CFM, you need to set a password for your server. This password is used the next time you log into your server - and should never be the same as your PikaPods account password.
 
 :::warning
 
-Keep your Actual Budget password safe, as it cannot be retrieved. If you forget your server password, you will not be able to retrieve your budget.
+Keep your Actual CFM password safe, as it cannot be retrieved. If you forget your server password, you will not be able to retrieve your budget.
 
 :::
 
-<img width="498" alt="The Welcome to Actual screen asking you to set a server password" src="/img/install/server-set-password@2x.webp" />
+<img width="498" alt="The Welcome to Actual CFM screen asking you to set a server password" src="/img/install/server-set-password@2x.webp" />
 <br />
 <br />
 
 ## Using a PWA (Progressive Web App) {#using-a-pwa}
 
-Modern browsers let you install a website on your device so it behaves like a standalone app. This is known as a Progressive Web App (PWA). If you access Actual Server over the internet, installing it as a PWA gives you quicker access and an app-like experience.
+Modern browsers let you install a website on your device so it behaves like a standalone app. This is known as a Progressive Web App (PWA). If you access Actual CFM Server over the internet, installing it as a PWA gives you quicker access and an app-like experience.
 
-After logging in and opening Actual Budget, you can install it as a PWA directly from your browser.
+After logging in and opening Actual CFM, you can install it as a PWA directly from your browser.
 
 Here's some help with a few common desktop browsers.
 
@@ -132,6 +138,6 @@ Browser version and OS/browser combination may affect how to install a PWA. Plea
 
 For other browsers or browser/OS combinations, most search engines or the browser's documentation will describe how to install a PWA. PC Magazine had an [article in March 2025](https://www.pcmag.com/explainers/how-to-use-progessive-web-apps) with some good information.
 
-## Getting started with Actual Budget
+## Getting started with Actual CFM
 
-Go to our [Starting Fresh](../getting-started/starting-fresh.md) guide to get started with Actual Budget.
+Go to our [Starting Fresh](../getting-started/starting-fresh.md) guide to get started with Actual CFM.

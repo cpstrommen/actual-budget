@@ -2,15 +2,15 @@
   "name": "actual",
   "version": "0.0.1",
   "private": true,
-  "description": "A local-first personal finance system",
-  "homepage": "https://github.com/actualbudget/actual/",
+  "description": "Actual CFM: local-first annual planning, liquidity management, and asset valuation",
+  "homepage": "https://github.com/cpstrommen/actual-budget",
   "bugs": {
-    "url": "https://github.com/actualbudget/actual/issues/"
+    "url": "https://github.com/cpstrommen/actual-budget/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:actualbudget/actual.git"
+    "url": "https://github.com/cpstrommen/actual-budget.git"
   },
   "workspaces": {
     "packages": [

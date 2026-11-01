@@ -20,7 +20,7 @@ import { Modal, ModalHeader } from './common/Modal';
 import { Checkbox } from './forms';
 
 const DATA_FOLDER_DOCS_URL =
-  'https://actualbudget.org/docs/troubleshooting/data-folder-access';
+  'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/troubleshooting/data-folder-access.md';
 
 // Filesystem error codes that mean "the OS refused access" rather than "the
 // location is missing or invalid".
@@ -53,9 +53,9 @@ function RenderSimple({ error }: RenderSimpleProps) {
       <Text>
         <Trans>
           Your browser doesn't support IndexedDB in this environment, a feature
-          that Actual requires to run. This might happen if you are in private
-          browsing mode. Please try a different browser or turn off private
-          browsing.
+          that Actual CFM requires to run. This might happen if you are in
+          private browsing mode. Please try a different browser or turn off
+          private browsing.
         </Trans>
       </Text>
     );
@@ -67,14 +67,14 @@ function RenderSimple({ error }: RenderSimpleProps) {
     msg = (
       <Text>
         <Trans>
-          Actual requires access to <code>SharedArrayBuffer</code> in order to
-          function properly. If you're seeing this error, either your browser
+          Actual CFM requires access to <code>SharedArrayBuffer</code> in order
+          to function properly. If you're seeing this error, either your browser
           does not support <code>SharedArrayBuffer</code>, or your server is not
           sending the appropriate headers, or you are not using HTTPS. See{' '}
           <Link
             variant="external"
             linkColor="muted"
-            to="https://actualbudget.org/docs/troubleshooting/shared-array-buffer"
+            to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/troubleshooting/shared-array-buffer.md"
           >
             our troubleshooting documentation
           </Link>{' '}
@@ -86,9 +86,12 @@ function RenderSimple({ error }: RenderSimpleProps) {
     msg = isElectron() ? (
       <Text>
         <Trans>
-          Actual's backend process failed to start or stopped unexpectedly.
+          Actual CFM's backend process failed to start or stopped unexpectedly.
           Restart the app to try again; if the problem persists, please get{' '}
-          <Link variant="external" to="https://actualbudget.org/contact">
+          <Link
+            variant="external"
+            to="https://github.com/cpstrommen/actual-budget/issues"
+          >
             in touch
           </Link>{' '}
           so it can be investigated.
@@ -97,9 +100,9 @@ function RenderSimple({ error }: RenderSimpleProps) {
     ) : (
       <Text>
         <Trans>
-          Actual couldn't load a critical backend worker. Reload the page to try
-          again; if the problem persists, do a hard refresh to clear any stale
-          cached assets.
+          Actual CFM couldn't load a critical backend worker. Reload the page to
+          try again; if the problem persists, do a hard refresh to clear any
+          stale cached assets.
         </Trans>
       </Text>
     );
@@ -146,7 +149,8 @@ function RenderDocumentDirError({ path, code }: RenderDocumentDirErrorProps) {
     >
       <Text>
         <Trans>
-          Actual couldn't access the folder where it stores your budget files:
+          Actual CFM couldn't access the folder where it stores your budget
+          files:
         </Trans>
       </Text>
       {path && <DirectoryDisplay directory={path} />}
@@ -155,8 +159,8 @@ function RenderDocumentDirError({ path, code }: RenderDocumentDirErrorProps) {
           <Trans>
             Access to this folder was denied. This is usually caused by folder
             permissions, or by security software (such as ransomware protection
-            or antivirus) blocking Actual. Allow Actual to use this folder, or
-            choose a different folder below.
+            or antivirus) blocking Actual CFM. Allow Actual CFM to use this
+            folder, or choose a different folder below.
           </Trans>
         </Text>
       ) : (
@@ -165,8 +169,8 @@ function RenderDocumentDirError({ path, code }: RenderDocumentDirErrorProps) {
             <Trans>The system reported the error code {{ code }}. </Trans>
           ) : null}
           <Trans>
-            Check that this location exists and that Actual is allowed to write
-            to it, or choose a different folder below.
+            Check that this location exists and that Actual CFM is allowed to
+            write to it, or choose a different folder below.
           </Trans>
         </Text>
       )}
@@ -214,7 +218,7 @@ function ChooseDocumentDirButton() {
       console.error('Could not change the data folder', error);
       setChooseError(
         t(
-          "That folder can't be used. Make sure it exists and that Actual is allowed to create files in it.",
+          "That folder can't be used. Make sure it exists and that Actual CFM is allowed to create files in it.",
         ),
       );
       setIsChanging(false);
@@ -270,7 +274,10 @@ function RenderUIError() {
       <Paragraph>
         <Trans>
           If this error persists, please get{' '}
-          <Link variant="external" to="https://actualbudget.org/contact">
+          <Link
+            variant="external"
+            to="https://github.com/cpstrommen/actual-budget/issues"
+          >
             in touch
           </Link>{' '}
           so it can be investigated.
@@ -288,7 +295,7 @@ function SharedArrayBufferOverride() {
     <>
       <Paragraph style={{ marginTop: 10 }}>
         <Trans>
-          Actual uses <code>SharedArrayBuffer</code> to allow usage from
+          Actual CFM uses <code>SharedArrayBuffer</code> to allow usage from
           multiple tabs at once and to ensure correct behavior when switching
           files. While it can run without access to
           <code>SharedArrayBuffer</code>, you may encounter data loss or notice
@@ -303,7 +310,8 @@ function SharedArrayBufferOverride() {
           onChange={() => setUnderstand(!understand)}
         />{' '}
         <Trans>
-          I understand the risks, run Actual in the unsupported fallback mode
+          I understand the risks, run Actual CFM in the unsupported fallback
+          mode
         </Trans>
       </label>
       <Button
@@ -313,7 +321,7 @@ function SharedArrayBufferOverride() {
           window.location.reload();
         }}
       >
-        <Trans>Open Actual</Trans>
+        <Trans>Open Actual CFM</Trans>
       </Button>
     </>
   ) : (

@@ -11,7 +11,7 @@ import type {
 const { version: VERSION, isDev: IS_DEV }: GetBootstrapDataPayload =
   ipcRenderer.sendSync('get-bootstrap-data');
 
-contextBridge.exposeInMainWorld('Actual', {
+contextBridge.exposeInMainWorld('Actual CFM', {
   IS_DEV,
   ACTUAL_VERSION: VERSION,
   logToTerminal: console.log,

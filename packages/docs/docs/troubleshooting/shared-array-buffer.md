@@ -1,10 +1,10 @@
 # Enabling SharedArrayBuffer Access
 
-Actual requires access to a web technology called [`SharedArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) in order to function. Because of security vulnerabilities in modern CPUs, this feature is disabled until certain conditions are met. Actual will not be able to run unless your server meets these conditions.
+Actual CFM requires access to a web technology called [`SharedArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) in order to function. Because of security vulnerabilities in modern CPUs, this feature is disabled until certain conditions are met. Actual CFM will not be able to run unless your server meets these conditions.
 
 ## HTTPS
 
-Actual must be served over HTTPS for `SharedArrayBuffer` to be enabled. If you're using a cloud provider, this will usually be done for you. See [Activating HTTPS](../config/https.md) for more information.
+Actual CFM must be served over HTTPS for `SharedArrayBuffer` to be enabled. If you're using a cloud provider, this will usually be done for you. See [Activating HTTPS](../config/https.md) for more information.
 
 ## HTTP Headers
 

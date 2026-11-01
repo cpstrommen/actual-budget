@@ -36,7 +36,7 @@ export function SharedArrayBufferWarning() {
     >
       <Link
         variant="external"
-        to="https://actualbudget.org/docs/troubleshooting/shared-array-buffer"
+        to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/troubleshooting/shared-array-buffer.md"
         className={css({
           color: `${theme.warningText} !important`,
           textDecoration: 'none',

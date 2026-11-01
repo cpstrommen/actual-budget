@@ -9,7 +9,7 @@ Server Version 23.7.0 or higher are required for this feature.
 From July 2025 onwards, GoCardless has stopped accepting new Bank Account Data accounts. The below sign up instructions are now outdated, however, if you are an existing user, your account should continue to work.
 :::
 
-### Create SECRET and KEY for Actual
+### Create SECRET and KEY for Actual CFM
 
 1. Create an account with GoCardless - https://bankaccountdata.gocardless.com/overview/.
 2. Log into your account dashboard at the same URL and select **Developers->User secrets** from the left side menu.
@@ -18,7 +18,7 @@ From July 2025 onwards, GoCardless has stopped accepting new Bank Account Data a
 
 3. Click on the '+ create new' button at the bottom left.
    - Make sure you download your secrets file since the **key** will not be available to you again in the account dashboard
-   - These secrets will be used in Actual to make the bank sync connection
+   - These secrets will be used in Actual CFM to make the bank sync connection
 
    ![Screenshot of GoCardless page for creating API secrets](/img/connecting-your-bank/connecting-your-bank-gocardless-02.webp)
 
@@ -31,7 +31,7 @@ From July 2025 onwards, GoCardless has stopped accepting new Bank Account Data a
 
    ![Screenshot of GoCardless API secret after successful creation](/img/connecting-your-bank/connecting-your-bank-gocardless-04.webp)
 
-6. Back in Actual, click on "+ Add account" at the bottom of the sidebar.
+6. Back in Actual CFM, click on "+ Add account" at the bottom of the sidebar.
 
    <img width="240" alt="The sidebar with the Add account button at the bottom highlighted" src="/img/advanced/bank-sync/bank-sync-add-account@2x.webp" />
 
@@ -86,25 +86,25 @@ From July 2025 onwards, GoCardless has stopped accepting new Bank Account Data a
 
    <img width="988" alt="The Link Accounts dialog listing three bank accounts, each with a Set up bank sync button" src="/img/advanced/bank-sync/gocardless-link-accounts@2x.webp" />
 
-9. The final step is to click **Set up bank sync** next to the account you want to sync, choose the Actual account to link it to, and click **Link accounts**.
+9. The final step is to click **Set up bank sync** next to the account you want to sync, choose the Actual CFM account to link it to, and click **Link accounts**.
 
    <img width="988" alt="The Link Accounts dialog with one bank account linked to Capital One Checking and the Link accounts button highlighted" src="/img/advanced/bank-sync/gocardless-link-accounts-chosen@2x.webp" />
-   - **1.** The bank account and the Actual account it will sync with.
+   - **1.** The bank account and the Actual CFM account it will sync with.
    - **2. Link accounts.** Saves the link and closes the dialog.
 
 ### Frequently Asked Questions
 
-**Does Actual sync automatically with your Bank?**
+**Does Actual CFM sync automatically with your Bank?**
 
-At this moment, it is not yet possible for Actual to automatically sync with your bank. You need to do this manually by going to "All Accounts" and pressing "Bank Sync".
+At this moment, it is not yet possible for Actual CFM to automatically sync with your bank. You need to do this manually by going to "All Accounts" and pressing "Bank Sync".
 
 <img width="765" alt="The All Accounts page with the Bank Sync button highlighted" src="/img/advanced/bank-sync/gocardless-sync-all@2x.webp" />
 
-**The best way to start from scratch in Actual with GoCardless?**
+**The best way to start from scratch in Actual CFM with GoCardless?**
 
-If you are setting up Actual for the first time, it is much easier not to try to pull in historic data. This has caused some users a lot of headaches with subsequent reconciliation. The following process may be more helpful:
+If you are setting up Actual CFM for the first time, it is much easier not to try to pull in historic data. This has caused some users a lot of headaches with subsequent reconciliation. The following process may be more helpful:
 
-1. Set up your account in Actual specifying a correct opening account balance at a recent date.
+1. Set up your account in Actual CFM specifying a correct opening account balance at a recent date.
 2. Link the account to GoCardless as above
 3. Sync the account with GoCardless. You should find that only transactions subsequent to the opening account balance entry are imported, making reconciliation easy.
 

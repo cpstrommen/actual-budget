@@ -12,9 +12,9 @@ The Balance Forecast report projects future balances from posted transaction his
 
 The report starts by resolving the selected accounts, filters, and forecast date range. It then calculates a starting balance from posted transactions before the forecast begins.
 
-By default, Actual expands scheduled transactions into simulated occurrences up to the forecast end date. Schedule rules are applied to those simulated transactions, and transfer schedules generate matching transfer legs when both sides can be assigned to accounts.
+By default, Actual CFM expands scheduled transactions into simulated occurrences up to the forecast end date. Schedule rules are applied to those simulated transactions, and transfer schedules generate matching transfer legs when both sides can be assigned to accounts.
 
-For each forecast day, Actual updates the running balance with posted transactions on that day plus simulated scheduled transactions on that day. Monthly granularity shows the same running balance grouped by month.
+For each forecast day, Actual CFM updates the running balance with posted transactions on that day plus simulated scheduled transactions on that day. Monthly granularity shows the same running balance grouped by month.
 
 Tracking Budget files can also use **Tracking budget** as the forecast source. This mode starts from the current on-budget balance and projects each month by adding budgeted income and subtracting budgeted expenses. It does not use schedules, account filters, or report filters, and it always uses monthly granularity.
 

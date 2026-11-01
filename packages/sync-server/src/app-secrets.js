@@ -35,7 +35,7 @@ function canManagePerBudgetFileSecrets(fileId, userId) {
 
 app.post('/', async (req, res) => {
   const { name, value } = req.body || {};
-  const fileId = req.get('X-Actual-File-Id');
+  const fileId = req.get('X-Actual CFM-File-Id');
   const perBudgetFile = fileId != null;
 
   if (!(name in SecretName)) {
@@ -82,7 +82,7 @@ app.post('/', async (req, res) => {
 
 app.delete('/:name', async (req, res) => {
   const name = req.params.name;
-  const fileId = req.get('X-Actual-File-Id');
+  const fileId = req.get('X-Actual CFM-File-Id');
   const perBudgetFile = fileId != null;
 
   if (!(name in SecretName)) {
@@ -129,7 +129,7 @@ app.delete('/:name', async (req, res) => {
 
 app.get('/:name', async (req, res) => {
   const name = req.params.name;
-  const fileId = req.get('X-Actual-File-Id');
+  const fileId = req.get('X-Actual CFM-File-Id');
   const perBudgetFile = fileId != null;
 
   if (!(name in SecretName)) {

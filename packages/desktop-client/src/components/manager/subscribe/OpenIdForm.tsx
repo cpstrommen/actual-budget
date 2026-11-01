@@ -343,7 +343,7 @@ const openIdProviders: (OpenIdProviderOption | typeof Menu.line)[] = [
           </Text>{' '}
           <Link
             variant="external"
-            to="https://actualbudget.org/docs/"
+            to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/index.md"
             linkColor="muted"
           >
             <Trans>Learn more</Trans>
@@ -393,7 +393,7 @@ const openIdProviders: (OpenIdProviderOption | typeof Menu.line)[] = [
         </Trans>{' '}
         <Link
           variant="external"
-          to="https://actualbudget.org/docs/"
+          to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/index.md"
           linkColor="muted"
         >
           <Trans>Learn more</Trans>

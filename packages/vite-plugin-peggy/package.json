@@ -2,7 +2,7 @@
   "name": "@actual-app/vite-plugin-peggy",
   "version": "0.0.0",
   "private": true,
-  "description": "Vite plugin that compiles Peggy grammars (.pegjs) into ES modules.",
+  "description": "Actual CFM — annual planning, cash flow management, and financial position",
   "type": "module",
   "main": "./index.js",
   "exports": "./index.js",

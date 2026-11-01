@@ -146,7 +146,7 @@ export function getFieldError(type) {
     case 'invalid-template':
       return 'Invalid handlebars template';
     default:
-      return 'Internal error, sorry! Please get in touch https://actualbudget.org/contact/ for support';
+      return 'Internal error, sorry! Please get in touch https://github.com/cpstrommen/actual-budget/issues for support';
   }
 }
 

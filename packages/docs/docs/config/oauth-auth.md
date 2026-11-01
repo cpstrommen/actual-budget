@@ -3,12 +3,12 @@
 ## Setup
 
 :::info
-This feature requires use of [Actual Server](./index.md)
+This feature requires use of [Actual CFM Server](./index.md)
 :::
 
 If you require a more robust authentication method than a server password, it is recommended to use an OpenID provider. Most OpenID providers support multi-factor authentication, enhancing your application's security. Additionally, if you need support for multiple users, you must enable this feature.
 
-To enable this feature, you can use a [configuration file](./index.md) `config.json` on the Actual server, or use the UI.
+To enable this feature, you can use a [configuration file](./index.md) `config.json` on the Actual CFM server, or use the UI.
 
 ### Configuration Using a Configuration File
 
@@ -19,7 +19,7 @@ If your OpenID provider supports discovery, use the following configuration exam
         "discoveryURL": "URL for the OpenID Provider",
         "client_id": "client_id given by the provider",
         "client_secret": "client_secret given by the provider",
-        "server_hostname": "your Actual Server URL (so the provider redirects you to this)",
+        "server_hostname": "your Actual CFM Server URL (so the provider redirects you to this)",
         "authMethod": "openid" // or "oauth2"
     }
 ```
@@ -36,7 +36,7 @@ If your OpenID provider does not supports discovery, you have to configure each 
         },
         "client_id": "client_id given by the provider",
         "client_secret": "client_secret given by the provider",
-        "server_hostname": "your Actual Server URL (so the provider redirects you to this)",
+        "server_hostname": "your Actual CFM Server URL (so the provider redirects you to this)",
         "authMethod": "openid" // or "oauth2"
     }
 ```
@@ -52,7 +52,7 @@ If your OpenID provider supports discovery, use the following variables:
 - `ACTUAL_OPENID_DISCOVERY_URL`: URL for the OpenID Provider
 - `ACTUAL_OPENID_CLIENT_ID`: client_id given by the provider
 - `ACTUAL_OPENID_CLIENT_SECRET`: client_secret given by the provider
-- `ACTUAL_OPENID_SERVER_HOSTNAME`: Your Actual Server URL (so the provider redirects you to this)
+- `ACTUAL_OPENID_SERVER_HOSTNAME`: Your Actual CFM Server URL (so the provider redirects you to this)
 
 If your OpenId provider does not supports discovery, use the following variables:
 
@@ -61,7 +61,7 @@ If your OpenId provider does not supports discovery, use the following variables
 - `ACTUAL_OPENID_USERINFO_ENDPOINT`: Provider's user info endpoint
 - `ACTUAL_OPENID_CLIENT_ID`: client_id given by the provider
 - `ACTUAL_OPENID_CLIENT_SECRET`: client_secret given by the provider
-- `ACTUAL_OPENID_SERVER_HOSTNAME`: Your Actual Server URL (so the provider redirects you to this)
+- `ACTUAL_OPENID_SERVER_HOSTNAME`: Your Actual CFM Server URL (so the provider redirects you to this)
 
 :::tip
 To keep the client secret out of your environment, set `ACTUAL_OPENID_CLIENT_SECRET_FILE` to the path of a file containing it instead. See [Configuring the Server](index.md).
@@ -142,7 +142,7 @@ The first user to log in with OpenID/OAuth2 will be granted admin permissions an
 
 #### `ACTUAL_OPENID_SERVER_HOSTNAME`
 
-- **Purpose:** The public URL of your Actual Server, which the provider redirects to after authentication.
+- **Purpose:** The public URL of your Actual CFM Server, which the provider redirects to after authentication.
   **Example Value:** `https://<actual.myserver.com>`
 
 #### `ACTUAL_OPENID_AUTHORIZATION_ENDPOINT`
@@ -186,7 +186,7 @@ Use `oauth2` for providers like GitHub that don't fully support OpenID discovery
 
 #### `ACTUAL_USER_CREATION_MODE`
 
-- **Purpose:** In `manual` (default) users must be created manually with matching usernames in Actual before they are able to authenticate with OpenID/OAuth2. When set to `login`, users authenticating with OpenID/OAuth2 for the first time will be created in Actual automatically.
+- **Purpose:** In `manual` (default) users must be created manually with matching usernames in Actual CFM before they are able to authenticate with OpenID/OAuth2. When set to `login`, users authenticating with OpenID/OAuth2 for the first time will be created in Actual CFM automatically.
 
   **Possible Values:** `manual` or `login` (default is `manual`)
 

@@ -1,9 +1,10 @@
 {
   "name": "plugins-service",
   "version": "0.0.1",
-  "description": "Plugin service worker for Actual",
+  "private": true,
+  "description": "Actual CFM — annual planning, cash flow management, and financial position",
   "license": "ISC",
-  "author": "",
+  "author": "Actual CFM",
   "main": "plugin-sw.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production vite build",

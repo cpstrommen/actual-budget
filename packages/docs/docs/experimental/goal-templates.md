@@ -361,7 +361,7 @@ Below is a table of the variations of the Percent template.
 
 ### Schedule Type
 
-The Schedule template allows you to automatically budget based on the schedules you have added to Actual.
+The Schedule template allows you to automatically budget based on the schedules you have added to Actual CFM.
 This includes sub-monthly, month, and extra-monthly schedules.
 This is the most common template outside of the Simple template.
 Below is an example of the syntax for a $ 100 per month schedule called "Internet", and a $ 2,400 per year schedule called "Taxes".

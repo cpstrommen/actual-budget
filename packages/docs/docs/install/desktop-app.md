@@ -2,11 +2,17 @@
 title: 'Desktop App'
 ---
 
-The simplest way to get started with Actual is by [downloading the desktop app](../../../download). This app bundles Actual's full budgeting capabilities into a streamlined application that's perfect for users looking for a smooth, hassle-free experience.
+:::note
+
+This page includes upstream Actual Budget distribution options. To use Actual CFM changes, [build this fork from source](./build-from-source.md). Upstream installers and hosted services do not include this fork.
+
+:::
+
+The simplest way to get started with Actual CFM is by [downloading the desktop app](../../../download). This app bundles Actual CFM's full budgeting capabilities into a streamlined application that's perfect for users looking for a smooth, hassle-free experience.
 
 ## Who should use the desktop app?
 
-If you prefer not to worry about setting up or configuring a server, the desktop app is designed for you. By combining both the client and server into one package, it eliminates the technical overhead and lets you dive straight into budgeting with Actual.
+If you prefer not to worry about setting up or configuring a server, the desktop app is designed for you. By combining both the client and server into one package, it eliminates the technical overhead and lets you dive straight into budgeting with Actual CFM.
 
 **Benefits include:**
 
@@ -42,8 +48,8 @@ To access your local server from mobile devices or other networks, you'll need t
 
 For a practical walkthrough, check out the [Ngrok guide](../config/reverse-proxies.md#ngrok). If you plan to use your mobile device regularly while the desktop app is running, consider configuring the reverse proxy to launch automatically with your computer.
 
-When using a mobile device with Actual, installing the Web client as a Progressive Web App(PWA) is recommended so that it works when offline.
+When using a mobile device with Actual CFM, installing the Web client as a Progressive Web App(PWA) is recommended so that it works when offline.
 
 ## Trying the Nightly Builds
 
-If you want to preview upcoming features before they reach an official release, [nightly builds of the desktop app](../contributing/preview-builds.md#nightly-desktop-builds) are also available.
+If you want to preview upcoming features before they reach an official release, [nightly builds of the desktop app](../development/preview-builds.md#nightly-desktop-builds) are also available.

@@ -1,6 +1,6 @@
 # Pluggy.ai Setup
 
-### Create CLIENT ID and CLIENT SECRET for Actual
+### Create CLIENT ID and CLIENT SECRET for Actual CFM
 
 1. Create an account at [https://pluggy.ai](https://pluggy.ai).
 2. Sign in to the [Pluggy Dashboard](https://dashboard.pluggy.ai/) and create a new team.
@@ -13,7 +13,7 @@
 
    ![](/img/connecting-your-bank/pluggy-console-02.webp)
 
-4. Store both values securely. You will need them in Actual.
+4. Store both values securely. You will need them in Actual CFM.
 
 ---
 
@@ -37,11 +37,11 @@ Please note, you will only be able to connect your account to meu.pluggy.ai whil
 
 ---
 
-### Set Up Pluggy in Actual
+### Set Up Pluggy in Actual CFM
 
 Pluggy integration is experimental at this point, so before you can use it you need to enable it under Settings -> Advanced Settings -> Experimental Features -> Pluggy.ai Bank Sync
 
-1. In Actual, click **"+ Add account"** at the bottom of the sidebar.
+1. In Actual CFM, click **"+ Add account"** at the bottom of the sidebar.
 
    <img width="240" alt="The sidebar with the Add account button at the bottom highlighted" src="/img/advanced/bank-sync/bank-sync-add-account@2x.webp" />
 
@@ -66,7 +66,7 @@ Pluggy integration is experimental at this point, so before you can use it you n
 
 ### Link Accounts with Pluggy
 
-1. In Actual, link a bank account (existing or new):
+1. In Actual CFM, link a bank account (existing or new):
    - For an **existing account**, click it, then click the `...` (kebab menu) and choose **Link account**.
 
      <img width="297" alt="The account menu with Link account highlighted" src="/img/advanced/bank-sync/bank-sync-link-account-menu@2x.webp" />
@@ -98,7 +98,7 @@ Pluggy integration is experimental at this point, so before you can use it you n
 
 To reset your Pluggy connection:
 
-1. In Actual, click **Add Account**.
+1. In Actual CFM, click **Add Account**.
 2. Next to "Set-up Pluggy for bank-sync", open the three-dot menu.
 3. Click **Reset Pluggy credentials**.
 

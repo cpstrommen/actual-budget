@@ -1,7 +1,7 @@
 # Experimental Features
 
 It can take a long time to fully develop and test new features.
-In order to make development easier, and to allow users to give feedback, Actual has a system of `experimental features`.
+In order to make development easier, and to allow users to give feedback, Actual CFM has a system of `experimental features`.
 These experimental features are generally opt-in.
 If the user doesn't opt-in to enabling the feature there will be no change in user experience.
 

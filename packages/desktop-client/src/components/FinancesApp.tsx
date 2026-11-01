@@ -133,7 +133,7 @@ export function FinancesApp() {
         addNotification({
           notification: {
             type: 'message',
-            title: t('A new version of Actual is available!'),
+            title: t('A new version of Actual CFM is available!'),
             message: t(
               'Click the button below to reload and apply the update.',
             ),
@@ -169,23 +169,21 @@ export function FinancesApp() {
           addNotification({
             notification: {
               type: 'message',
-              title: t('A new version of Actual is available!'),
-              message:
-                (import.meta.env.REACT_APP_IS_PIKAPODS ?? '').toLowerCase() ===
-                'true'
-                  ? t(
-                      'A new version of Actual is available! Your Pikapods instance will be automatically updated in the next few days - no action needed.',
-                    )
-                  : t(
-                      'Version {{latestVersion}} of Actual was recently released.',
-                      { latestVersion: versionInfo.latestVersion },
-                    ),
+              title: t('A new version of Actual CFM is available!'),
+              message: t(
+                'Version {{latestVersion}} of Actual CFM was recently released.',
+                {
+                  latestVersion: versionInfo.latestVersion,
+                },
+              ),
               sticky: true,
               id: 'update-notification',
               button: {
                 title: t('Open changelog'),
                 action: () => {
-                  window.open('https://actualbudget.org/docs/releases');
+                  window.open(
+                    'https://github.com/cpstrommen/actual-budget/releases',
+                  );
                 },
               },
               onClose: () => {

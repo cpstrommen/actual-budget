@@ -107,7 +107,7 @@ export function CreateAccountModal({
                         add transactions manually. You can also{' '}
                         <Link
                           variant="external"
-                          to="https://actualbudget.org/docs/transactions/importing"
+                          to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/transactions/importing.md"
                           linkColor="muted"
                         >
                           import QIF/OFX/QFX files into a local account

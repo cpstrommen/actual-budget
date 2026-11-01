@@ -1,1 +1,3 @@
-See the [Writing Good Release Notes](https://actualbudget.org/docs/contributing/#writing-good-release-notes) section of the README for the documentation repo for more information on how to create a release notes file here.
+# Actual CFM Change Notes
+
+This directory retains upstream change notes and can hold optional notes for this fork. CFM development priorities and implementation status live in [wishlist.md](../wishlist.md).

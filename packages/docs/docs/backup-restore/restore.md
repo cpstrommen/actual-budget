@@ -2,7 +2,7 @@
 
 ## Restoring a Manual Backup
 
-If you previously followed the [steps](./backup.md) to back up your data and have an Actual
+If you previously followed the [steps](./backup.md) to back up your data and have an Actual CFM
 zip export, you can restore this backup by importing it using the Import File button in the Switch File page.
 
 ### Steps to Restore a Backup:
@@ -16,13 +16,13 @@ zip export, you can restore this backup by importing it using the Import File bu
 
    <img width="511" alt="The list of budget files with the Import file button highlighted" src="/img/backup-restore/restore-import-file@2x.webp" />
 
-3. Choose the _Actual_ option.
+3. Choose the _Actual CFM / Actual Budget_ import format.
 
-   <img width="512" alt="The Import From dialog with the Actual option highlighted" src="/img/backup-restore/restore-import-source@2x.webp" />
+   <img width="512" alt="The Import From dialog with the Actual CFM option highlighted" src="/img/backup-restore/restore-import-source@2x.webp" />
 
 4. Then click on the _Select file..._ button.
 
-   <img width="512" alt="The Import from Actual export dialog with the Select file button highlighted" src="/img/backup-restore/restore-import-actual@2x.webp" />
+   <img width="512" alt="The Import from Actual CFM export dialog with the Select file button highlighted" src="/img/backup-restore/restore-import-actual@2x.webp" />
 
 5. Navigate to the location of where you stored your backup file, select it and click
    on the _upload button_.
@@ -53,7 +53,7 @@ The fix for this is to migrate your SQLite database in the steps outlined below 
 1. Unzip the backup budget `.zip` file. The filename should look like: `yyyy-mm-dd-My-Finances-abcd1234.zip`
 1. Open SQLite Browser. Click on the "Open Database" button and navigate to the file you just unzipped. You're looking for a file named `db.sqlite`.
 1. Load the file and click on the `Browse Data` tab. Select the `__migrations__` table from the table dropdown menu.
-1. You should see a list of integers under the' id' column. Cross-reference the entries in this table with the list of [database migrations](https://github.com/actualbudget/actual/tree/master/packages/loot-core/migrations) in the main Actual repository.
+1. You should see a list of integers under the' id' column. Cross-reference the entries in this table with the list of [database migrations](https://github.com/actualbudget/actual/tree/master/packages/loot-core/migrations) in the main Actual CFM repository.
 1. For every integer that's missing, click on the `.sql` file associated with it and copy the raw data.
 1. Run the SQL query in the Execute tab of SQLite Browser. Be sure to check the output that the command was successful.
 1. If the SQL query that you copied is successful, you'll want to insert the migration command's id into the `__migrations__` table by executing `insert into __migrations__ values(id_of_missing_migration_command);`.
@@ -67,7 +67,7 @@ The fix for this is to migrate your SQLite database in the steps outlined below 
 Automatic backups are currently only available in the desktop app.
 :::
 
-Actual keeps backups of your data locally. If something disastrous happens, you can always load a recent backup to regain your data.
+Actual CFM keeps backups of your data locally. If something disastrous happens, you can always load a recent backup to regain your data.
 
 Currently, it keeps up to 10 backups, one for each you used the app, and multiple backups of the current day. The result is you will have data backed up **up to the last 15 minutes**, in addition to the previous 10 days you used the app.
 

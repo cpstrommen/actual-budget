@@ -4,7 +4,6 @@
 const { themes } = require('prism-react-renderer');
 
 const defaultOptions = {
-  editUrl: 'https://github.com/actualbudget/actual/tree/master/packages/docs',
   beforeDefaultRemarkPlugins: [
     require('./src/remark/mentions'),
     require('./src/remark/enforce-doc-links'),
@@ -13,17 +12,18 @@ const defaultOptions = {
 
 /** @type {import('@docusaurus/types').Config} */
 module.exports = {
-  title: 'Actual Budget',
-  tagline: 'Your finances - made simple',
-  url: 'https://actualbudget.org/',
+  title: 'Actual CFM',
+  tagline: 'Annual planning, liquidity, and asset valuation',
+  // Local documentation only; configure a public URL before publishing this fork.
+  url: 'http://localhost:3000',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
   favicon: 'img/favicon.ico',
 
-  projectName: 'actualbudget.github.io',
-  organizationName: 'actualbudget',
-  deploymentBranch: 'main',
+  projectName: 'actual-budget',
+  organizationName: 'cpstrommen',
+  deploymentBranch: 'gh-pages',
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -52,19 +52,7 @@ module.exports = {
           sidebarPath: require.resolve('./docs-sidebar.js'),
           ...defaultOptions,
         },
-        blog: {
-          ...defaultOptions,
-          blogSidebarTitle: 'All posts',
-          blogSidebarCount: 'ALL',
-          feedOptions: {
-            type: 'rss',
-            title: 'Actual Budget Blog',
-            description:
-              'Stay updated with the latest blog posts from Actual Budget',
-            copyright: `Copyright © ${new Date().getFullYear()} Actual Budget. All rights reserved.`,
-          },
-          onUntruncatedBlogPosts: 'ignore',
-        },
+        blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
@@ -74,12 +62,12 @@ module.exports = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/og.webp',
+      image: 'img/cfm-social.png',
       navbar: {
-        title: 'Actual Budget',
+        title: 'Actual CFM',
         logo: {
-          alt: 'Actual Open Source',
-          src: 'img/logo.webp',
+          alt: 'Actual CFM',
+          src: 'img/logo.svg',
         },
         items: [
           {
@@ -102,14 +90,9 @@ module.exports = {
             position: 'left',
           },
           {
-            to: 'blog',
-            label: 'Blog',
-            position: 'left',
-          },
-          {
             type: 'docSidebar',
-            sidebarId: 'communitySidebar',
-            label: 'Community',
+            sidebarId: 'developmentSidebar',
+            label: 'Development',
             position: 'left',
           },
           {
@@ -118,17 +101,7 @@ module.exports = {
             position: 'left',
           },
           {
-            href: 'https://opencollective.com/actual',
-            label: 'Donate',
-            position: 'left',
-          },
-          {
-            href: 'https://discord.gg/8JfAXSgfRf',
-            label: 'Discord',
-            position: 'right',
-          },
-          {
-            href: 'https://github.com/actualbudget/actual',
+            href: 'https://github.com/cpstrommen/actual-budget',
             label: 'GitHub',
             position: 'right',
           },
@@ -138,31 +111,15 @@ module.exports = {
         style: 'dark',
         links: [
           {
-            label: 'Discord',
-            href: 'https://discord.gg/8JfAXSgfRf',
+            label: 'Actual CFM Source',
+            href: 'https://github.com/cpstrommen/actual-budget',
           },
           {
-            label: 'GitHub',
+            label: 'Upstream Actual Budget',
             href: 'https://github.com/actualbudget/actual',
           },
-          {
-            href: 'https://opencollective.com/actual',
-            label: 'Donate',
-          },
-          {
-            label: 'Website Source',
-            href: 'https://github.com/actualbudget/actual/tree/master/packages/docs',
-          },
-          {
-            label: 'Privacy Policy',
-            to: '/docs/privacy-policy',
-          },
-          {
-            label: 'RSS Feed',
-            href: 'https://actualbudget.org/blog/rss.xml',
-          },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Actual Budget. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Actual CFM. Built with Docusaurus.`,
       },
       prism: {
         theme: themes.github,
@@ -209,7 +166,7 @@ module.exports = {
         redirects: [
           {
             from: '/contact',
-            to: '/docs/community/',
+            to: '/docs/',
           },
           {
             from: '/docs/actual-server-repo-move',

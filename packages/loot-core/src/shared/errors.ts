@@ -35,17 +35,17 @@ function getUnsafeZipError(meta: UnsafeZipMeta): string {
   const maxSizeMB = toMB(meta.maxSize);
   switch (meta.zipReason) {
     case 'archive-size':
-      return `This file is larger than the maximum supported size of ${maxSizeMB} MB, sorry! Visit https://actualbudget.org/contact/ for support.`;
+      return `This file is larger than the maximum supported size of ${maxSizeMB} MB, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.`;
     case 'entry-size':
-      return `The file "${entryName}" in this archive is larger than the maximum supported size of ${maxSizeMB} MB, sorry! Visit https://actualbudget.org/contact/ for support.`;
+      return `The file "${entryName}" in this archive is larger than the maximum supported size of ${maxSizeMB} MB, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.`;
     case 'total-size':
-      return `The uncompressed contents of this archive are larger than the maximum supported size of ${maxSizeMB} MB, sorry! Visit https://actualbudget.org/contact/ for support.`;
+      return `The uncompressed contents of this archive are larger than the maximum supported size of ${maxSizeMB} MB, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.`;
     case 'unsafe-entry-name':
       return `This archive contains an entry with an unsafe file name: "${entryName}".`;
     case 'duplicate-entry':
       return `This archive contains more than one entry named "${entryName}".`;
     default:
-      return 'This file could not be imported, sorry! Visit https://actualbudget.org/contact/ for support.';
+      return 'This file could not be imported, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.';
   }
 }
 
@@ -84,7 +84,7 @@ export function isDatabaseSchemaMismatch(meta?: unknown): boolean {
 }
 
 function getSchemaMismatchError() {
-  return 'This budget could not be loaded because it uses a newer database schema than this version of Actual supports. Make sure you are using the latest version, then try again.';
+  return 'This budget could not be loaded because it uses a newer database schema than this version of Actual CFM supports. Make sure you are using the latest version, then try again.';
 }
 
 export function getDownloadError({
@@ -107,7 +107,7 @@ export function getDownloadError({
     case 'not-zip-file':
     case 'invalid-zip-file':
     case 'invalid-meta-file':
-      return 'Downloaded file is invalid, sorry! Visit https://actualbudget.org/contact/ for support.';
+      return 'Downloaded file is invalid, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.';
     case 'mismatched-cloud-file':
       return 'The selected local budget does not match this cloud file. It has not been replaced.';
     case 'zip-too-large': {
@@ -115,7 +115,7 @@ export function getDownloadError({
       if (zipMeta) {
         return getUnsafeZipError(zipMeta);
       }
-      return 'This file is too large to import, sorry! Visit https://actualbudget.org/contact/ for support.';
+      return 'This file is too large to import, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.';
     }
     case 'decrypt-failure':
       return (
@@ -136,7 +136,7 @@ export function getDownloadError({
         meta && typeof meta === 'object' && 'fileId' in meta && meta.fileId
           ? `, fileId: ${String(meta.fileId)}`
           : '';
-      return `Something went wrong trying to download that file, sorry! Visit https://actualbudget.org/contact/ for support. reason: ${reason}${info}`;
+      return `Something went wrong trying to download that file, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support. reason: ${reason}${info}`;
     }
   }
 }
@@ -146,11 +146,11 @@ export function getTestKeyError({ reason }: ErrorWithMeta) {
     case 'network':
       return 'Unable to connect to the server. We need to access the server to get some information about your keys.';
     case 'old-key-style':
-      return 'This file is encrypted with an old unsupported key style. Recreate the key on a device where the file is available, or use an older version of Actual to download it.';
+      return 'This file is encrypted with an old unsupported key style. Recreate the key on a device where the file is available, or use an older version of Actual CFM to download it.';
     case 'decrypt-failure':
       return 'Unable to decrypt file with this password. Please try again.';
     default:
-      return 'Something went wrong trying to create a key, sorry! Visit https://actualbudget.org/contact/ for support.';
+      return 'Something went wrong trying to create a key, sorry! Visit https://github.com/cpstrommen/actual-budget/issues for support.';
   }
 }
 

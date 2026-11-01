@@ -43,7 +43,7 @@ describe('deleted budget bank sync', () => {
       await request(pluggy)
         .post('/status')
         .set('x-actual-token', token)
-        .set('X-Actual-File-Id', fileId)
+        .set('X-Actual CFM-File-Id', fileId)
         .expect(200);
       getAccountDb().mutate('UPDATE files SET deleted = 1 WHERE id = ?', [
         fileId,
@@ -54,7 +54,7 @@ describe('deleted budget bank sync', () => {
           await request(pluggy)
             .post(path)
             .set('x-actual-token', token)
-            .set('X-Actual-File-Id', id)
+            .set('X-Actual CFM-File-Id', id)
             .expect(403);
         }
       }
@@ -74,7 +74,7 @@ describe('deleted budget bank sync', () => {
     await request(pluggy)
       .post('/status')
       .set('x-actual-token', 'valid-token-user')
-      .set('X-Actual-File-Id', fileId)
+      .set('X-Actual CFM-File-Id', fileId)
       .expect(200);
     getAccountDb().mutate('UPDATE files SET deleted = 1 WHERE id = ?', [
       fileId,
@@ -82,7 +82,7 @@ describe('deleted budget bank sync', () => {
     const denied = await request(pluggy)
       .post('/status')
       .set('x-actual-token', 'valid-token-user')
-      .set('X-Actual-File-Id', fileId);
+      .set('X-Actual CFM-File-Id', fileId);
     expect(denied.status).toBe(403);
   });
 
@@ -146,7 +146,7 @@ describe('deleted budget bank sync', () => {
     const denied = await request(pluggy)
       .post('/status')
       .set('x-actual-token', 'valid-token-user')
-      .set('X-Actual-File-Id', fileId);
+      .set('X-Actual CFM-File-Id', fileId);
     expect(denied.status).toBe(403);
     await request(pluggy)
       .post('/status')

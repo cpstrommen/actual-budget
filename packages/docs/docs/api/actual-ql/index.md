@@ -17,7 +17,7 @@ q('transactions')
 
 The above query would return the `id`, `date`, and `amount` of all transactions with the `Food` category on `2021-02-20`.
 
-Currently the query language is mostly undocumented, but more docs will come soon. Most of Actual uses ActualQL, so you have access to the same functionality that Actual has.
+Currently the query language is mostly undocumented, but more docs will come soon. Most of Actual CFM uses ActualQL, so you have access to the same functionality that Actual CFM has.
 
 Until we have better docs, here are few things you can do with ActualQL.
 

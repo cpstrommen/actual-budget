@@ -4,10 +4,10 @@ title: Using a Reverse Proxy
 
 # Using a Reverse Proxy
 
-If you want to expose Actual to the internet, you should hide it behind a reverse proxy with SSL enabled.
+If you want to expose Actual CFM to the internet, you should hide it behind a reverse proxy with SSL enabled.
 There are a series of tools that can be used for this purpose. This configuration page is dynamic, so that new tools and their configuration can be added continuously.
 
-In our examples, the Actual Server should be published under the domain **budget.example.org**.
+In our examples, the Actual CFM Server should be published under the domain **budget.example.org**.
 
 :::note
 The **basic configurations** provided here are only suggestions for implementing a reverse proxy configuration. Additional security mechanisms should then be activated/implemented for the tool selected in each case.
@@ -15,7 +15,7 @@ The **basic configurations** provided here are only suggestions for implementing
 
 ## CADDY
 
-Below is an example `Caddyfile` that you can use to configure Caddy and Actual Server using Docker. Caddy is an easy reverse proxy to use since it automatically obtains and renews SSL certificates for you.
+Below is an example `Caddyfile` that you can use to configure Caddy and Actual CFM Server using Docker. Caddy is an easy reverse proxy to use since it automatically obtains and renews SSL certificates for you.
 
 ```yaml title="docker-compose.yml"
 services:
@@ -50,7 +50,7 @@ budget.example.org {
 
 ## Traefik
 
-Our example shows a working configuration for Traefik and Actual Server using Docker - as documented in [Install Actual/Docker](../install/docker.md)
+Our example shows a working configuration for Traefik and Actual CFM Server using Docker - as documented in [Install Actual CFM/Docker](../install/docker.md)
 
 ```yaml title="docker-compose.yml"
 services:
@@ -111,7 +111,7 @@ Please refer to the [official documentation](https://doc.traefik.io/traefik/user
 
 ### Note on Cross-Origin Isolation & Header Collisions
 
-Actual Budget requires a "Secure Context" and specific headers (`COOP/COEP`) to enable `SharedArrayBuffer` for its underlying SQLite engine. While the application attempts to set these headers automatically, implementing a manual Nginx configuration as suggested above can lead to **duplicate headers** (e.g., `require-corp, require-corp`).
+Actual CFM requires a "Secure Context" and specific headers (`COOP/COEP`) to enable `SharedArrayBuffer` for its underlying SQLite engine. While the application attempts to set these headers automatically, implementing a manual Nginx configuration as suggested above can lead to **duplicate headers** (e.g., `require-corp, require-corp`).
 
 Modern browsers will invalidate security policies if headers are duplicated, resulting in a `SharedArrayBufferMissing` fatal error.
 
@@ -199,13 +199,13 @@ Apache HTTP server can serve as a reverse proxy using [VirtualHosts](https://htt
 
 Creating a free Ngrok domain is very simple: just navigate to the Domains section of the site. For more information, check out the [custom domain docs](https://ngrok.com/docs/guides/other-guides/how-to-set-up-a-custom-domain/).
 
-Once that's all done, you can expose Actual to the internet with your custom domain and free SSL with a simple command:
+Once that's all done, you can expose Actual CFM to the internet with your custom domain and free SSL with a simple command:
 
 ```
 ngrok http --url=your-custom-domain.ngrok-free.app 5006
 ```
 
-If running Actual on your PC, you may find it helpful to run this command when your computer starts up. There are many ways to do this. The below is not a complete list:
+If running Actual CFM on your PC, you may find it helpful to run this command when your computer starts up. There are many ways to do this. The below is not a complete list:
 
 - On Windows, you can use the [Task Scheduler](https://www.technipages.com/scheduled-task-windows/)
   - Create a _Basic Task_, give it a name then set the trigger to _At system startup_

@@ -1,10 +1,10 @@
 # Reconciliation
 
-Keeping your Actual account ledgers consistent with your bank ledgers is important to maintain a healthy budget and know exactly how much currency is available to spend. Some choose to reconcile monthly, weekly, or even daily. Actual provides a Reconciliation tool to help manage this process.
+Keeping your Actual CFM account ledgers consistent with your bank ledgers is important to maintain a healthy budget and know exactly how much currency is available to spend. Some choose to reconcile monthly, weekly, or even daily. Actual CFM provides a Reconciliation tool to help manage this process.
 
 ## Work Flow
 
-When you reconcile, you compare your bank statement, print or online, against Actual's ledger for that account. If you have transactions in Actual that have not been verified against your bank account the **cleared** flag will be shown in gray (pending). If the transaction is finalized (cleared) on your bank statement, click the gray circle to turn it green. This is a visual indication that the transaction is in both your budget and in your account statement, and they match.
+When you reconcile, you compare your bank statement, print or online, against Actual CFM's ledger for that account. If you have transactions in Actual CFM that have not been verified against your bank account the **cleared** flag will be shown in gray (pending). If the transaction is finalized (cleared) on your bank statement, click the gray circle to turn it green. This is a visual indication that the transaction is in both your budget and in your account statement, and they match.
 
 Click on the balance in the header of the account view to bring two more category balances into view. The **cleared total** only includes transactions that have been matched to the bank while the **Uncleared total** shows the sum of the transactions that aren't yet matched to the bank statement.
 
@@ -30,11 +30,11 @@ Or, if you use certain bank sync providers, the last synced balance will be show
 
 <img width="275" alt="The reconcile popover showing the last balance from the bank, with the Use last synced total button highlighted" src="/img/accounts/reconciliation-statement-balance-synced@2x.webp" />
 
-The tool will tell you exactly what the difference is between the bank statement and your Actual ledger. Click the gray circles as you match each Actual transaction to the bank ledger and watch the difference come closer to 0 as you change the status of each transaction to green (cleared). In the example, the cleared transactions need to add up to -82.60 This is much easier if you look at the Actual ledger and bank statement side by side to match the transactions.
+The tool will tell you exactly what the difference is between the bank statement and your Actual CFM ledger. Click the gray circles as you match each Actual CFM transaction to the bank ledger and watch the difference come closer to 0 as you change the status of each transaction to green (cleared). In the example, the cleared transactions need to add up to -82.60 This is much easier if you look at the Actual CFM ledger and bank statement side by side to match the transactions.
 
 <img width="860" alt="The reconciliation bar showing the difference, with the uncleared transactions highlighted" src="/img/accounts/reconciliation-difference@2x.webp" />
 
-When the cleared amount of the Actual account ledger and the value entered into the Reconciliation tool are the same, the tool will let you know that you are _All reconciled!_ Click on the **Lock transactions** button to complete the reconciliation and lock the cleared transactions. If you want to leave reconciling for a later time, click **Exit reconciliation** to cancel.
+When the cleared amount of the Actual CFM account ledger and the value entered into the Reconciliation tool are the same, the tool will let you know that you are _All reconciled!_ Click on the **Lock transactions** button to complete the reconciliation and lock the cleared transactions. If you want to leave reconciling for a later time, click **Exit reconciliation** to cancel.
 
 :::warning
 

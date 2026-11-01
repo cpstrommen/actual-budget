@@ -35,12 +35,12 @@ Before we get started, check the settings for your Credit Card accounts to make 
 
 <br />
 
-- When we use the "Uncleared total" or account "Balance" from Actual we will use the absolute value, the positive value without the (-) sign. So, if Actual shows "Uncleared total: -2553.86", then we will use 2553.86.
+- When we use the "Uncleared total" or account "Balance" from Actual CFM we will use the absolute value, the positive value without the (-) sign. So, if Actual CFM shows "Uncleared total: -2553.86", then we will use 2553.86.
 - For our purposes here, we will be paying the credit card from a checking account.
 - While you are paying off your credit card(s), it is best to use a debit card or cash. If that is not possible, and you have a card with no debt, use that one to make new purchases so you can pay it in full every month using [Paying in Full - Within the Budget](./paying-in-full.md) and work to pay off another. In any case, use _**only one credit card**_ for new purchases and pay off the one with the highest interest first.
 - We recommend doing this On Budget. If you will not use the card again after it's completely paid off and you have received a statement with a $0 balance, you can [close](../../accounts/index.md#closing-or-deleting-an-account) the account.
 
-### Setting Up Actual Budget for Credit Card Debt
+### Setting Up Actual CFM for Credit Card Debt
 
 - Create a **Credit Card Debt** Category Group
 - Create a separate **Bank Card Debt** category in the group for each card carrying debt. Set them all to _Rollover Overspending_. In our example below, we used **Citi Card Debt** and **DEMO Card Debt**.
@@ -87,8 +87,8 @@ If you have been paying the statement balance in full every month, but need to i
   - If you are _not_ paying off any original debt on this card, make sure the **Budgeted** column is at least the Minimum Payment. The Minimum Payment you budgeted for at the beginning of the month should have this covered. If the Minimum Payment is more than you expected due to Interest or Fees, add an amount to the **Budgeted** column to equal the statement Minimum Payment. _Cover_ any additions to the **Budgeted** amount by transferring from another category with a positive balance.
   - If you _are_ paying off the debt on this card, make sure the current **Budgeted** column is more than the Minimum Payment. It should be at least the sum of the Interest & Fees plus the extra amount you want to pay off, but it will probably be a bit more and that's OK!
 - Now let's calculate your payment.
-  - Your payment is the sum of the New Purchases from your statement (minus any return credits) plus the "Uncleared total" from Actual plus the amount in the **Budgeted** column of **Bank Card Debt**.
-  - This is the same as the difference between the Account Balance in Actual and the Category Balance of **Bank Card Debt**.
+  - Your payment is the sum of the New Purchases from your statement (minus any return credits) plus the "Uncleared total" from Actual CFM plus the amount in the **Budgeted** column of **Bank Card Debt**.
+  - This is the same as the difference between the Account Balance in Actual CFM and the Category Balance of **Bank Card Debt**.
 
 :::warning
 
@@ -176,8 +176,8 @@ Our cleared new purchases add up to $846.11 and match our statement, so we're go
 - So, the numbers we need are:
   - New Purchases (statement): $846.11
   - Return credits (statement): $0.00
-  - Uncleared total (Actual): $126.60 (Remember to use the absolute, positive, value)
-  - Budgeted column (Actual): $250.00
+  - Uncleared total (Actual CFM): $126.60 (Remember to use the absolute, positive, value)
+  - Budgeted column (Actual CFM): $250.00
 - Our payment calculation is:
   <br /> New Purchases - Return credits + Uncleared total + Budgeted column, or
   <br /> 846.11 - 0.00 + 126.60 + 250.00 = 1222.71

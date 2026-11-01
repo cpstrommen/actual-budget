@@ -1,4 +1,4 @@
-# Resetting Actual Login Password
+# Resetting Actual CFM Login Password
 
 If you have forgotten your actual-server login password - not all is lost, as the password can be reset without losing any of your files / data.
 

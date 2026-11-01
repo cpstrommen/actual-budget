@@ -20,7 +20,7 @@ app.use(validateSessionMiddleware);
 app.post(
   '/status',
   handleError(async (req, res) => {
-    const fileId = req.get('X-Actual-File-Id');
+    const fileId = req.get('X-Actual CFM-File-Id');
     if (!!fileId) {
       if (!isValidFileId(fileId)) {
         res.status(400).send({
@@ -56,7 +56,7 @@ app.post(
 app.post(
   '/accounts',
   handleError(async (req, res) => {
-    const fileId = req.get('X-Actual-File-Id');
+    const fileId = req.get('X-Actual CFM-File-Id');
     if (!!fileId) {
       if (!isValidFileId(fileId)) {
         res.status(400).send({
@@ -124,7 +124,7 @@ app.post(
   '/transactions',
   handleError(async (req, res) => {
     const { accountId, startDate } = req.body || {};
-    const fileId = req.get('X-Actual-File-Id');
+    const fileId = req.get('X-Actual CFM-File-Id');
     if (!!fileId) {
       if (!isValidFileId(fileId)) {
         res.status(400).send({

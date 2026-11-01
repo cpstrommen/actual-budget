@@ -96,7 +96,7 @@ export const GoCardlessInitialiseModal = ({
                 creating an account with{' '}
                 <Link
                   variant="external"
-                  to="https://actualbudget.org/docs/advanced/bank-sync/"
+                  to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/advanced/bank-sync.md"
                   linkColor="purple"
                 >
                   GoCardless

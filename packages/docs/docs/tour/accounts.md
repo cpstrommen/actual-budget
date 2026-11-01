@@ -6,7 +6,7 @@ This view lets you manage your transactions for an account. Consult [Accounts & 
 
 ## The Account Header
 
-To rename the account, click on the pencil icon that appears when you hover over the account name. Clicking on the note icon lets you add a note. Actual fully supports Markdown and the note will be rendered according to your Markdown when the cursor is hovering over the note.
+To rename the account, click on the pencil icon that appears when you hover over the account name. Clicking on the note icon lets you add a note. Actual CFM fully supports Markdown and the note will be rendered according to your Markdown when the cursor is hovering over the note.
 
 <img width="860" alt="The account header with the balance, the Import, Add New and Filter buttons, the search box and the account menu labeled" src="/img/a-tour-of-actual/tour-accounts-header@2x.webp" />
 

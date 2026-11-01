@@ -66,7 +66,7 @@ const LINK_PAGE_HTML = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Actual</title>
+    <title>Actual CFM</title>
   </head>
   <body>
     <script>

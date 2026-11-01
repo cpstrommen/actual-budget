@@ -171,5 +171,5 @@ This process will only apply when the below conditions are met
    ```
 
 6. Zip the `db.sqlite` file with the original `metadata.json` file
-7. Follow the [restore](../../backup-restore/restore.md) process to apply these into your Actual Server instance
+7. Follow the [restore](../../backup-restore/restore.md) process to apply these into your Actual CFM Server instance
 8. Verify your balances are correct and you see the correct transactions marked as transfers!

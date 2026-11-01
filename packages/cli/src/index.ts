@@ -20,9 +20,12 @@ const program = new Command();
 
 program
   .name('actual')
-  .description('CLI for Actual Budget')
+  .description('CLI for Actual CFM')
   .version(__CLI_VERSION__)
-  .option('--server-url <url>', 'Actual server URL (env: ACTUAL_SERVER_URL)')
+  .option(
+    '--server-url <url>',
+    'Actual CFM server URL (env: ACTUAL_SERVER_URL)',
+  )
   .option('--password <password>', 'Server password (env: ACTUAL_PASSWORD)')
   .option(
     '--session-token <token>',

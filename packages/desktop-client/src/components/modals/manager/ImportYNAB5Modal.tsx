@@ -91,7 +91,7 @@ export function ImportYNAB5Modal() {
                 <Trans>
                   <Link
                     variant="external"
-                    to="https://actualbudget.org/docs/migration/nynab"
+                    to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/migration/nynab.md"
                   >
                     Read here
                   </Link>{' '}
@@ -103,7 +103,7 @@ export function ImportYNAB5Modal() {
               <Paragraph>
                 <Trans>
                   Once you have exported your data, select the file and Actual
-                  will import it. Budgets may not match up exactly because
+                  CFM will import it. Budgets may not match up exactly because
                   things work slightly differently, but you should be able to
                   fix up any problems.
                 </Trans>

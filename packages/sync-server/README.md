@@ -1,24 +1,14 @@
-This is the main project to run [Actual](https://github.com/actualbudget/actual), a local-first personal finance tool. It comes with the latest version of Actual, and a server to persist changes and make data available across all devices.
+# Actual CFM Sync Server
 
-### Getting Started
+The optional server for Actual CFM, a personal fork of Actual Budget focused on annual planning, liquidity, and asset valuation. It persists synchronized budget data and provides the existing bank-provider integrations.
 
-Actual is a local-first personal finance tool. It is 100% free and open-source, written in NodeJS, it has a synchronization element so that all your changes can move between devices without any heavy lifting.
-
-If you are interested in contributing, or want to know how development works, see our [contributing](https://actualbudget.org/docs/contributing/) document we would love to have you.
-
-Want to say thanks? Click the ⭐ at the top of the page.
+From the repository root, run `yarn start:server-dev` for local development or `yarn build:server` to build this fork. The published `@actual-app/sync-server` npm package is an upstream Actual Budget build. Server commands and configuration names retain their existing identifiers.
 
 ### Using the CLI tool
 
 Node.js v22 or higher is required for the @actual-app/sync-server npm package
 
-**Install globally with npm:**
-
-```bash
-npm install --location=global @actual-app/sync-server
-```
-
-After installing, you can execute actual-server commands directly in your terminal.
+After building from the repository root, run `node packages/sync-server/build/bin/actual-server.js` with the options below.
 
 **Usage**
 
@@ -57,10 +47,4 @@ actual-server --reset-password
 
 ### Documentation
 
-We have a wide range of documentation on how to use Actual. This is all available in our [Community Documentation](https://actualbudget.org/docs/), including topics on [installing](https://actualbudget.org/docs/install/), [Budgeting](https://actualbudget.org/docs/budgeting/), [Account Management](https://actualbudget.org/docs/accounts/), [Tips & Tricks](https://actualbudget.org/docs/getting-started/tips-tricks) and some documentation for developers.
-
-### Feature Requests
-
-Current feature requests can be seen [here](https://github.com/actualbudget/actual/issues?q=is%3Aissue+label%3A%22needs+votes%22+sort%3Areactions-%2B1-desc). Vote for your favorite requests by reacting 👍 to the top comment of the request.
-
-To add new feature requests, open a new Issue of the "Feature Request" type.
+See the [project README](../../README.md) and [CFM implementation plan](../../wishlist.md). [Upstream documentation](https://actualbudget.org/docs/) describes inherited server configuration and account functionality.

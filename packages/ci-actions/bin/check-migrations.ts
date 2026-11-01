@@ -9,10 +9,9 @@
 // 3. Emit advisory warnings when a new migration contains statements that
 //    look like they remove or rename schema (removing or renaming breaks
 //    older clients syncing the same budget file). The warnings are also
-//    written to migration-warnings.json so the migration-warnings-comment
-//    workflow can surface them as a PR comment.
+//    written to migration-warnings.json for local inspection.
 //
-// See https://actualbudget.org/docs/contributing/project-details/migrations
+// See https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/development/project-details/migrations.md
 
 import { spawnSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
@@ -28,7 +27,7 @@ import {
 } from '../src/migrations/check';
 
 const POLICY_URL =
-  'https://actualbudget.org/docs/contributing/project-details/migrations';
+  'https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/development/project-details/migrations.md';
 
 const migrationsDir = path.join(
   path.dirname(fileURLToPath(import.meta.url)),

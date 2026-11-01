@@ -29,7 +29,7 @@ test.describe('Tour', () => {
     const tooltip = await startTourFromHelpMenu();
 
     await expect(tooltip).toBeVisible();
-    await expect(tooltip).toContainText('Welcome to Actual!');
+    await expect(tooltip).toContainText('Welcome to Actual CFM!');
 
     const counter = tooltip.getByText(/^\d+ of \d+$/);
     await expect(counter).toBeVisible();

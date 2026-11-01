@@ -2,16 +2,16 @@
 
 ### Introduction
 
-Filtering is a little known tool in Actual but is really quite a powerhouse. Filters go well beyond the simple Search tool and will allow you to create all sorts of useful transaction summaries. This will help you view various aspects of your spending, extract data for tax filing and so on.
+Filtering is a little known tool in Actual CFM but is really quite a powerhouse. Filters go well beyond the simple Search tool and will allow you to create all sorts of useful transaction summaries. This will help you view various aspects of your spending, extract data for tax filing and so on.
 
 ### Caveats
 
-Inevitably, there are some restrictions but these offer a great opportunity for developers to improve Actual in the future:
+Inevitably, there are some restrictions but these offer a great opportunity for developers to improve Actual CFM in the future:
 
 1. The only way to print the filtered results is via a screen shot (unless you save to a spreadsheet as a CSV file first)
 1. The columns of the filtered view cannot yet be sorted. But you can of course export the filtered results to a spreadsheet and play with them to your heart's content.
 1. Split transactions do not behave well in the filtered view. The non-applicable part of the filtered results can end up getting added into the total.
-1. Filters are just one way of searching and viewing your data. There is still great scope for the future development of graphical style reports in Actual.
+1. Filters are just one way of searching and viewing your data. There is still great scope for the future development of graphical style reports in Actual CFM.
 
 ### How to use the Filter tool
 

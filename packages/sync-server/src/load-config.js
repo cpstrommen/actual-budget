@@ -28,7 +28,7 @@ const actualAppWebBuildPath = path.join(
   path.dirname(require.resolve('@actual-app/web/package.json')),
   'build',
 );
-debug(`Actual web build path: '${actualAppWebBuildPath}'`);
+debug(`Actual CFM web build path: '${actualAppWebBuildPath}'`);
 
 // Custom formats
 convict.addFormat({

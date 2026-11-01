@@ -4,19 +4,19 @@ import { Method, MethodBox } from './types';
 
 :::warning
 
-Many people mistake the term "API" for a HTTP and/or REST-full API. Actual **does not** expose HTTP endpoints that can be called. We do, however, offer a NPM package - API - that allows interacting with the product programmatically.
+Many people mistake the term "API" for a HTTP and/or REST-full API. Actual CFM **does not** expose HTTP endpoints that can be called. We do, however, offer a NPM package - API - that allows interacting with the product programmatically.
 
 :::
 
-The API gives you full programmatic access to your data. It allows to run the UI in _headless_ mode thus interacting with it as-if it was a user clicking around in it. If you are a developer, you can use this to import transactions from a custom source, export data to another app like Excel, or write anything you want on top of Actual.
+The API gives you full programmatic access to your data. It allows to run the UI in _headless_ mode thus interacting with it as-if it was a user clicking around in it. If you are a developer, you can use this to import transactions from a custom source, export data to another app like Excel, or write anything you want on top of Actual CFM.
 
-One thing to keep in mind: Actual is not like most other apps. While your data is stored on a server, the server does not have the functionality for analyzing details of or modifying your budget. As a result, the API client contains all the code necessary to query your data and will work on a local copy. Right now, the primary use case is custom importers and exporters.
+One thing to keep in mind: Actual CFM is not like most other apps. While your data is stored on a server, the server does not have the functionality for analyzing details of or modifying your budget. As a result, the API client contains all the code necessary to query your data and will work on a local copy. Right now, the primary use case is custom importers and exporters.
 
 ## Getting Started
 
 We provide an official Node.js client in the `@actual-app/api` package. Other languages are not supported at this point.
 
-The client is [open-source on GitHub](https://github.com/actualbudget/actual/tree/master/packages/api) along with the rest of Actual if you want to see the code.
+The client is [open-source on GitHub](https://github.com/actualbudget/actual/tree/master/packages/api) along with the rest of Actual CFM if you want to see the code.
 
 Install it with either `npm` or `yarn`:
 
@@ -44,7 +44,7 @@ Legacy `"node"` / `"node10"` / `"classic"` resolution is not supported in strict
 
 ### Connecting to a Remote Server
 
-Next, you'll need connect to your running server version of Actual to access your budget files.
+Next, you'll need connect to your running server version of Actual CFM to access your budget files.
 
 ```js
 let api = require('@actual-app/api');
@@ -81,7 +81,7 @@ If the serverURL is using [self-signed or custom CA certificates](../config/http
 The API communicates with the server using Node's built-in `fetch`. There are a few ways to get Node.js to trust the self-signed certificate.
 
 - Option 1: Point environment variable [NODE_EXTRA_CA_CERTS](https://nodejs.org/api/cli.html#node_extra_ca_certsfile) to the path of a file containing the public certificate.
-- Option 2: Set environment variable [NODE_TLS_REJECT_UNAUTHORIZED](https://nodejs.org/api/cli.html#node_tls_reject_unauthorizedvalue) to `0`. Not recommended if your program reaches out to any other endpoints other than the Actual server.
+- Option 2: Set environment variable [NODE_TLS_REJECT_UNAUTHORIZED](https://nodejs.org/api/cli.html#node_tls_reject_unauthorizedvalue) to `0`. Not recommended if your program reaches out to any other endpoints other than the Actual CFM server.
 - Options 3: Use OpenSSL CA certificates configuration for Node and add your certificate to the OpenSSL SSL_CERT_DIR. What this requires depends on your build of Node.js, and the configuration details are beyond the scope of this documentation. See the [Node.js OpenSSL Strategy](https://github.com/nodejs/TSC/blob/main/OpenSSL-Strategy.md) page for a starting point.
 
 ## Using the API in a Browser
@@ -103,7 +103,7 @@ console.log(await api.getAccounts());
 await api.shutdown();
 ```
 
-Behind the scenes, `init` starts a Web Worker running the same budget engine the Actual web app uses, backed by SQLite compiled to WebAssembly. Your budget data is stored in the browser's IndexedDB and stays on the device.
+Behind the scenes, `init` starts a Web Worker running the same budget engine the Actual CFM web app uses, backed by SQLite compiled to WebAssembly. Your budget data is stored in the browser's IndexedDB and stays on the device.
 
 In the browser, `dataDir` is a path inside the worker's virtual file system rather than a folder on disk. It is optional: it defaults to `/documents`, and if you pass a custom path it is created automatically and persisted to IndexedDB just the same.
 
@@ -146,18 +146,18 @@ try {
 
 These are the codes for the common failures:
 
-| Code                     | Meaning                                                                                              |
-| ------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `network-failure`        | The server could not be reached — the `serverURL` is wrong, or the server is offline or unreachable. |
-| `network`                | Same as `network-failure`, reported by the download and encryption-key checks.                       |
-| `invalid-password`       | The server password given to `init` is wrong.                                                        |
-| `token-expired`          | The session token given to `init` is invalid or has expired.                                         |
-| `unauthorized`           | The client is not logged in to the server.                                                           |
-| `budget-not-found`       | No budget file matches the given sync ID.                                                            |
-| `missing-key`            | The budget file is end-to-end encrypted, and no encryption password was given.                       |
-| `decrypt-failure`        | The budget file could not be decrypted — the encryption password is wrong.                           |
-| `old-key-style`          | The budget file uses an old, unsupported encryption key style.                                       |
-| `out-of-sync-migrations` | The budget file is damaged or from a version too old to open. Files from a newer Actual open fine.   |
+| Code                     | Meaning                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `network-failure`        | The server could not be reached — the `serverURL` is wrong, or the server is offline or unreachable.   |
+| `network`                | Same as `network-failure`, reported by the download and encryption-key checks.                         |
+| `invalid-password`       | The server password given to `init` is wrong.                                                          |
+| `token-expired`          | The session token given to `init` is invalid or has expired.                                           |
+| `unauthorized`           | The client is not logged in to the server.                                                             |
+| `budget-not-found`       | No budget file matches the given sync ID.                                                              |
+| `missing-key`            | The budget file is end-to-end encrypted, and no encryption password was given.                         |
+| `decrypt-failure`        | The budget file could not be decrypted — the encryption password is wrong.                             |
+| `old-key-style`          | The budget file uses an old, unsupported encryption key style.                                         |
+| `out-of-sync-migrations` | The budget file is damaged or from a version too old to open. Files from a newer Actual CFM open fine. |
 
 :::note
 `code` is present for the common connection and download failures listed above. Other errors may only carry a `message`, so always keep a fallback.
@@ -165,9 +165,9 @@ These are the codes for the common failures:
 
 ## Writing Data Importers
 
-If you are using another app, like YNAB or Mint, you might want to migrate your data into Actual. Right now, Actual officially supports [importing YNAB4 data](../migration/ynab4.md) and [importing nYNAB data](../migration/nynab.md) (and it works very well). But if you want to import all of your data into Actual, you can write a custom importer.
+If you are using another app, like YNAB or Mint, you might want to migrate your data into Actual CFM. Right now, Actual CFM officially supports [importing YNAB4 data](../migration/ynab4.md) and [importing nYNAB data](../migration/nynab.md) (and it works very well). But if you want to import all of your data into Actual CFM, you can write a custom importer.
 
-Note that this is not about importing transactions. If all you want to do is add transactions from a custom source (like your bank's API), use [`importTransactions`](./reference.md#importtransactions). In this context, a custom importer is something that takes _all_ of your data (budgets, transactions, payees, etc) and dumps them all into a new file in Actual.
+Note that this is not about importing transactions. If all you want to do is add transactions from a custom source (like your bank's API), use [`importTransactions`](./reference.md#importtransactions). In this context, a custom importer is something that takes _all_ of your data (budgets, transactions, payees, etc) and dumps them all into a new file in Actual CFM.
 
 The API has a special mode for bulk importing data. In this mode, a new file is always created (you can't bulk import into an existing file), and it will run much faster than if you did it normally.
 
@@ -192,9 +192,9 @@ async function run() {
 api.runImport('My-Budget', run);
 ```
 
-This is very simple, but it takes some data in `my-data.json` and creates all the accounts and transactions from it. Functions used to convert items (like `convertAccount`) are not included here. Use the [reference docs](./reference.md) to learn the shape of objects that Actual expects.
+This is very simple, but it takes some data in `my-data.json` and creates all the accounts and transactions from it. Functions used to convert items (like `convertAccount`) are not included here. Use the [reference docs](./reference.md) to learn the shape of objects that Actual CFM expects.
 
-**Note:** it's important that [`addTransactions`](./reference.md#addtransactions) is used here. You want to use it instead of [`importTransactions`](./reference.md#importtransactions) when dumping raw data into Actual. The former will not run the reconciliation process (which deduplicates transactions), and won't create the other side of transfer transactions, and more. If you use `importTransactions` it may adjust your data in ways that don't match the data you're importing.
+**Note:** it's important that [`addTransactions`](./reference.md#addtransactions) is used here. You want to use it instead of [`importTransactions`](./reference.md#importtransactions) when dumping raw data into Actual CFM. The former will not run the reconciliation process (which deduplicates transactions), and won't create the other side of transfer transactions, and more. If you use `importTransactions` it may adjust your data in ways that don't match the data you're importing.
 
 Check out the [YNAB4](https://github.com/actualbudget/actual/blob/master/packages/loot-core/src/server/importers/ynab4.ts) and [YNAB5](https://github.com/actualbudget/actual/blob/master/packages/loot-core/src/server/importers/ynab5.ts) importers to see how a real importer works.
 
@@ -224,10 +224,10 @@ Close the current budget file, and stop any other ongoing processes. It's recomm
 
 <Method name="utils.amountToInteger" args={[{ name: 'amount', type: 'number' }]} returns="number" />
 
-Convert a currency amount (such as `123.45`) represented as a floating point number to the integer format Actual uses internally (i.e. `12345`).
+Convert a currency amount (such as `123.45`) represented as a floating point number to the integer format Actual CFM uses internally (i.e. `12345`).
 
 #### `utils.integerToAmount`
 
 <Method name="utils.integerToAmount" args={[{ name: 'amount', type: 'number' }]} returns="number" />
 
-Convert an integer amount as used internally by Actual (such as `12345`) to the traditional floating point (i.e. `123.45`).
+Convert an integer amount as used internally by Actual CFM (such as `12345`) to the traditional floating point (i.e. `123.45`).

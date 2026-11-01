@@ -43,7 +43,7 @@ export function BudgetTypeSettings() {
             </Trans>{' '}
             <Link
               variant="external"
-              to="https://actualbudget.org/docs/getting-started/envelope-budgeting"
+              to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/envelope-budgeting.md"
               linkColor="purple"
             >
               <Trans>Learn more</Trans>
@@ -58,7 +58,7 @@ export function BudgetTypeSettings() {
             </Trans>{' '}
             <Link
               variant="external"
-              to="https://actualbudget.org/docs/getting-started/tracking-budget"
+              to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/tracking-budget.md"
               linkColor="purple"
             >
               <Trans>Learn more</Trans>

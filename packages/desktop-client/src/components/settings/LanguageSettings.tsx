@@ -50,13 +50,10 @@ export function LanguageSettings() {
               feel free to make a suggestion on{' '}
               <Link
                 variant="external"
-                to={
-                  'https://hosted.weblate.org/projects/actualbudget/actual/' +
-                  (language ?? '')
-                }
+                to={'https://github.com/cpstrommen/actual-budget/issues'}
                 linkColor="purple"
               >
-                Weblate
+                the Actual CFM issue tracker
               </Link>
               .
             </Trans>
@@ -66,7 +63,7 @@ export function LanguageSettings() {
               instructions{' '}
               <Link
                 variant="external"
-                to="https://actualbudget.org/docs/install/build-from-source#translations"
+                to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/install/build-from-source.md#translations"
                 linkColor="purple"
               >
                 here

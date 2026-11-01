@@ -1,15 +1,4 @@
-// Generates `packages/desktop-client/src/data/news.json` — the feed the Actual
-// app reads for in-app notifications — from the blog posts in `packages/docs/blog`
-// that are marked `in_app_notification: true` (release announcements get the
-// flag from the release tooling; other posts opt in by hand).
-//
-// The file is committed so it can be reviewed in the PR that adds a post;
-// autofix.ci regenerates and commits it on every PR, and the "News feed check"
-// workflow fails a PR whose committed copy is stale. The app fetches it from
-// the `master` branch on GitHub, the same way as the custom theme catalog.
-//
-// Run from the repo root: `yarn generate:news-feed`.
-
+// Generates only CFM announcements; upstream posts live in archives/upstream.
 import * as fs from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { buildNewsFeed, getPostSlug, parsePost } from '../src/news-feed/parse';
 import type { NewsEntry } from '../src/news-feed/parse';
 
-const SITE_URL = 'https://actualbudget.org';
+const SITE_URL = process.env.CFM_DOCS_URL || 'http://localhost:3000';
 const RELEASE_LIMIT = 10;
 const POST_LIMIT = 10;
 

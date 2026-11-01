@@ -63,8 +63,8 @@ function About() {
       title={t('About')}
       description={
         <Trans>
-          <span>Actual</span> is a super fast privacy-focused app for managing
-          your finances.
+          <span>Actual CFM</span> is a local-first financial workspace focused
+          on annual planning, liquidity, asset valuation, and net equity.
         </Trans>
       }
     >
@@ -102,7 +102,7 @@ function About() {
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <Link
               variant="external"
-              to="https://actualbudget.org/docs/releases"
+              to="https://github.com/cpstrommen/actual-budget/releases"
               linkColor="purple"
             >
               <Trans>Release Notes</Trans>
@@ -157,7 +157,7 @@ function AdvancedAbout() {
     <SettingsGroup
       title={t('Budget file')}
       description={t(
-        'IDs are the names Actual uses to identify your budget internally.',
+        'IDs are the names Actual CFM uses to identify your budget internally.',
       )}
     >
       <SettingsRow

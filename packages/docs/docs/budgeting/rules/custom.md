@@ -1,6 +1,6 @@
 # Rules Examples
 
-This page has examples of custom rules that some of our users have found useful for their own budgets. If you have any custom rules you're proud of, click the "Edit this page" button below to propose adding them to this page [tell us about them](../../community/index.md)!
+This page has examples of custom rules that some of our users have found useful for their own budgets. Adapt these examples to your own categories and accounts.
 
 ### Q: How do I set the payee when the payee name changes between transactions
 
@@ -23,7 +23,7 @@ This page has examples of custom rules that some of our users have found useful 
 ### Q: I use bank sync. How do I create transfers and not make duplicates?
 
 **A:** Rules can be used to automatically create transfers.
-Under the hood, Actual creates payees for each of your accounts.
+Under the hood, Actual CFM creates payees for each of your accounts.
 To create a transfer, simply set the payee to the other account you are transferring between.
 It is recommended to also limit the rule to a specific account.
 
@@ -38,4 +38,4 @@ The processes will look like this:
 3. The transfer will show up in both accounts.
 4. Bank account **B** is imported and contains a transaction for the same transfer.
 5. Your second rule will catch the transfer transaction and set it as a transfer.
-6. Actual's deduplication will see two transfers of the same amount on the same day with the same payee and delete the duplicate.
+6. Actual CFM's deduplication will see two transfers of the same amount on the same day with the same payee and delete the duplicate.

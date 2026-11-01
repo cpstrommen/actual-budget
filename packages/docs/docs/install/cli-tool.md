@@ -2,9 +2,15 @@
 title: 'Server CLI'
 ---
 
-## Hosting Actual with the Server CLI
+:::note
 
-The Actual sync-server is available as an NPM package. The package is designed to make running the sync-server as easy as possible and is published to the official NPM registry under [@@actual-app/sync-server](https://www.npmjs.com/package/@actual-app/sync-server).
+This guide describes an upstream distribution or hosting workflow. It does not install Actual CFM unless you build and supply this fork yourself. Use [Build from Source](./build-from-source.md) for CFM. There is no published CFM Docker/npm/hosting release configured in this repository.
+
+:::
+
+## Hosting Actual CFM with the Server CLI
+
+The Actual CFM sync-server is available as an NPM package. The package is designed to make running the sync-server as easy as possible and is published to the official NPM registry under [@@actual-app/sync-server](https://www.npmjs.com/package/@actual-app/sync-server).
 
 ### Installing the Server CLI
 
@@ -39,7 +45,7 @@ actual-server [options]
 
 **Default values**
 
-If no `--config` option is set, Actual will search for a `config.json` file in the current directory. If it exists it will be used. If it doesn't exist, Actual will set a [Default Configuration](../config/index.md).
+If no `--config` option is set, Actual CFM will search for a `config.json` file in the current directory. If it exists it will be used. If it doesn't exist, Actual CFM will set a [Default Configuration](../config/index.md).
 
 ### Examples
 

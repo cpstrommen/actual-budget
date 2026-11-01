@@ -1,12 +1,12 @@
 # Multi-Currency
 
-The Actual Budget software is currency agnostic and does not support multi-currency. People are working on implementing currency support, but it will take time.
+The Actual CFM software is currency agnostic and does not support multi-currency. People are working on implementing currency support, but it will take time.
 For the current status visit:
 https://github.com/tlesicka/actual-budget-multicurrency-todo
 
 ## Method to Implement Multi-Currency Using Rule Templates
 
-Until multi-currency is supported natively by Actual Budget, you can use the method described in this document to achieve similar results.
+Until multi-currency is supported natively by Actual CFM, you can use the method described in this document to achieve similar results.
 
 <ExperimentalFeatureWarning issueId="3606" />
 

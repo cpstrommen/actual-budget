@@ -4,7 +4,7 @@
 
 Nothing derails a relationship faster than (not) talking about money and how it's spent.
 
-When budgeting with a partner in Actual Budget, you have several strategies to consider, each tailored to how you
+When budgeting with a partner in Actual CFM, you have several strategies to consider, each tailored to how you
 manage finances together.
 
 One approach is maintaining a common budget where both partners share a single budget file.
@@ -13,7 +13,7 @@ A shared budget fosters collaboration but requires consistent communication to k
 you both set clear boundaries for individual and shared expenses while working together toward common financial objectives.
 See [Multi-user](../getting-started/sync.md#multi-user-support) regarding simultaneous edits.
 
-Alternatively, you can track your partner's contributions within your personal Actual Budget file. This allows you to
+Alternatively, you can track your partner's contributions within your personal Actual CFM file. This allows you to
 maintain individual control over your finances while still acknowledging and accounting for your partner's financial
 inputs. This method benefits couples who prefer to manage their finances independently but want to monitor how their
 spending aligns with joint expenses and goals.
@@ -21,7 +21,7 @@ spending aligns with joint expenses and goals.
 Choosing the right approach depends on your communication style, financial goals, and the level of financial
 independence or collaboration you prefer in your relationship.
 
-## Tracking A Shared Account With A Shared Actual Budget
+## Tracking A Shared Account With A Shared Actual CFM
 
 If you and your partner are in a serious relationship and have begun reimbursing each other, you should consider the next step: creating a joint account for joint expenses.
 
@@ -42,7 +42,7 @@ Another tip is to let your partner be the primary account holder for your joint 
 
 1. Talk to your bank and have a joint account set up.
 2. Get two debit cards attached to the joint account, one for you and one for your partner.
-3. Create a joint Actual Budget file on a server that is also reachable by your partner.
+3. Create a joint Actual CFM file on a server that is also reachable by your partner.
 4. Decide how big each partner's contribution to the joint account should be (see below).
 5. Follow the [Starting Fresh guide](../getting-started/starting-fresh.md) with your partner.
 
@@ -102,9 +102,9 @@ two categories called _Partner Reimbursements_ and _Common Income_.
 - _Common Income_ is all other income that is _not planned_. This could be gifts, or if you sell stuff that you own
   together, etc.
 
-## Tracking A Shared Account With Your Personal Actual Budget
+## Tracking A Shared Account With Your Personal Actual CFM
 
-Situation: I am using Actual to keep track of my budget and finances, but I share a joint account with my partner.
+Situation: I am using Actual CFM to keep track of my budget and finances, but I share a joint account with my partner.
 
 ### Basic setup steps
 

@@ -1,12 +1,12 @@
 # Paying in Full - Within the Budget
 
-If you pay off your credit card statement every month, then you will want to use this page to understand how Actual helps you work with your credit card to stay _Within the Budget_. In this case, you will _**not**_ create a separate Budget category for this credit card. Each transaction will be deducted from the Budget and Available funds as they are entered and categorized to a funded category.
+If you pay off your credit card statement every month, then you will want to use this page to understand how Actual CFM helps you work with your credit card to stay _Within the Budget_. In this case, you will _**not**_ create a separate Budget category for this credit card. Each transaction will be deducted from the Budget and Available funds as they are entered and categorized to a funded category.
 
-If you are unable to budget for and pay your credit card outstanding balance, see the [Carrying Debt](./carrying-debt.md) page for a step-by-step guide on how to set up Actual and track this debt in a safe and sustainable manner.
+If you are unable to budget for and pay your credit card outstanding balance, see the [Carrying Debt](./carrying-debt.md) page for a step-by-step guide on how to set up Actual CFM and track this debt in a safe and sustainable manner.
 
 **tl;dr. If you don't budget funds you don't have and don't spend money that is not covered in your budget, you will not incur any new debt and always have enough funds to pay for your new credit card purchases whenever you want!**
 
-Starting our example Budget in August, we'll show you step-by-step how to handle credit cards in Actual.
+Starting our example Budget in August, we'll show you step-by-step how to handle credit cards in Actual CFM.
 
 ## Example
 

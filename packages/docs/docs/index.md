@@ -1,29 +1,21 @@
 ---
 slug: /
 sidebar_position: 1
-title: 'Introduction'
+title: 'Actual CFM Documentation'
 ---
 
-Welcome to Actual's documentation!
+Actual CFM is a personal fork of Actual Budget for annual planning, cash flow management, liquidity, and asset valuation. The existing account, transaction, budgeting, and reporting features provide its foundation.
 
-## How to Get Around
+## Product Direction
 
-The left sidebar menu lists the main pages of the documentation. On mobile, it's the collapsed navigation menu icon at the top left. Click on a chevron to view more nested pages on a subject.
+The planned additions include annual category plans with YTD comparisons, asset valuations, receivables and payables, liquidity projections, and reusable financial report packages. These features are being planned; they are not yet implemented. The repository's root `wishlist.md` contains the implementation sequence and acceptance criteria.
 
-The right sidebar of each page lists the outline of the page for quick navigation to a specific subject. On mobile, it's at the top under "On this page".
+## Using the Inherited Features
 
-If you aren't sure where to look for information, an entry in the search bar will show the most useful result at the top, and all results it finds will be available.
+The guides in this site describe functionality inherited from Actual CFM. Monthly budgeting remains available while CFM features are developed. Start with [building from source](install/build-from-source.md) to run this fork. Upstream hosted services and downloads contain Actual Budget builds.
 
-## Where to Begin?
+Use the sidebar or search to find account, transaction, budget, sync, and report guides. Historical upstream blog posts and release notes are retained outside the documentation site in the repository’s `archives/upstream/` directory.
 
-If you're new to Actual, consult the [roadmap for new users](./getting-started/roadmap-for-new-users.md).
+## Development
 
-If you're new to budgeting, read about [envelope budgeting](./getting-started/envelope-budgeting.md).
-
-For help and support, [reach out to the maintainers and community](community/index.md).
-
-## Want to Contribute?
-
-The Actual application is actively maintained and updated by a dedicated group of contributors and maintainers who do their best to keep these documents synchronized with the changes. If you notice anything incorrect you can [open an issue](https://github.com/actualbudget/actual/issues/new/choose) in github or note it in the [`#Documentation` channel](https://discord.com/channels/937901803608096828/1027831463103696928) in Discord.
-
-If you'd like to contribute to Actual Budget's documentation, start by reading the documentation standards, local setup, and guidelines on using images and screenshots located in the [contributing guide](./contributing/writing-docs.md) and in the documentation's [github README file](https://github.com/actualbudget/actual/tree/master/packages/docs#actual-budget-community-documentation). We use Docusaurus to build our website. You can click on _Edit this page_ at the bottom left of every page to open that page's Markdown document.
+See [development setup](development/development-setup.md), [project structure](development/project-details/index.md), and [testing](development/testing.md) for technical reference. Upstream contribution policies do not apply to this personal fork.

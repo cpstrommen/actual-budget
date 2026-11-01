@@ -82,7 +82,7 @@ export function CleanupAutomation({
           categories set to use that pool.{' '}
           <Link
             variant="external"
-            to="https://actualbudget.org/docs/experimental/monthly-cleanup#local-group-source-and-sinks"
+            to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/experimental/monthly-cleanup.md#local-group-source-and-sinks"
           >
             Learn more
           </Link>

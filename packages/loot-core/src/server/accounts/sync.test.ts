@@ -1038,7 +1038,9 @@ describe('SimpleFin batch sync', () => {
             accountId:
               mode === 'batch' ? ['external-account'] : 'external-account',
           }),
-          expect.objectContaining({ 'X-Actual-File-Id': 'simplefin-budget' }),
+          expect.objectContaining({
+            'X-Actual CFM-File-Id': 'simplefin-budget',
+          }),
           expect.any(Number),
         );
       } finally {

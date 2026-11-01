@@ -6,7 +6,7 @@
 // applied the newer one first. This module also flags statements that look
 // like they remove or rename schema, so contributors get a hint in the PR
 // checks.
-// See https://actualbudget.org/docs/contributing/project-details/migrations
+// See https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/development/project-details/migrations.md
 
 export type MigrationEntry = {
   name: string;

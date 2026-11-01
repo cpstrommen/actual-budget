@@ -24,7 +24,7 @@ test.describe('Onboarding', () => {
   });
 
   test('checks the page visuals', async () => {
-    await expect(page.getByText('Welcome to Actual')).toBeVisible();
+    await expect(page.getByText('Welcome to Actual CFM')).toBeVisible();
     await expect(page).toMatchThemeScreenshots();
 
     await configurationPage.clickOnConnectServer();
@@ -90,9 +90,9 @@ test.describe('Onboarding', () => {
     }
   });
 
-  test('creates a new budget file by importing Actual budget', async () => {
+  test('creates a new budget file by importing Actual CFM budget', async () => {
     const budgetPage = await configurationPage.importBudget(
-      'Actual',
+      'Actual CFM',
       path.resolve(__dirname, 'data/actual-demo-budget.zip'),
     );
 

@@ -1,6 +1,6 @@
 # The Budget
 
-This view lets you manage your budget. You'll find more information about envelope budgeting with Actual in [Budgeting](../budgeting/index.md).
+This view lets you manage your budget. You'll find more information about envelope budgeting with Actual CFM in [Budgeting](../budgeting/index.md).
 
 ![The Budget page showing October and November side by side](/img/a-tour-of-actual/tour-budget-overview@2x.webp)
 
@@ -20,7 +20,7 @@ At the top of each month, you have a couple of choices in the user interface.
 
 <img width="650" alt="The October and November headers with the note, minimize and menu buttons labeled" src="/img/a-tour-of-actual/tour-budget-header-expanded@2x.webp" />
 
-- **A. Notes.** Clicking on the note icon lets you add a note. Actual fully supports Markdown and the note will be rendered according to your Markdown when the cursor is hovering over the note.
+- **A. Notes.** Clicking on the note icon lets you add a note. Actual CFM fully supports Markdown and the note will be rendered according to your Markdown when the cursor is hovering over the note.
 - **B. Minimize.** You can minimize the header by clicking on the chevrons, which appear when you hover over the month.
 - **C. Menu.** Clicking on the three vertical dots lets you execute the following functions on that month's budget categories:
   - Copy last month's budget.

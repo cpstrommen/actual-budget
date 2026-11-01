@@ -77,7 +77,7 @@ export function WelcomeScreen() {
           style={{ color: theme.pageTextPositive }}
         />
         <Text style={{ ...styles.veryLargeText, textAlign: 'center' }}>
-          <Trans>Welcome to Actual</Trans>
+          <Trans>Welcome to Actual CFM</Trans>
         </Text>
         <Text
           style={{
@@ -86,7 +86,7 @@ export function WelcomeScreen() {
             fontStyle: 'italic',
           }}
         >
-          <Trans>Your finances - made simple</Trans>
+          <Trans>Your financial position — over time</Trans>
         </Text>
       </View>
 
@@ -98,7 +98,7 @@ export function WelcomeScreen() {
           style={{ textAlign: 'center', maxWidth: 400, marginBottom: 0 }}
         >
           <Trans>
-            Actual is a super fast, privacy-focused app for managing your
+            Actual CFM is a local-first workspace for understanding your
             finances. It is 100% free and open source: everything stays on your
             device, no data is collected, and there is nothing to sign up for.
           </Trans>
@@ -172,12 +172,12 @@ export function WelcomeScreen() {
             New to budgeting? Take the{' '}
             <Link
               variant="external"
-              to="https://actualbudget.org/docs/tour/"
+              to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/tour/index.md"
               linkColor="purple"
             >
               guided tour
             </Link>{' '}
-            to learn how Actual works.
+            to learn how Actual CFM works.
           </Trans>
         </Paragraph>
       </View>

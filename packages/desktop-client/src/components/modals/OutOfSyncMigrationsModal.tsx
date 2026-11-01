@@ -26,7 +26,7 @@ export function OutOfSyncMigrationsModal() {
       {({ state }) => (
         <>
           <ModalHeader
-            title={<ModalTitle title={t('Please update Actual!')} />}
+            title={<ModalTitle title={t('Please update Actual CFM!')} />}
           />
           <View
             style={{
@@ -42,9 +42,10 @@ export function OutOfSyncMigrationsModal() {
               <Paragraph style={{ fontSize: 16 }}>
                 <Trans>
                   It looks like you&apos;re using an outdated version of the
-                  Actual client. Your budget data has been updated by another
-                  client, but this client is still on the old version. For the
-                  best experience, please update Actual to the latest version.
+                  Actual CFM client. Your budget data has been updated by
+                  another client, but this client is still on the old version.
+                  For the best experience, please update Actual CFM to the
+                  latest version.
                 </Trans>
               </Paragraph>
             </Text>
@@ -55,12 +56,16 @@ export function OutOfSyncMigrationsModal() {
               }}
             >
               <Trans>
-                If you can&apos;t update Actual at this time you can find the
-                latest release at{' '}
-                <Link variant="external" to="https://app.actualbudget.org">
-                  app.actualbudget.org
+                Keep a backup of this budget and update from the{' '}
+                <Link
+                  variant="external"
+                  to="https://github.com/cpstrommen/actual-budget/releases"
+                >
+                  Actual CFM releases
                 </Link>
-                . You can use it until your client is updated.
+                . Do not open a CFM database directly in another product. Use
+                the documented compatible export when returning to Actual
+                Budget.
               </Trans>
             </Paragraph>
 

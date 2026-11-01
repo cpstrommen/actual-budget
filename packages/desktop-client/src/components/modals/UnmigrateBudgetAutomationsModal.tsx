@@ -179,7 +179,7 @@ export function UnmigrateBudgetAutomationsModal({
                   us know your feedback about what&apos;s not working on the{' '}
                   <Link
                     variant="external"
-                    to="https://github.com/actualbudget/actual/issues/"
+                    to="https://github.com/cpstrommen/actual-budget/issues"
                   >
                     feedback issue
                   </Link>

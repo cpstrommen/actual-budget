@@ -43,7 +43,7 @@ const releaseEntry: NewsEntry = {
   title: 'Release 26.8.1',
   date: '2026-08-07',
   version: '26.8.1',
-  url: 'https://actualbudget.org/docs/releases#2681',
+  url: 'https://github.com/cpstrommen/actual-budget/releases',
   body: 'A hotfix.\n\n- Fixes **freezes**\n\n:::warning Deprecation\n\nTemplating is deprecated.\n\n:::\n\n> Plain quote.',
   details: '#### Bugfixes\n\n- [#8628](https://example.com/8628) Fix freezes',
 };
@@ -53,7 +53,7 @@ const postEntry: NewsEntry = {
   type: 'post',
   title: 'Hello world',
   date: '2026-07-01',
-  url: 'https://actualbudget.org/blog/hello',
+  url: 'https://cfm.example/blog/hello',
   body: 'An announcement.',
 };
 
@@ -93,11 +93,14 @@ describe('NotificationsPage', () => {
     );
     expect(screen.getByText('freezes')).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'View on actualbudget.org' }),
-    ).toHaveAttribute('href', 'https://actualbudget.org/docs/releases#2681');
+      screen.getByRole('link', { name: 'View CFM announcement' }),
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/cpstrommen/actual-budget/releases',
+    );
     expect(
       screen.getByRole('link', { name: 'Read the full post' }),
-    ).toHaveAttribute('href', 'https://actualbudget.org/blog/hello');
+    ).toHaveAttribute('href', 'https://cfm.example/blog/hello');
 
     // Only the release is newer than the last seen date.
     expect(screen.getAllByText('Unread')).toHaveLength(1);
@@ -151,10 +154,14 @@ describe('NotificationsPage', () => {
 
     expect(
       screen.getByRole('link', { name: 'All release notes' }),
-    ).toHaveAttribute('href', 'https://actualbudget.org/docs/releases');
-    expect(
-      screen.getByRole('link', { name: 'Community (Discord)' }),
-    ).toHaveAttribute('href', 'https://discord.gg/pRYNYr4W5A');
+    ).toHaveAttribute(
+      'href',
+      'https://github.com/cpstrommen/actual-budget/releases',
+    );
+    expect(screen.getByRole('link', { name: 'CFM support' })).toHaveAttribute(
+      'href',
+      'https://github.com/cpstrommen/actual-budget/issues',
+    );
   });
 
   it('asks the user to update when the feed format is not understood', () => {
@@ -162,7 +169,7 @@ describe('NotificationsPage', () => {
     renderPage();
 
     expect(
-      screen.getByText('Update Actual to see the latest notifications.'),
+      screen.getByText('Update Actual CFM to see the latest notifications.'),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: 'Try again' }),

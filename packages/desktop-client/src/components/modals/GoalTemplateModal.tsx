@@ -177,7 +177,7 @@ export function GoalTemplateModal() {
                   <Link
                     variant="external"
                     linkColor="muted"
-                    to="https://actualbudget.org/docs/experimental/goal-templates"
+                    to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/experimental/goal-templates.md"
                   >
                     Goal Templates
                   </Link>{' '}

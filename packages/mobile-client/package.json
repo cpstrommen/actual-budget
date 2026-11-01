@@ -1,6 +1,7 @@
 {
   "name": "mobile-client",
   "version": "26.10.0",
+  "private": true,
   "license": "MIT",
   "files": [
     "build"

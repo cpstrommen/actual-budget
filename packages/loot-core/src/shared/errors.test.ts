@@ -1,7 +1,7 @@
 import { getDownloadError, getSyncError } from './errors';
 
 const SCHEMA_MISMATCH_MESSAGE =
-  'This budget could not be loaded because it uses a newer database schema than this version of Actual supports. Make sure you are using the latest version, then try again.';
+  'This budget could not be loaded because it uses a newer database schema than this version of Actual CFM supports. Make sure you are using the latest version, then try again.';
 
 const schemaMismatchMeta = {
   error: { message: 'no such column: cleanup_def', stack: '' },

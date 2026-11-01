@@ -111,7 +111,7 @@ export function CreateLocalAccountModal() {
                   <Link
                     variant="external"
                     linkColor="muted"
-                    to="https://actualbudget.org/docs/transactions/importing"
+                    to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/transactions/importing.md"
                   >
                     import QIF/OFX/QFX files
                   </Link>{' '}
@@ -191,7 +191,7 @@ export function CreateLocalAccountModal() {
                         <Link
                           variant="external"
                           linkColor="muted"
-                          to="https://actualbudget.org/docs/accounts/#off-budget-accounts"
+                          to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/accounts/index.md#off-budget-accounts"
                         >
                           Accounts Overview
                         </Link>{' '}

@@ -138,7 +138,7 @@ export function ScheduleEditModal({ id, transaction }: ScheduleEditModalProps) {
       dispatch({
         type: 'form-error',
         error: t(
-          'An error occurred while saving. Please visit https://actualbudget.org/contact/ for support.',
+          'An error occurred while saving. Please visit https://github.com/cpstrommen/actual-budget/issues for support.',
         ),
       });
       return;

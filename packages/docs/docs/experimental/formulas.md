@@ -11,7 +11,7 @@ Excel formula mode adds two related features:
 - **Formula cards**: a dashboard/report card that evaluates an Excel-style formula, including totals from custom queries.
 - **Rule formulas**: in the Rules editor, some “set field” actions can be driven by a formula instead of a fixed value.
 
-Under the hood, Actual evaluates formulas using [HyperFormula](https://hyperformula.handsontable.com/). Formulas **must start with `=`**.
+Under the hood, Actual CFM evaluates formulas using [HyperFormula](https://hyperformula.handsontable.com/). Formulas **must start with `=`**.
 
 ## Enable the feature
 
@@ -41,10 +41,10 @@ Click the card to open the editor (where you can save the widget).
 
 ## Function reference
 
-This list documents formula functions that are useful in Actual. The in-app **autocomplete/hover popover** provides a curated subset of these functions.
+This list documents formula functions that are useful in Actual CFM. The in-app **autocomplete/hover popover** provides a curated subset of these functions.
 
 :::tip
-If a function isn’t listed here, it still might work. Actual uses HyperFormula under the hood, so you can also refer to [HyperFormula’s built-in functions list](https://hyperformula.handsontable.com/guide/built-in-functions.html).
+If a function isn’t listed here, it still might work. Actual CFM uses HyperFormula under the hood, so you can also refer to [HyperFormula’s built-in functions list](https://hyperformula.handsontable.com/guide/built-in-functions.html).
 :::
 
 | Function                        | Available in | Description                                                                                                                                                           | Syntax example                                                                                                                | Optional params                                                                                                 |
@@ -379,7 +379,7 @@ These functions return their result in the same units you pass in, so write the 
 
 ### Result types
 
-When a rule runs, Actual converts the formula result to the field type:
+When a rule runs, Actual CFM converts the formula result to the field type:
 
 - **number fields**: must produce a number (or a string that parses as a number)
 - **date fields**: must produce a valid date

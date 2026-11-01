@@ -88,7 +88,7 @@ export function FixEncryptionKeyModal({
                 )}{' '}
                 <Link
                   variant="external"
-                  to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
+                  to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/sync.md#end-to-end-encryption"
                 >
                   <Trans>Learn more</Trans>
                 </Link>
@@ -100,7 +100,7 @@ export function FixEncryptionKeyModal({
                 )}{' '}
                 <Link
                   variant="external"
-                  to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
+                  to="https://github.com/cpstrommen/actual-budget/blob/master/packages/docs/docs/getting-started/sync.md#end-to-end-encryption"
                 >
                   <Trans>Learn more</Trans>
                 </Link>

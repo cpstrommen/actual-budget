@@ -1,8 +1,8 @@
-Actual on the web
+# Actual CFM Web Interface
 
 ## E2E tests
 
-E2E (end-to-end) tests use [Playwright](https://playwright.dev/). Running them requires an Actual server to be running either locally or on a remote server.
+E2E (end-to-end) tests use [Playwright](https://playwright.dev/). Running them requires an Actual CFM server to be running either locally or on a remote server.
 
 ### Functional
 

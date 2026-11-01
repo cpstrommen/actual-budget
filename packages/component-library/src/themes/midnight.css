@@ -1,21 +1,21 @@
 :root {
-  --color-pageBackground: var(--palette-gray600);
+  --color-pageBackground: var(--palette-gray900);
   --color-pageBackgroundModalActive: var(--palette-gray700);
   --color-pageBackgroundTopLeft: var(--palette-gray800);
   --color-pageBackgroundBottomRight: var(--palette-gray700);
-  --color-pageBackgroundLineTop: var(--palette-purple300);
+  --color-pageBackgroundLineTop: var(--palette-gray200);
   --color-pageBackgroundLineMid: var(--palette-gray900);
   --color-pageBackgroundLineBottom: var(--palette-gray150);
   --color-pageText: var(--palette-gray100);
   --color-pageTextLight: var(--palette-gray200);
-  --color-pageTextSubdued: var(--palette-gray400);
+  --color-pageTextSubdued: var(--palette-gray300);
   --color-pageTextDark: var(--palette-gray100);
-  --color-pageTextPositive: var(--palette-purple200);
-  --color-pageTextLink: var(--palette-purple300);
-  --color-pageTextLinkLight: var(--palette-purple300);
+  --color-pageTextPositive: var(--palette-gray150);
+  --color-pageTextLink: var(--palette-gray200);
+  --color-pageTextLinkLight: var(--palette-gray200);
 
   --color-cardBackground: var(--palette-gray800);
-  --color-cardBorder: var(--palette-purple300);
+  --color-cardBorder: var(--palette-gray200);
   --color-cardShadow: var(--palette-gray900);
 
   --color-tableBackground: var(--palette-gray800);
@@ -24,17 +24,17 @@
   --color-tableText: var(--palette-gray150);
   --color-tableTextItemAdded: var(--color-tableText);
   --color-tableTextLight: var(--color-tableText);
-  --color-tableTextSubdued: var(--palette-gray500);
+  --color-tableTextSubdued: var(--palette-gray300);
   --color-tableTextSelected: var(--palette-gray800);
   --color-tableTextHover: var(--palette-gray400);
-  --color-tableTextInactive: var(--palette-gray400);
+  --color-tableTextInactive: var(--palette-gray300);
   --color-tableHeaderText: var(--palette-gray200);
   --color-tableHeaderBackground: var(--palette-gray900);
   --color-tableBorder: var(--palette-gray600);
-  --color-tableBorderSelected: var(--palette-purple400);
-  --color-tableBorderHover: var(--palette-purple300);
+  --color-tableBorderSelected: var(--palette-gray200);
+  --color-tableBorderHover: var(--palette-gray200);
   --color-tableBorderSeparator: var(--palette-gray400);
-  --color-tableRowBackgroundHighlight: var(--palette-purple150);
+  --color-tableRowBackgroundHighlight: var(--palette-gray150);
   --color-tableRowBackgroundHighlightText: var(--palette-gray800);
   --color-tableRowHeaderBackground: var(--palette-gray700);
   --color-tableRowHeaderText: var(--palette-gray150);
@@ -56,7 +56,7 @@
   --color-sidebarItemBackgroundPending: var(--palette-orange200);
   --color-sidebarItemBackgroundPositive: var(--palette-green400);
   --color-sidebarItemBackgroundFailed: var(--palette-red300);
-  --color-sidebarItemAccentSelected: var(--palette-purple200);
+  --color-sidebarItemAccentSelected: var(--palette-gray150);
   --color-sidebarItemBackgroundHover: var(--palette-gray700);
   --color-sidebarItemBackgroundSelected: color-mix(
     in srgb,
@@ -65,7 +65,7 @@
   );
   --color-sidebarItemText: var(--palette-gray100);
   --color-sidebarItemTextUpdated: var(--color-sidebarItemText);
-  --color-sidebarItemTextSelected: var(--palette-purple200);
+  --color-sidebarItemTextSelected: var(--palette-gray150);
   --color-sidebarBudgetName: var(--palette-gray300);
   --color-sidebarHeaderText: var(--palette-gray100);
   --color-sidebarTextSubdued: var(--palette-gray300);
@@ -91,7 +91,7 @@
     var(--color-settingsNavItemText) 8%,
     transparent
   );
-  --color-settingsNavItemAccentSelected: var(--palette-purple200);
+  --color-settingsNavItemAccentSelected: var(--palette-gray150);
   --color-settingsNavItemTextSelected: var(
     --color-settingsNavItemAccentSelected
   );
@@ -106,38 +106,38 @@
   --color-menuItemBackgroundHover: var(--palette-gray500);
   --color-menuItemText: var(--palette-gray100);
   --color-menuItemTextHover: var(--palette-gray50);
-  --color-menuItemTextSelected: var(--palette-purple400);
-  --color-menuItemTextHeader: var(--palette-purple200);
+  --color-menuItemTextSelected: var(--palette-gray200);
+  --color-menuItemTextHeader: var(--palette-gray150);
   --color-menuBorder: var(--palette-gray800);
-  --color-menuBorderHover: var(--palette-purple300);
-  --color-menuKeybindingText: var(--palette-purple200);
+  --color-menuBorderHover: var(--palette-gray200);
+  --color-menuKeybindingText: var(--palette-gray150);
   --color-menuAutoCompleteBackground: var(--palette-gray600);
   --color-menuAutoCompleteBackgroundHover: var(--palette-gray500);
   --color-menuAutoCompleteText: var(--palette-gray100);
   --color-menuAutoCompleteTextHover: var(--palette-green400);
-  --color-menuAutoCompleteTextHeader: var(--palette-purple200);
+  --color-menuAutoCompleteTextHeader: var(--palette-gray150);
   --color-menuAutoCompleteItemTextHover: var(--palette-gray50);
   --color-menuAutoCompleteItemText: var(--color-menuItemText);
   --color-modalBackground: var(--palette-gray700);
   --color-modalBorder: var(--palette-gray200);
   --color-mobileHeaderBackground: var(--palette-gray900);
-  --color-mobileHeaderText: var(--palette-purple200);
+  --color-mobileHeaderText: var(--palette-gray150);
   --color-mobileHeaderTextSubdued: var(--palette-gray200);
   --color-mobileHeaderTextHover: rgba(200, 200, 200, 0.15);
   --color-mobilePageBackground: var(--palette-gray900);
   --color-mobileNavBackground: var(--palette-gray600);
   --color-mobileNavItem: var(--palette-gray150);
-  --color-mobileNavItemSelected: var(--palette-purple200);
+  --color-mobileNavItemSelected: var(--palette-gray150);
   --color-mobileAccountShadow: var(--color-cardShadow);
   --color-mobileAccountText: var(--palette-blue800);
-  --color-mobileTransactionSelected: var(--palette-purple300);
+  --color-mobileTransactionSelected: var(--palette-gray200);
 
   --color-mobileViewTheme: var(--color-mobileHeaderBackground);
-  --color-mobileConfigServerViewTheme: var(--palette-purple500);
+  --color-mobileConfigServerViewTheme: var(--palette-gray300);
 
-  --color-markdownNormal: var(--palette-purple700);
-  --color-markdownDark: var(--palette-purple500);
-  --color-markdownLight: var(--palette-purple800);
+  --color-markdownNormal: var(--palette-gray600);
+  --color-markdownDark: var(--palette-gray300);
+  --color-markdownLight: var(--palette-gray700);
 
   --color-buttonMenuText: var(--palette-gray200);
   --color-buttonMenuTextHover: var(--color-buttonMenuText);
@@ -150,9 +150,9 @@
   --color-buttonMenuSelectedBackgroundHover: var(--palette-gray300);
   --color-buttonMenuSelectedBorder: var(--color-buttonMenuSelectedBackground);
 
-  --color-buttonPrimaryText: var(--palette-white);
+  --color-buttonPrimaryText: var(--palette-gray900);
   --color-buttonPrimaryTextHover: var(--color-buttonPrimaryText);
-  --color-buttonPrimaryBackground: var(--palette-purple300);
+  --color-buttonPrimaryBackground: var(--palette-gray200);
   --color-buttonPrimaryBackgroundHover: var(--color-buttonPrimaryBackground);
   --color-buttonPrimaryBorder: var(--color-buttonPrimaryBackground);
   --color-buttonPrimaryShadow: rgba(0, 0, 0, 0.6);
@@ -168,8 +168,8 @@
   --color-buttonNormalBackgroundHover: var(--palette-gray400);
   --color-buttonNormalBorder: var(--palette-gray300);
   --color-buttonNormalShadow: rgba(0, 0, 0, 0.4);
-  --color-buttonNormalSelectedText: var(--palette-white);
-  --color-buttonNormalSelectedBackground: var(--palette-purple500);
+  --color-buttonNormalSelectedText: var(--palette-gray900);
+  --color-buttonNormalSelectedBackground: var(--palette-gray300);
   --color-buttonNormalDisabledText: var(--palette-gray400);
   --color-buttonNormalDisabledBackground: var(--palette-gray700);
   --color-buttonNormalDisabledBorder: var(--palette-gray500);
@@ -181,7 +181,7 @@
   --color-calendarSelectedBackground: var(
     --color-buttonNormalSelectedBackground
   );
-  --color-datePickerRangeBackground: var(--palette-purple600);
+  --color-datePickerRangeBackground: var(--palette-gray400);
 
   --color-buttonBareText: var(--color-pageText);
   --color-buttonBareTextHover: var(--color-pageText);
@@ -211,59 +211,59 @@
   --color-errorTextDarker: var(--color-errorTextDark);
   --color-errorTextMenu: var(--palette-red200);
   --color-errorBorder: var(--palette-red500);
-  --color-upcomingBackground: var(--palette-purple800);
-  --color-upcomingText: var(--palette-purple200);
+  --color-upcomingBackground: var(--palette-gray700);
+  --color-upcomingText: var(--palette-gray150);
   --color-upcomingBorder: var(--color-tableBorder);
 
-  --color-formLabelText: var(--palette-purple150);
-  --color-formLabelBackground: var(--palette-blue900);
+  --color-formLabelText: var(--palette-gray150);
+  --color-formLabelBackground: var(--palette-gray700);
   --color-formInputBackground: var(--palette-gray800);
   --color-formInputBackgroundSelected: var(--palette-gray700);
-  --color-formInputBackgroundSelection: var(--palette-purple400);
+  --color-formInputBackgroundSelection: var(--palette-gray200);
   --color-formInputBorder: var(--palette-gray600);
   --color-formInputTextReadOnlySelection: var(--palette-gray800);
-  --color-formInputBorderSelected: var(--palette-purple300);
+  --color-formInputBorderSelected: var(--palette-gray200);
   --color-formInputText: var(--palette-gray150);
   --color-formInputTextSelected: var(--palette-black);
   --color-formInputTextPlaceholder: var(--palette-gray150);
   --color-formInputTextPlaceholderSelected: var(--palette-gray100);
   --color-formInputTextSelection: var(--palette-gray800);
-  --color-formInputShadowSelected: var(--palette-purple400);
-  --color-formInputTextHighlight: var(--palette-purple200);
+  --color-formInputShadowSelected: var(--palette-gray200);
+  --color-formInputTextHighlight: var(--palette-gray150);
   --color-checkboxText: var(--color-tableText);
-  --color-checkboxBackgroundSelected: var(--palette-purple300);
-  --color-checkboxBorderSelected: var(--palette-purple300);
-  --color-checkboxShadowSelected: var(--palette-purple500);
+  --color-checkboxBackgroundSelected: var(--palette-gray200);
+  --color-checkboxBorderSelected: var(--palette-gray200);
+  --color-checkboxShadowSelected: var(--palette-gray300);
   --color-checkboxToggleBackground: var(--palette-gray400);
-  --color-checkboxToggleBackgroundSelected: var(--palette-purple300);
+  --color-checkboxToggleBackgroundSelected: var(--palette-gray200);
   --color-checkboxToggleDisabled: var(--palette-gray700);
 
   --color-pillBackground: var(--palette-gray500);
   --color-pillBackgroundLight: var(--palette-gray900);
   --color-pillText: var(--palette-gray200);
-  --color-pillTextHighlighted: var(--palette-purple200);
+  --color-pillTextHighlighted: var(--palette-gray150);
   --color-pillBorder: var(--palette-gray500);
   --color-pillBorderDark: var(--color-pillBorder);
-  --color-pillBackgroundSelected: var(--palette-purple600);
+  --color-pillBackgroundSelected: var(--palette-gray400);
   --color-pillTextSelected: var(--palette-gray150);
-  --color-pillBorderSelected: var(--palette-purple300);
-  --color-pillTextSubdued: var(--palette-gray500);
+  --color-pillBorderSelected: var(--palette-gray200);
+  --color-pillTextSubdued: var(--palette-gray300);
 
   --color-reportsRed: var(--palette-red300);
   --color-reportsBlue: var(--palette-blue400);
   --color-reportsGreen: var(--palette-green400);
   --color-reportsGray: var(--palette-gray400);
   --color-reportsLabel: var(--color-pageText);
-  --color-reportsInnerLabel: var(--palette-navy800);
+  --color-reportsInnerLabel: var(--palette-gray800);
   --color-reportsNumberPositive: var(--color-numberPositive);
   --color-reportsNumberNegative: var(--color-numberNegative);
   --color-reportsNumberNeutral: var(--color-numberNeutral);
   --color-reportsChartFill: var(--color-reportsNumberPositive);
 
-  --color-noteTagBackground: var(--palette-purple800);
-  --color-noteTagBackgroundHover: var(--palette-purple600);
-  --color-noteTagDefault: var(--palette-purple700);
-  --color-noteTagText: var(--palette-purple100);
+  --color-noteTagBackground: var(--palette-gray700);
+  --color-noteTagBackgroundHover: var(--palette-gray400);
+  --color-noteTagDefault: var(--palette-gray600);
+  --color-noteTagText: var(--palette-gray100);
 
   --color-budgetOtherMonth: var(--palette-gray700);
   --color-budgetCurrentMonth: var(--color-tableBackground);
@@ -271,14 +271,14 @@
   --color-budgetHeaderCurrentMonth: var(--color-tableHeaderBackground);
 
   --color-floatingActionBarBackground: var(--palette-gray900);
-  --color-floatingActionBarBorder: var(--palette-purple300);
-  --color-floatingActionBarText: var(--palette-purple200);
+  --color-floatingActionBarBorder: var(--palette-gray200);
+  --color-floatingActionBarText: var(--palette-gray150);
 
   --color-tooltipText: var(--palette-gray100);
   --color-tooltipBackground: var(--palette-gray800);
   --color-tooltipBorder: var(--palette-gray600);
 
-  --color-calendarCellBackground: var(--palette-navy900);
+  --color-calendarCellBackground: var(--palette-gray900);
 
   --color-overlayBackground: rgba(0, 0, 0, 0.3);
 
