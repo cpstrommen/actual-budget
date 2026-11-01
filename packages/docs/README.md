@@ -1,6 +1,6 @@
 # Actual CFM Documentation
 
-Local documentation for Actual CFM, a personal fork of Actual Budget focused on annual planning, cash flow, liquidity, and asset valuation. Existing guides describe inherited functionality; the CFM additions are planned in [wishlist.md](../../wishlist.md).
+Local documentation for Actual CFM, a personal fork of Actual Budget focused on annual planning, cash flow, liquidity, and asset valuation. Existing guides describe inherited functionality; the CFM workflows are described in [Using Actual CFM](docs/actual-cfm.md) and tracked in [wishlist.md](../../wishlist.md).
 
 ## Local Development
 

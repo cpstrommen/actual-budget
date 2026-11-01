@@ -17,12 +17,12 @@ import {
   Choice,
   DataTable,
   Field,
-  Money,
-  Panel,
   fieldStyle,
   gridStyle,
+  Money,
   moneyInput,
   newId,
+  Panel,
   parseMoney,
   today,
 } from './ui';
@@ -51,6 +51,7 @@ export function CfmAssets({
   valueAssetAccount,
 }: Props) {
   const { t } = useTranslation();
+  const [restatementReason, setRestatementReason] = useState('');
   const [editing, setEditing] = useState<CfmRecord<CfmAsset> | null>(null);
   const [accountId, setAccountId] = useState('');
   const [acquisitionDate, setAcquisitionDate] = useState(today());
@@ -146,6 +147,9 @@ export function CfmAssets({
         acquisitionDate,
         acquisitionValue: parseMoney(acquisitionValue),
         policy,
+        ...(restatementReason.trim()
+          ? { policyRestatementReason: restatementReason.trim() }
+          : {}),
         ...(editing
           ? {
               policyHistory: [
@@ -158,8 +162,9 @@ export function CfmAssets({
         ...(disposal ? { disposalDate: disposal } : {}),
         ...(debt ? { linkedDebtAccountId: debt } : {}),
       };
-      if (await save('asset', asset, editing?.id)) {
+      if (await save('asset', asset, editing?.id, editing?.updatedAt)) {
         setEditing(null);
+        setRestatementReason('');
         setAccountId('');
         setAcquisitionValue('');
         setBaseValue('');
@@ -229,7 +234,7 @@ export function CfmAssets({
                 <Cell>{valuation.effectiveDate}</Cell>
                 <Cell>
                   <Action onPress={() => edit(record)}>
-                    {t('Edit policy')}
+                    <Trans>Edit policy</Trans>
                   </Action>
                 </Cell>
               </tr>
@@ -244,6 +249,20 @@ export function CfmAssets({
             sidebar first if the asset has no ledger account.
           </Trans>
         </p>
+        {editing && (
+          <Field
+            label={t('Historical model restatement reason')}
+            hint={t(
+              'Leave blank for a future policy revision. A reason explicitly allows changing a past modeled policy; posted ledger history remains unchanged until a separate dated adjustment.',
+            )}
+          >
+            <input
+              style={fieldStyle}
+              value={restatementReason}
+              onChange={event => setRestatementReason(event.target.value)}
+            />
+          </Field>
+        )}
         <form
           onSubmit={event => {
             event.preventDefault();
@@ -289,8 +308,9 @@ export function CfmAssets({
                     value === 'straight-line' ||
                     value === 'fixed-rate' ||
                     value === 'schedule'
-                  )
+                  ) {
                     setMethod(value);
+                  }
                 }}
                 options={[
                   ['manual', t('Manual observations')],
@@ -372,8 +392,9 @@ export function CfmAssets({
                     value === 'monthly' ||
                     value === 'quarterly' ||
                     value === 'annually'
-                  )
+                  ) {
                     setFrequency(value);
+                  }
                 }}
                 options={[
                   ['daily', t('Daily')],
@@ -432,7 +453,7 @@ export function CfmAssets({
               </Button>
               {editing && (
                 <Button onPress={() => setEditing(null)}>
-                  {t('Cancel editing')}
+                  <Trans>Cancel editing</Trans>
                 </Button>
               )}
             </p>

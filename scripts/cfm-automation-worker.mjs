@@ -3,6 +3,7 @@
 // yarn build:api
 // node scripts/cfm-automation-worker.mjs --sync-id <id> --device-id <selected-writer>
 import { createHash, randomUUID } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { hostname } from 'node:os';
 import path from 'node:path';
@@ -38,26 +39,30 @@ export function parseWorkerArguments(args, environment = process.env) {
     }
     const key = options.get(flag);
     const value = args[++index];
-    if (!key || !value || value.startsWith('--'))
+    if (!key || !value || value.startsWith('--')) {
       throw new Error(`Invalid option or missing value: ${flag}`);
+    }
     values[key] = key === 'intervalSeconds' ? Number(value) : value;
   }
   if (!values.help) {
-    if (!values.serverUrl || !values.syncId || !values.deviceId)
+    if (!values.serverUrl || !values.syncId || !values.deviceId) {
       throw new Error(
         'Provide --server-url, --sync-id and --device-id (or their environment variables).',
       );
+    }
     const url = new URL(values.serverUrl);
-    if (!['http:', 'https:'].includes(url.protocol))
+    if (!['http:', 'https:'].includes(url.protocol)) {
       throw new Error('The sync server must use HTTP or HTTPS.');
+    }
     if (
       !Number.isSafeInteger(values.intervalSeconds) ||
       values.intervalSeconds < 15 ||
       values.intervalSeconds > 3600
-    )
+    ) {
       throw new Error(
         'Worker polling must be between 15 and 3600 seconds. Bank-provider refresh intervals are enforced separately.',
       );
+    }
   }
   values.dataDir = path.resolve(values.dataDir);
   return values;
@@ -100,10 +105,11 @@ export async function acquireWorkerLock(dataDir, serverUrl, syncId) {
   try {
     await mkdir(guardPath, { mode: 0o700 });
   } catch (error) {
-    if (error.code === 'EEXIST')
+    if (error.code === 'EEXIST') {
       throw new Error(
         `Another worker is acquiring its lease, or a recovery was interrupted. Retry, or inspect ${guardPath} before removing an abandoned guard.`,
       );
+    }
     throw error;
   }
   try {
@@ -113,25 +119,28 @@ export async function acquireWorkerLock(dataDir, serverUrl, syncId) {
         await readFile(path.join(lockPath, 'owner.json'), 'utf8'),
       );
     } catch (error) {
-      if (error.code !== 'ENOENT')
+      if (error.code !== 'ENOENT') {
         throw new Error(
           `Cannot verify the existing worker lease at ${lockPath}; retain it and inspect its owner file.`,
         );
+      }
     }
     if (previous) {
-      if (previous.host !== hostname() || isAlive(previous.pid))
+      if (previous.host !== hostname() || isAlive(previous.pid)) {
         throw new Error(
           `A worker already owns this budget lease (${previous.host}, process ${previous.pid}).`,
         );
+      }
       await rm(lockPath, { recursive: true });
     }
     try {
       await mkdir(lockPath, { mode: 0o700 });
     } catch (error) {
-      if (error.code === 'EEXIST')
+      if (error.code === 'EEXIST') {
         throw new Error(
           `The worker lease has no readable owner file: ${lockPath}. Inspect it before removing it.`,
         );
+      }
       throw error;
     }
     await writeFile(path.join(lockPath, 'owner.json'), JSON.stringify(owner), {
@@ -148,10 +157,11 @@ export async function acquireWorkerLock(dataDir, serverUrl, syncId) {
       const current = JSON.parse(
         await readFile(path.join(lockPath, 'owner.json'), 'utf8'),
       );
-      if (current.token !== owner.token)
+      if (current.token !== owner.token) {
         throw new Error(
           'The worker lease changed owners; refusing to remove it.',
         );
+      }
       await rm(lockPath, { recursive: true });
       released = true;
     } finally {
@@ -175,10 +185,11 @@ export async function runHeadlessWorker(
       environment.ACTUAL_ENCRYPTION_PASSWORD_FILE,
     environment.ACTUAL_ENCRYPTION_PASSWORD,
   );
-  if (!password)
+  if (!password) {
     throw new Error(
       'Provide the server password through ACTUAL_PASSWORD or --password-file.',
     );
+  }
   const release = await acquireWorkerLock(
     options.dataDir,
     options.serverUrl,
@@ -203,10 +214,11 @@ export async function runHeadlessWorker(
       !configRecord?.data.enabled ||
       configRecord.data.mode !== 'headless' ||
       configRecord.data.schedulerId !== options.deviceId
-    )
+    ) {
       throw new Error(
         'Select this scheduler ID and headless mode in CFM automation settings before starting this worker.',
       );
+    }
     do {
       if (signal?.aborted) break;
       await api.sync();
@@ -215,10 +227,11 @@ export async function runHeadlessWorker(
         deviceId: options.deviceId,
       });
       await api.sync();
-      if (result.status === 'paused')
+      if (result.status === 'paused') {
         throw new Error(
           `Automation paused: ${result.reason || 'configuration changed'}`,
         );
+      }
       if (options.once || signal?.aborted) return result;
       await new Promise(resolve => {
         const complete = () => {
@@ -269,7 +282,7 @@ async function main() {
 
 if (
   process.argv[1] &&
-  import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
+  realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   main().catch(error => {
     process.stderr.write(

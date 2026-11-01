@@ -1,37 +1,49 @@
 # Returning to Actual Budget
 
-Actual CFM is separate software derived from Actual Budget. Keeping your financial records portable is a release requirement: returning to upstream must preserve your transaction ledger and dated balance history.
+Actual CFM exports your ledger for **Actual Budget 26.10.0**, pinned to commit `5897cfa65afec3d0252d7467e5b7a033fb66900b`. The compatibility harness imports the file into unmodified upstream code and compares supported records and dated ledger movements after exporting it again. Other upstream versions are not certified by this target.
 
-## Current Status
+Transactions and dated balances remain ordinary ledger entries. Returning does not replace account history with one opening balance. CFM-only plans, valuations, obligations, and report snapshots remain readable in a companion recovery archive.
 
-This checkout still uses the inherited ledger format and has no CFM financial schema migrations. Its existing **Settings → Export → Export data** action produces a ZIP containing `db.sqlite` and `metadata.json`. The ZIP is unencrypted even when the source budget uses encryption.
+## Return procedure
 
-The dedicated **Export for Actual Budget** converter and its upstream compatibility tests are **planned, not implemented**. They are required before shipping CFM financial extensions. A native database backup is not a general downgrade guarantee: upstream can reject unknown migrations. Only use a target version whose compatibility has actually been verified; this documentation does not yet certify a tested CFM/upstream release pair.
+1. Finish transactions and synchronization. Disable scheduled work for the final export.
+2. Keep a native CFM backup and a separate copy of the existing data directory.
+3. Choose **Settings → Export → Export for Actual Budget**, or the same action in **Cash flow management → Financial position**. Save both ZIP files. Both are unencrypted, including when the source uses encryption.
+4. Inspect `receipt.json` inside the recovery ZIP. Check the target, transaction counts, historical balance checkpoints, and warnings about existing unresolved links. Unsupported schemas and failed financial comparisons stop export.
+5. In a separate installation of the pinned upstream version, close the current budget, select its Actual import format, and import the upstream ZIP as a **new budget**. Keep CFM's original directory and sync group separate.
+6. Compare account names, dated balances, counts, splits, transfers, notes, and reconciliation flags against the receipt and source. Configure upstream sync and bank connections separately after checking history.
+7. Retain the recovery ZIP. Its JSON/CSV records, reports, and full snapshot remain useful after the fork stops being maintained.
 
-## Return Procedure
+Do not remove migration records or edit a live database to force an unsupported version to open. The dedicated exporter constructs a clean target database and resets sync identities.
 
-For the inherited-format checkout, use the existing export action. Once CFM financial extensions ship, use the dedicated compatibility export supplied with that release instead. The intended workflow is:
+## Preserved records
 
-1. Finish pending transactions and synchronization in CFM. Pause automated financial jobs for the final export.
-2. Save a full CFM backup. Keep a separate copy before changing installations.
-3. Export the upstream-compatible ZIP and accompanying audit archive. Check the validation receipt and the named supported upstream version. For this checkout, the native ZIP is the available export and requires an independent import check.
-4. Open a separate upstream Actual Budget installation. Close its current budget, choose **Import file**, select its **Actual** import format, and import the ZIP as a new budget. Do not reuse CFM's live sync group or overwrite the original directory.
-5. Compare account lists, transaction counts, signed balances, historical balance checkpoints, splits/transfers, notes, and reconciliation states with the export receipt or the original CFM budget. Investigate discrepancies before proceeding.
-6. Configure upstream synchronization and bank connections separately. Reconnect bank imports carefully so already imported transactions are not duplicated.
-7. Keep the CFM backup and audit archive until you are satisfied with the imported history. You can keep them indefinitely for CFM-only records.
+The upstream file preserves supported accounts, opening balances, transactions, dates, amounts, payees, categories, user notes, splits, transfer links, cleared/reconciled flags, schedules, rules, and monthly budgets. Realized valuations, corrections, settlements, write-offs, and reversals have dated native representations. Forecasts never become invented historical cash flows.
 
-If an upstream version rejects the ZIP, stop and retain the source backup. Do not delete migration records or edit the live database to force it to open. Use the converter and upstream version supplied with a release that has passed the compatibility gate.
+The recovery ZIP retains CFM records in JSON/CSV, available edit/deletion messages, tombstones, and an original full snapshot. Reports include HTML, CSV, and JSON. Upstream cannot run CFM-only interfaces, but the records remain readable. The [format specification](cfm-format.md) describes every archive file and its hashes.
 
-## What Is Preserved
+## Automatic recovery copies
 
-The required export preserves accounts, opening balances, all posted transactions and their effective dates, amounts, categories, payees, splits, transfers, notes, and cleared/reconciled state. Dated balance corrections, realized asset valuations, settlements, and write-offs have ordinary ledger representations, so returning does not reduce history to a single current balance.
+After financial changes, the running worker refreshes validated `cfm-upstream.zip`, `cfm-recovery.zip`, and `cfm-portability-receipt.json` in the budget directory after a short debounce. Automatic native backups include the most recent successful copies when present. **Financial position** shows their timestamp and export failures. A suspended or closed app cannot refresh them. Copies may lag recent edits, particularly if the app closes immediately after an edit; request a final fresh export before leaving CFM.
 
-Detailed valuation/balance observations and available transaction edit/deletion history also remain in an open JSON/CSV audit archive. Deleted transactions stay deleted in the upstream working budget; their audit records remain available separately. Observations that never changed the ledger remain observations; they are not invented transactions. Forecast values stay forecasts.
+## Offline recovery after maintenance ends
 
-CFM-specific annual plans, asset policies, obligation details, forecast scenarios, and report layouts are preserved as files in the companion archive. Upstream cannot display CFM-only interfaces. Archived reports remain readable, and the records are retained for future conversion or a return to CFM. CSV alone is not the financial migration format because it cannot preserve the entire native ledger structure.
+A prepared recovery runtime requires a compatible Node installation and a local native backup. No server, login, network access, or maintained CFM service is required:
 
-## If Actual CFM Is No Longer Maintained
+```sh
+node scripts/cfm-export-upstream.mjs /path/to/native-cfm-backup.zip /path/to/new-output-directory
+```
 
-The implementation plan requires every data-feature release to include an offline exporter, a documented format, and a pinned compatible upstream target. A local backup plus that release must be sufficient; a running CFM hosting service is not required. Maintain current local backups and check the timestamp of the latest validated upstream export rather than relying on an old backup.
+Run inside the downloaded recovery-runtime directory. It produces `actual-budget.zip`, `cfm-recovery.zip`, and `receipt.json`. The output directory must be new. The source is read into an isolated temporary budget and remains unchanged. Check the receipt and follow the procedure above.
 
-This is the release contract for future CFM data features. It is not a claim that the unimplemented converter is available in this checkout.
+Prepare a runtime from source before relying on it:
+
+```sh
+yarn install
+yarn build:api
+node scripts/package-cfm-recovery.mjs /path/to/new-recovery-runtime
+```
+
+The package includes the built API, migrations, target schema, recovery commands, documentation, SQLite runtime/dependencies, a synthetic example budget, licenses, and a SHA-256 manifest. It needs Node but no dependency installation during recovery. Retain a package for your operating system and CPU; native SQLite addons are platform-specific. `.nvmrc`, `package.json`, and `yarn.lock` pin the development environment. Keep a tested runtime with your backups.
+
+Native backups alone are not a general downgrade guarantee. Future CFM or upstream releases may need a different adapter. Keep the converter, runtime, receipt, and native backup from the same CFM release together.

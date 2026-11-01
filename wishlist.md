@@ -2,7 +2,26 @@
 
 Actual CFM is a personal fork of Actual Budget focused on annual planning, liquidity, asset valuation, and net equity. The ledger and transaction workflows remain the foundation; the main view should help explain the year ahead and the overall financial position.
 
-This document records the requested features and a proposed implementation sequence. **The CFM features below are planned, not implemented.** The repository cleanup and documentation branding establish the fork; they do not change the application's financial behavior.
+This document records the implemented CFM workflows and their acceptance criteria. The workspace, shared financial calculations, ledger commands, report archives, application/headless scheduling, and upstream return path are implemented. The detailed requirements below remain the regression and release checklist.
+
+## Implementation Status — 2026-11-01
+
+| Area               | Delivered implementation                                                                                                                                                                             |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Financial position | Effective-dated classifications, separate asset/liability statement columns, residual net equity, liquidity eligibility, and manual account creation                                                 |
+| Manual balances    | Core-calculated dated adjustments, preview/stale-write check, stable request IDs, audit observations, undo, and register actions                                                                     |
+| Annual plans       | Exact equal/custom/weighted allocations, dated items, prorated/full-month YTD, revisions, independent year copies, and explicit monthly funding                                                      |
+| Assets             | Manual/straight-line/rate/schedule policies, effective-date history, explicit modeled-history restatement, linked debt, disposal, observed versus modeled values, and scheduled ledger realization   |
+| AR/AP              | Purchase/split allocation, partial/import-matched settlements, shared deposits, existing-balance itemization, explicit payable credits, non-cash write-offs/reversals, and managed-entry edit guards |
+| Liquidity          | Daily/monthly scenarios, cards, native schedules/transfers, annual residuals, AR delay, exclusions, shortfalls, coverage, and stale-data warnings                                                    |
+| Reports            | Reusable ordered packages, periods/filters/charts/tables, valuation roll-forward, AR/AP aging, immutable runs, printable HTML/PDF, CSV, and JSON                                                     |
+| Automation         | Selected writer, timezone/period keys, local leases, retry/backoff, bank refresh grouping/overlap lock, valuation/report jobs, application-open mode, and opt-in credentialed worker                 |
+| Portability        | Clean pinned upstream schema, row/checkpoint comparisons, JSON/CSV audit archive, report artifacts, native snapshot, automatic recovery copies, offline converter, and packaged runtime              |
+| Identity           | Actual CFM display identity, icons, documentation, own native IDs, and neutral light/dark/midnight themes                                                                                            |
+
+Implementation entry points are `shared/cfm.ts`, `shared/cfm-reports.ts`, `shared/cfm-automation.ts`, `server/cfm/`, and `components/cfm/`. New financial metadata uses per-record envelopes in the existing synced `notes` table, with native ledger entries for realized balances. No CFM SQL migrations are required. [Using Actual CFM](packages/docs/docs/actual-cfm.md), the [format specification](packages/docs/docs/migration/cfm-format.md), and the [return guide](packages/docs/docs/migration/return-to-actual-budget.md) describe operation and recovery.
+
+Validation includes the full core and UI suites, focused financial/automation regressions, browser balance/report/AR workflows, browser compatibility export, and a 2,145-record unmodified upstream round trip with native and packaged offline recovery. A complete annual package renders to a paginated PDF with landscape pages for wide tables. Checks use Node 24.22.1. Live provider-authenticated calls need the user's own connections; tests exercise scheduling, retries, encrypted-access credentials, and leases without real bank data. Docker visual baselines remain a release check when Docker is available; host screenshots do not replace them.
 
 ## Requested Features
 
@@ -28,7 +47,7 @@ Reuse the existing implementation rather than introducing a separate financial d
 | Forecasts           | Existing balance-forecast report and schedule occurrences in `packages/loot-core/src/server/schedules/`     | Aggregate liquidity coverage, obligation timing, and scenario assumptions                 |
 | Bank sync           | `packages/loot-core/src/server/accounts/app.ts`, `src/server/accounts/sync.ts`, `packages/sync-server/src/` | Scheduling around existing provider calls, with limits, retries, and durable job state    |
 | Themes              | `packages/component-library/src/themes/`, `src/theme.ts`                                                    | Grey palette mappings through existing semantic tokens                                    |
-| Persistence         | `packages/loot-core/migrations/`, shared schemas, sync, and backup/export paths                             | Additive schema changes and round-trip support for all new entities                       |
+| Persistence         | `packages/loot-core/migrations/`, shared schemas, sync, and backup/export paths                             | Per-record synced note envelopes, native ledger postings, undo, and round-trip support    |
 
 `src/...` paths in a table row are relative to the package named in that row. The core should own calculations used by the UI, API, reports, and jobs.
 
@@ -36,11 +55,11 @@ Reuse the existing implementation rather than introducing a separate financial d
 
 Users must be able to return to **upstream Actual Budget** without losing transaction history or dated account balances, even if Actual CFM stops being maintained. This requirement takes priority over the implementation choices below.
 
-### Current Capability and Gap
+### Current Capability
 
-The inherited Settings → Export action writes a ZIP containing `db.sqlite` and `metadata.json`. It preserves the ledger and strips computed caches. The importer loads that database and runs migrations. **A native backup is not a guaranteed downgrade format:** an upstream client can reject a database with unknown CFM migrations or fields. The original plan did not address this sufficiently.
+**Export for Actual Budget** is available in Settings and Financial position. The supported target is **26.10.0**, commit `5897cfa65afec3d0252d7467e5b7a033fb66900b`. The isolated compatibility harness builds and imports through that unmodified upstream implementation. Recovery also runs from a packaged local runtime without a maintained CFM server or dependency installation.
 
-The current fork has no CFM financial schema migrations, so its data still uses the inherited format. Compatibility must nevertheless be verified against a named upstream release; neither the current native export nor a CSV-only export is a blanket guarantee for future releases. Do not tell users a dedicated compatibility exporter exists until it ships and passes the tests below.
+The native ledger format is retained. CFM records use reserved `cfm:v1:` note envelopes, and all realized balances use ordinary transactions. The dedicated converter builds a clean pinned schema, removes reserved notes into an audit/recovery archive, resets sync identities and derived view/cache state, compares rows and dated balance checkpoints, and refuses unsupported schemas. Native backups alone remain insufficient as a future downgrade guarantee.
 
 ### Required Design
 
@@ -60,7 +79,7 @@ Before releasing any CFM data feature, create a fixture with opening balances, c
 
 Run the exporter, import the resulting ZIP into the **unmodified, pinned upstream Actual Budget application**, and compare every supported record plus signed running balances at every transaction date. Verify transfer links, splits, categories, notes and reconciliation flags; export again upstream and compare. Cover CFM backup/restore, encrypted source budgets, large files, unsupported targets, interrupted exports, and execution using only a downloaded release plus a local backup. Check audit-archive records and hashes, and prove that no future forecast is posted accidentally. A converter-only round-trip or matching ending balances is insufficient.
 
-Phase 1 now starts with this exporter and test harness, before introducing CFM tables or new financial behavior. Every later phase extends the exporter and the same compatibility gate. See [Returning to Actual Budget](packages/docs/docs/migration/return-to-actual-budget.md) for the user-facing procedure and current implementation status.
+The exporter and unmodified upstream test harness implement this gate. Every later format or financial change must extend the same fixtures and compatibility checks. See [Returning to Actual Budget](packages/docs/docs/migration/return-to-actual-budget.md) for the user-facing procedure and current implementation status.
 
 ## Shared Financial Model
 
@@ -76,7 +95,7 @@ Build these foundations before combining the features into dashboards and automa
 - **Integrate persistence fully.** New entities need migrations, types, AQL schema/query support where applicable, sync registration, tombstones, undo behavior, backup/export/import, and API validation. Financial tables belong with the budget; server credentials and job leases do not belong in synced financial data.
 - **Make generated work repeatable.** Scheduled jobs and generated adjustments need deterministic occurrence identifiers and a single authorized writer for each budget. Database uniqueness within one client alone does not prevent duplicates when two devices operate offline.
 
-Proposed entities, subject to a short schema review during implementation: effective-dated account classifications, adjustment records linked to transactions, asset valuation policies/observations, annual plans and monthly allocations, obligations and settlement links, report templates and immutable report runs. Derive totals from source records rather than maintaining competing balance fields.
+Implemented extension records: effective-dated account classifications, adjustment records linked to transactions, asset valuation policies/observations, annual plans and monthly allocations, obligations and settlement links, report templates and immutable report runs. Derive totals from source records rather than maintaining competing balance fields.
 
 ## Implementation Sequence
 
@@ -189,21 +208,21 @@ Application identity and display branding are implemented in the branding change
 
 **Acceptance:** Dense financial tables, charts, forms, menus, disabled states, and keyboard focus are legible in each theme. Verify contrast and scoped Docker-generated visual snapshots. Existing backups and API scripts still work after display-name changes.
 
-## Validation and First Work Package
+## Validation and Regression Coverage
 
 Use a shared deterministic example budget for all phases: checking and savings, a credit card, a property with debt, an investment holding, seasonal annual expenses, and the ticket reimbursements. It should demonstrate the links between annual plans, cash timing, valuations, and statements.
 
-For financial features, add calculation tests for dates, signs, rounding, and duplicate events; database tests for migrations and sync/export round-trips; and focused interface tests for the main workflow. Run type checking and linting for implementation changes. Use the existing VRT environment for actual UI changes. No new financial behavior is implemented by this planning document.
+For financial features, add calculation tests for dates, signs, rounding, and duplicate events; database tests for migrations and sync/export round-trips; and focused interface tests for the main workflow. Run type checking and linting for implementation changes. Use the existing VRT environment for actual UI changes. The financial behavior is implemented in the linked core, UI, API, and tool files; this document records its contract.
 
-The first implementation work package is Phase 1: establish the pinned upstream compatibility target, implement the clean-schema exporter and offline command, and prove actual upstream import with record and dated-balance comparisons. Then settle account classifications and adjustment metadata, add the atomic set-balance command, and expose the manual-account action with a full save/undo/sync/export round-trip. That sequence establishes portability before CFM begins adding financial records.
+The shared example in `scripts/create-cfm-example.mjs` can be exported for manual exploration and is used by `packages/loot-core/scripts/test-cfm-upstream.mjs`. The harness adds a larger historical ledger, closed/zero accounts, and deletion records, then checks native and packaged offline recovery. Core tests cover financial calculations, database commands, undo, report immutability, scheduling, and unsupported-schema refusal.
 
-## Proposed Defaults to Confirm During Implementation
+## Implemented Defaults
 
 - Calendar-year planning, with exact monthly allocations and prorated current-month YTD expectations unless an item has a due date.
 - “Equities” means investment holdings; net equity remains the residual on the statement.
-- Manual valuations and straight-line depreciation first; modeled values remain visibly distinct from observations.
+- Manual, straight-line, fixed-rate, and explicit-schedule valuations; modeled values remain distinct from observations.
 - Liquidity includes explicitly selected cash accounts; uncertain AR collections are excluded until enabled in a scenario.
 - Printable HTML/PDF plus CSV and structured JSON first; LaTeX remains an optional adapter.
-- Application-open bank sync first; unattended work requires the separately configured worker described above.
+- Application-open bank sync and a separately configured opt-in headless worker.
 
-These are implementation proposals, not additional requirements or completed decisions. Resolve them with concrete examples as each phase starts.
+These defaults are reflected in the workspace and shared calculations. LaTeX remains an optional future adapter; printable HTML/PDF, CSV, and JSON are the implemented formats.

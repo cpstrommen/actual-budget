@@ -70,10 +70,11 @@ export function balanceCheckpoints(transactions: Row[]) {
       typeof row.acct !== 'string' ||
       !Number.isSafeInteger(row.amount) ||
       !Number.isSafeInteger(row.date)
-    )
+    ) {
       throw new Error(
         'A financial transaction cannot be represented by the upstream target',
       );
+    }
     const accountEvents = byAccount.get(row.acct) || new Map<string, number>();
     const date = String(row.date);
     accountEvents.set(
@@ -91,8 +92,9 @@ export function balanceCheckpoints(transactions: Row[]) {
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([date, amount]) => {
           balance += amount;
-          if (!Number.isSafeInteger(balance))
+          if (!Number.isSafeInteger(balance)) {
             throw new Error('Account balance exceeds safe integer range');
+          }
           return { date, balance };
         });
       return {
@@ -113,27 +115,31 @@ export async function convertCfmDatabase(source: Database) {
     [],
     true,
   );
-  for (const { name } of sourceTables)
-    if (!knownTables.has(name))
+  for (const { name } of sourceTables) {
+    if (!knownTables.has(name)) {
       throw new Error(
         `Unsupported financial table ${name}; export refused rather than dropping data`,
       );
+    }
+  }
   const migrations = rows(source, '__migrations__')
     .map(row => Number(row.id))
     .sort((a, b) => a - b);
   const supported = targetManifest.migrations
     .map(row => row.id)
     .sort((a, b) => a - b);
-  if (JSON.stringify(migrations) !== JSON.stringify(supported))
+  if (JSON.stringify(migrations) !== JSON.stringify(supported)) {
     throw new Error(
       `Unsupported migration history for Actual Budget ${CFM_UPSTREAM_VERSION}`,
     );
+  }
   const destination = await sqlite.openDatabase(':memory:');
   const archived: Record<string, unknown> = {};
   const copied: Record<string, number> = {};
   try {
-    for (const object of targetManifest.schema)
+    for (const object of targetManifest.schema) {
       if (object.type === 'table') sqlite.execQuery(destination, object.sql);
+    }
     for (const [table, columns] of knownTables) {
       const sourceColumns = sqlite
         .runQuery<{ name: string }>(
@@ -146,8 +152,9 @@ export async function convertCfmDatabase(source: Database) {
       if (
         sorted(sourceColumns.map(name => ({ name }))) !==
         sorted(columns.map(row => ({ name: row.name })))
-      )
+      ) {
         throw new Error(`Unsupported columns in ${table}`);
+      }
       const original = rows(source, table);
       if (ephemeral.has(table)) {
         archived[table] = original;
@@ -155,9 +162,11 @@ export async function convertCfmDatabase(source: Database) {
         continue;
       }
       let selected = original;
-      if(table==='__meta__') {
-        archived.derivedViewMetadata=original.filter(row=>row.key==='view-hash');
-        selected=original.filter(row=>row.key!=='view-hash');
+      if (table === '__meta__') {
+        archived.derivedViewMetadata = original.filter(
+          row => row.key === 'view-hash',
+        );
+        selected = original.filter(row => row.key !== 'view-hash');
       }
       if (table === 'notes') {
         archived.cfmRecords = original.filter(row =>
@@ -170,35 +179,41 @@ export async function convertCfmDatabase(source: Database) {
       const names = columns.map(column => column.name);
       const sql = `INSERT INTO ${quote(table)} (${names.map(quote).join(',')}) VALUES (${names.map(() => '?').join(',')})`;
       sqlite.transaction(destination, () => {
-        for (const row of selected)
+        for (const row of selected) {
           sqlite.runQuery(
             destination,
             sql,
             names.map(name => row[name] ?? null),
           );
+        }
       });
-      if (sorted(rows(destination, table)) !== sorted(selected))
+      if (sorted(rows(destination, table)) !== sorted(selected)) {
         throw new Error(`Export validation failed for ${table}`);
+      }
       copied[table] = selected.length;
     }
-    for (const object of targetManifest.schema)
+    for (const object of targetManifest.schema) {
       if (object.type !== 'table') sqlite.execQuery(destination, object.sql);
+    }
     const sourceTransactions = rows(source, 'transactions');
     const checkpoints = balanceCheckpoints(sourceTransactions);
     if (
       JSON.stringify(checkpoints) !==
       JSON.stringify(balanceCheckpoints(rows(destination, 'transactions')))
-    )
+    ) {
       throw new Error('Dated balance comparison failed');
+    }
     const validIds = new Set(
       sourceTransactions.filter(row => !row.tombstone).map(row => row.id),
     );
     const warnings: string[] = [];
     for (const row of sourceTransactions.filter(row => !row.tombstone)) {
-      if (row.transferred_id && !validIds.has(row.transferred_id))
+      if (row.transferred_id && !validIds.has(row.transferred_id)) {
         warnings.push(`Existing unresolved transfer: ${row.id}`);
-      if (row.isChild && row.parent_id && !validIds.has(row.parent_id))
+      }
+      if (row.isChild && row.parent_id && !validIds.has(row.parent_id)) {
         warnings.push(`Existing orphan split: ${row.id}`);
+      }
     }
     // Invalid pre-existing links are preserved and visible, never silently repaired.
     const integrity = sqlite.runQuery<{ integrity_check: string }>(
@@ -207,8 +222,9 @@ export async function convertCfmDatabase(source: Database) {
       [],
       true,
     );
-    if (integrity.some(row => row.integrity_check !== 'ok'))
+    if (integrity.some(row => row.integrity_check !== 'ok')) {
       throw new Error('Converted database failed SQLite integrity validation');
+    }
     return {
       data: new Uint8Array(await sqlite.exportDatabase(destination)),
       archived,
@@ -225,14 +241,16 @@ export async function convertCfmDatabase(source: Database) {
 export async function exportForActualBudget({
   targetVersion = CFM_UPSTREAM_VERSION,
 }: { targetVersion?: string } = {}) {
-  if (targetVersion !== CFM_UPSTREAM_VERSION)
+  if (targetVersion !== CFM_UPSTREAM_VERSION) {
     throw new Error(
       `Only the pinned ${CFM_UPSTREAM_VERSION} target is supported`,
     );
+  }
   return runMutator(async () => {
     const live = db.getDatabase();
-    if (!live || !prefs.getPrefs()?.id)
+    if (!live || !prefs.getPrefs()?.id) {
       throw new Error('Open a financial file first');
+    }
     const sourceBytes = new Uint8Array(await sqlite.exportDatabase(live));
     const snapshot = await sqlite.openDatabase(Buffer.from(sourceBytes));
     try {
@@ -288,8 +306,10 @@ export async function exportForActualBudget({
         ),
       };
       const auditRows = (converted.archived.cfmRecords || []) as Row[];
-      const csvCell = (value: unknown) =>
-        `"${String(value ?? '').replaceAll('"', '""')}"`;
+      const csvCell = (value: unknown) => {
+        const text = String(value ?? '');
+        return `"${(/^[=+@\-\t\r]/.test(text) ? "'" + text : text).replaceAll('"', '""')}"`;
+      };
       archiveFiles['cfm-records.csv'] = new TextEncoder().encode(
         'id,kind,recorded_at,data_json\r\n' +
           auditRows
@@ -316,12 +336,13 @@ export async function exportForActualBudget({
           !('kind' in envelope) ||
           envelope.kind !== 'report-run' ||
           !('data' in envelope)
-        )
+        ) {
           continue;
+        }
         try {
           const run = validateReportRun(envelope.data);
           const documents = getReportDocuments(run);
-          const id = run.id.replace(/[^A-Za-z0-9_-]/g, '_');
+          const id = encodeURIComponent(run.id);
           archiveFiles[`reports/${id}.html`] = new TextEncoder().encode(
             documents.html,
           );
@@ -397,12 +418,14 @@ export async function refreshRecoveryExport(budgetId = prefs.getPrefs()?.id) {
     );
     await asyncStorage.setItem('cfm-portability-status', {
       updatedAt: result.receipt.createdAt,
+      budgetId,
     });
     return result.receipt;
   } catch (error) {
     const previous = await asyncStorage.getItem('cfm-portability-status');
     await asyncStorage.setItem('cfm-portability-status', {
-      updatedAt: previous?.updatedAt || '',
+      updatedAt: previous?.budgetId === budgetId ? previous.updatedAt : '',
+      budgetId,
       error: error instanceof Error ? error.message : String(error),
     });
     throw error;

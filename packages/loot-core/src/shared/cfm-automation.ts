@@ -55,39 +55,46 @@ export function defaultAutomationConfig(timeZone = 'UTC'): CfmAutomationConfig {
 }
 
 export function validateAutomationConfig(value: unknown): CfmAutomationConfig {
-  if (!value || typeof value !== 'object' || Array.isArray(value))
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error('Invalid automation configuration');
+  }
   const input: Record<string, unknown> = value as Record<string, unknown>;
   const config = { ...defaultAutomationConfig(), ...input };
   if (
     typeof config.enabled !== 'boolean' ||
     typeof config.generateReports !== 'boolean' ||
     typeof config.postAssetValuations !== 'boolean'
-  )
+  ) {
     throw new Error('Automation switches must be boolean');
-  if (config.mode !== 'application' && config.mode !== 'headless')
+  }
+  if (config.mode !== 'application' && config.mode !== 'headless') {
     throw new Error('Automation mode must be application or headless');
+  }
   if (
     typeof config.schedulerId !== 'string' ||
     (config.enabled && !config.schedulerId.trim())
-  )
+  ) {
     throw new Error('Select one scheduler device before enabling automation');
-  if (typeof config.timeZone !== 'string')
+  }
+  if (typeof config.timeZone !== 'string') {
     throw new Error('Automation needs a timezone');
+  }
   new Intl.DateTimeFormat('en-US', { timeZone: config.timeZone });
   if (
     !Number.isSafeInteger(config.bankSyncIntervalMinutes) ||
     Number(config.bankSyncIntervalMinutes) < 15 ||
     Number(config.bankSyncIntervalMinutes) > 10080
-  )
+  ) {
     throw new Error(
       'Bank sync interval must be between 15 minutes and one week',
     );
+  }
   if (
     !Array.isArray(config.bankConnectionIds) ||
     config.bankConnectionIds.some(id => typeof id !== 'string' || !id)
-  )
+  ) {
     throw new Error('Invalid bank connections');
+  }
   return {
     enabled: config.enabled,
     mode: config.mode,
@@ -106,8 +113,9 @@ export function getAutomationDay(
   timeZone: string,
 ): string {
   const date = new Date(now);
-  if (!Number.isFinite(date.getTime()))
+  if (!Number.isFinite(date.getTime())) {
     throw new Error('Invalid automation timestamp');
+  }
   let formatter = formatters.get(timeZone);
   if (!formatter) {
     formatter = new Intl.DateTimeFormat('en-CA', {
@@ -157,15 +165,17 @@ export function resolveAutomationOccurrence(
   timeZone: string,
 ): CfmAutomationOccurrence {
   const timestamp = Date.parse(now);
-  if (!Number.isFinite(timestamp))
+  if (!Number.isFinite(timestamp)) {
     throw new Error('Invalid automation timestamp');
+  }
   const today = getAutomationDay(timestamp, timeZone);
   if (job.schedule === 'interval') {
     if (
       !Number.isSafeInteger(job.intervalMinutes) ||
       Number(job.intervalMinutes) < 1
-    )
+    ) {
       throw new Error('Interval jobs require a positive interval');
+    }
     const interval = Number(job.intervalMinutes) * 60000;
     const slot = Math.floor(timestamp / interval);
     return {

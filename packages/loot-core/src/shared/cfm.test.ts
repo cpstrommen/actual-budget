@@ -15,6 +15,7 @@ import {
   allocateAnnualPlan,
   assertCfmDate,
   buildBalanceSheet,
+  cfmBankSyncTimestamp,
   getAccountBalances,
   getAnnualPlanPerformance,
   getAssetValuation,
@@ -83,6 +84,63 @@ const liquidClasses = [
   { ...classification, accountId: 'savings' },
 ];
 const opening = [tx('open', 'checking', '2026-01-01', 100000)];
+
+it('reads native bank refresh timestamps and ISO imports without treating an epoch string as fresh forever', () => {
+  const timestamp = Date.parse('2026-10-31T12:00:00Z');
+  expect(cfmBankSyncTimestamp(String(timestamp))).toBe(timestamp);
+  expect(cfmBankSyncTimestamp('2026-10-31T12:00:00Z')).toBe(timestamp);
+  expect(cfmBankSyncTimestamp('invalid')).toBe(0);
+});
+it('deducts an explicit card payment once against several charges in the same cycle', () => {
+  const card: CfmAccountClassification = {
+    ...classification,
+    accountId: 'card',
+    kind: 'credit-card',
+    isLiquid: false,
+    statementDay: 15,
+    paymentDay: 10,
+    paymentAccountId: 'checking',
+  };
+  const result = projectLiquidity({
+    accounts: [...cashAccounts, { id: 'card', name: 'Card' }],
+    classifications: [...liquidClasses, card],
+    transactions: opening,
+    events: [
+      {
+        id: 'charge-1',
+        date: '2026-01-02',
+        accountId: 'card',
+        amount: -10000,
+        currency,
+        source: 'schedule',
+      },
+      {
+        id: 'charge-2',
+        date: '2026-01-03',
+        accountId: 'card',
+        amount: -20000,
+        currency,
+        source: 'schedule',
+      },
+      {
+        id: 'part-payment',
+        date: '2026-02-10',
+        accountId: 'checking',
+        transferAccountId: 'card',
+        amount: -5000,
+        currency,
+        source: 'schedule',
+      },
+    ],
+    startDate: '2026-01-01',
+    endDate: '2026-02-28',
+    currency,
+  });
+  expect(result.closingLiquidity).toBe(70000);
+  expect(result.daily.find(row => row.date === '2026-02-10')?.outflows).toBe(
+    30000,
+  );
+});
 
 function forecast(events: CfmForecastEvent[] = []) {
   return projectLiquidity({
@@ -464,10 +522,11 @@ describe('CFM liquidity projection', () => {
       endDate: '2026-01-31',
     });
     expect(result.closingLiquidity).toBe(90000);
-    for (const point of result.daily)
+    for (const point of result.daily) {
       expect(point.closing).toBe(
         point.opening + point.inflows - point.outflows,
       );
+    }
     expect(result.monthly[0]?.closing).toBe(result.closingLiquidity);
   });
 

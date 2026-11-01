@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 
 import { Button } from '@actual-app/components/button';
 import { theme } from '@actual-app/components/theme';
-import { send } from '@actual-app/core/platform/client/connection';
+import { listen, send } from '@actual-app/core/platform/client/connection';
 import type {
   CfmAccountKind,
   CfmRecord,
@@ -21,10 +21,10 @@ import { CfmReports } from './CfmReports';
 import {
   Choice,
   Field,
-  Panel,
   fieldStyle,
   gridStyle,
   newId,
+  Panel,
   parseMoney,
   today,
 } from './ui';
@@ -40,21 +40,36 @@ type Tab =
   | 'automation';
 export function CfmWorkspace() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [state, setState] = useState<CfmState | null>(null);
-  const [tab, setTab] = useState<Tab>('overview');
+  const [tab, setTab] = useState<Tab>(
+    searchParams.get('tab') === 'automation' ? 'automation' : 'overview',
+  );
   const [asOf, setAsOf] = useState(today());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [name, setName] = useState('');
   const [kind, setKind] = useState<CfmAccountKind>('asset');
   const [opening, setOpening] = useState('0');
+  const [createRequestId, setCreateRequestId] = useState(newId);
   const reportError = (value: unknown) =>
-    setError(value instanceof Error ? value.message : String(value));
+    setError(
+      value instanceof Error
+        ? value.message
+        : typeof value === 'object' && value && 'message' in value
+          ? String(value.message)
+          : JSON.stringify(value),
+    );
   async function refresh() {
     setState(await send('cfm-get-state'));
   }
   useEffect(() => {
     void refresh().catch(reportError);
+    return listen('sync-event', event => {
+      if (event.type === 'applied' || event.type === 'success') {
+        void refresh().catch(reportError);
+      }
+    });
   }, []);
   async function mutate(operation: () => Promise<unknown>): Promise<boolean> {
     setBusy(true);
@@ -70,14 +85,15 @@ export function CfmWorkspace() {
       setBusy(false);
     }
   }
-  const save: SaveRecord = (recordKind, data, id) =>
+  const save: SaveRecord = (recordKind, data, id, expectedUpdatedAt) =>
     mutate(async () => {
       const previous = state?.records.find(item => item.id === id);
       const record: CfmRecord = {
         id: id || newId(),
         kind: recordKind,
         data,
-        updatedAt: previous?.updatedAt || new Date().toISOString(),
+        updatedAt:
+          expectedUpdatedAt || previous?.updatedAt || new Date().toISOString(),
       };
       await send('cfm-save-record', { record });
     });
@@ -107,6 +123,7 @@ export function CfmWorkspace() {
   ];
   return (
     <main
+      data-cfm-workspace
       style={{
         height: '100%',
         overflow: 'auto',
@@ -115,6 +132,7 @@ export function CfmWorkspace() {
         padding: 24,
       }}
     >
+      <style>{`[data-cfm-workspace]{color-scheme:light}[data-theme="dark"] [data-cfm-workspace],[data-theme="midnight"] [data-cfm-workspace]{color-scheme:dark}@media(prefers-color-scheme:dark){[data-theme="auto"] [data-cfm-workspace]{color-scheme:dark}}`}</style>
       <header
         style={{
           display: 'flex',
@@ -140,10 +158,15 @@ export function CfmWorkspace() {
             style={fieldStyle}
             type="date"
             value={asOf}
-            onChange={event => setAsOf(event.target.value)}
+            onChange={event => {
+              if (event.target.value) setAsOf(event.target.value);
+            }}
           />
         </Field>
       </header>
+      <Button onPress={() => void refresh().catch(reportError)}>
+        <Trans>Refresh</Trans>
+      </Button>
       <nav
         aria-label={t('Cash flow management')}
         style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}
@@ -173,6 +196,7 @@ export function CfmWorkspace() {
             <>
               <CfmOverview
                 state={state}
+                initialAccountId={searchParams.get('account') || undefined}
                 asOf={asOf}
                 save={save}
                 busy={busy}
@@ -199,10 +223,11 @@ export function CfmWorkspace() {
                         initialBalance: parseMoney(opening),
                         date: asOf,
                         currency: state.currency,
-                        requestId: newId(),
+                        requestId: createRequestId,
                       });
                       setName('');
                       setOpening('0');
+                      setCreateRequestId(newId());
                     });
                   }}
                 >
@@ -249,6 +274,18 @@ export function CfmWorkspace() {
                 </form>
               </Panel>
               <Panel title={t('Your records stay portable')}>
+                {state.portability?.updatedAt && (
+                  <p>
+                    {t('Last validated recovery copy: {{date}}', {
+                      date: state.portability.updatedAt,
+                    })}
+                  </p>
+                )}
+                {state.portability?.error && (
+                  <p role="alert" style={{ color: theme.errorText }}>
+                    {state.portability.error}
+                  </p>
+                )}
                 <p>
                   <Trans>
                     Export a separate Actual Budget file and keep the CFM
@@ -340,7 +377,9 @@ export function CfmWorkspace() {
               save={save}
               busy={busy}
               onError={reportError}
-              run={() => mutate(() => send('cfm-run-automation', {}))}
+              run={resumePaused =>
+                mutate(() => send('cfm-run-automation', { resumePaused }))
+              }
             />
           )}
         </>

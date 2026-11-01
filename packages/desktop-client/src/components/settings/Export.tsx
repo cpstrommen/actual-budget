@@ -20,13 +20,25 @@ export function ExportBudget() {
   const [encryptKeyId] = useMetadataPref('encryptKeyId');
 
   async function onExportUpstream() {
-    setIsLoading(true);setError(null);
+    setIsLoading(true);
+    setError(null);
     try {
-      const result=await send('cfm-export-upstream',{});
-      await window.Actual.saveFile(result.data,`${format(new Date(),'yyyy-MM-dd')}-for-Actual-Budget.zip`,t('Save Actual Budget file'));
-      await window.Actual.saveFile(result.archive,`${format(new Date(),'yyyy-MM-dd')}-CFM-recovery.zip`,t('Save CFM recovery archive'));
-    } catch { setError('export-error'); }
-    finally {setIsLoading(false);}
+      const result = await send('cfm-export-upstream', {});
+      await window.Actual.saveFile(
+        result.data,
+        `${format(new Date(), 'yyyy-MM-dd')}-for-Actual-Budget.zip`,
+        t('Save Actual Budget file'),
+      );
+      await window.Actual.saveFile(
+        result.archive,
+        `${format(new Date(), 'yyyy-MM-dd')}-CFM-recovery.zip`,
+        t('Save CFM recovery archive'),
+      );
+    } catch {
+      setError('export-error');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function onExport() {
@@ -88,9 +100,13 @@ export function ExportBudget() {
         </>
       }
       control={
-        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-          <ButtonWithLoading onPress={onExport} isLoading={isLoading}><Trans>Export CFM backup</Trans></ButtonWithLoading>
-          <ButtonWithLoading onPress={onExportUpstream} isLoading={isLoading}><Trans>Export for Actual Budget</Trans></ButtonWithLoading>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <ButtonWithLoading onPress={onExport} isLoading={isLoading}>
+            <Trans>Export CFM backup</Trans>
+          </ButtonWithLoading>
+          <ButtonWithLoading onPress={onExportUpstream} isLoading={isLoading}>
+            <Trans>Export for Actual Budget</Trans>
+          </ButtonWithLoading>
         </div>
       }
     >

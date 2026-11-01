@@ -1,10 +1,10 @@
 // @ts-strict-ignore
 
 import * as connection from '#platform/server/connection';
+import { assertCfmTransactionChanges } from '#server/cfm/transaction-guard';
 import * as db from '#server/db';
 import { incrFetch, whereIn } from '#server/db/util';
 import { batchMessages } from '#server/sync';
-import { assertCfmTransactionChanges } from '#server/cfm/transaction-guard';
 import type { Diff } from '#shared/util';
 import type { PayeeEntity, TransactionEntity } from '#types/models';
 
@@ -33,7 +33,7 @@ async function getTransactionsByIds(
     (query, params) => db.selectWithSchema('transactions', query, params),
     ids,
 
-    id => `id = '${id}'`,
+    id => `id = '${id.replaceAll("'", "''")}'`,
     where => `SELECT * FROM v_transactions_internal WHERE ${where}`,
   );
 }
@@ -50,7 +50,7 @@ export async function batchUpdateTransactions({
   detectOrphanPayees?: boolean;
   runTransfers?: boolean;
 }) {
-  if(runTransfers)await assertCfmTransactionChanges(updated,deleted);
+  if (runTransfers) await assertCfmTransactionChanges(updated, deleted);
   // Track the ids of each type of transaction change (see below for why)
   let addedIds = [];
   const updatedIds = updated ? updated.map(u => u.id) : [];
@@ -114,6 +114,7 @@ export async function batchUpdateTransactions({
     if (updated) {
       await Promise.all(
         updated.map(async t => {
+          if (t.is_parent) t.category = null;
           if (t.account) {
             // Moving transactions off budget should always clear the
             // category. Parent transactions should not have categories.

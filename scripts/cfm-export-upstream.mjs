@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Offline recovery from a native Actual CFM ZIP. No server or credentials used.
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { realpathSync } from 'node:fs';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -15,7 +16,7 @@ export async function exportOffline(input, outputDirectory, api) {
     await api.importBudget(source, { filename: path.basename(input) });
     const exported = await api.exportForActualBudget();
     const destination = path.resolve(outputDirectory);
-    await mkdir(destination, { recursive: true, mode: 0o700 });
+    await mkdir(destination, { mode: 0o700 });
     // Never overwrite an earlier recovery or the source backup.
     await writeFile(
       path.join(destination, 'actual-budget.zip'),
@@ -66,7 +67,7 @@ async function main() {
 }
 if (
   process.argv[1] &&
-  import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
+  realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   main().catch(error => {
     process.stderr.write(`Recovery failed: ${error.message}\n`);

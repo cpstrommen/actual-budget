@@ -17,9 +17,9 @@ import {
   Choice,
   DataTable,
   Field,
-  Panel,
   fieldStyle,
   gridStyle,
+  Panel,
 } from './ui';
 import type { SaveRecord } from './ui';
 
@@ -28,7 +28,7 @@ type Props = {
   save: SaveRecord;
   busy: boolean;
   onError: (error: unknown) => void;
-  run: () => Promise<boolean>;
+  run: (resumePaused?: boolean) => Promise<boolean>;
 };
 function isJob(record: CfmRecord): record is CfmRecord<CfmAutomationJobState> {
   return (
@@ -114,8 +114,9 @@ export function CfmAutomation({ state, save, busy, onError, run }: Props) {
                 label={t('Execution mode')}
                 value={config.mode}
                 onChange={value => {
-                  if (value === 'application' || value === 'headless')
+                  if (value === 'application' || value === 'headless') {
                     patch({ mode: value });
+                  }
                 }}
                 options={[
                   ['application', t('Running application')],
@@ -241,6 +242,13 @@ export function CfmAutomation({ state, save, busy, onError, run }: Props) {
                 }}
               >
                 <Trans>Check and run due jobs now</Trans>
+              </Button>
+              <Button
+                onPress={() => {
+                  void run(true);
+                }}
+              >
+                <Trans>Retry paused jobs after reconnecting</Trans>
               </Button>
             </p>
           </fieldset>

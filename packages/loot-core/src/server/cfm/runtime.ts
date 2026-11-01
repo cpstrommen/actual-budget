@@ -4,8 +4,7 @@ import * as asyncStorage from '#platform/server/asyncStorage';
 import { app as accountsApp } from '#server/accounts/app';
 import { runMutator } from '#server/mutators';
 import * as prefs from '#server/prefs';
-import { batchMessages } from '#server/sync';
-import { getCfmRecords, valueAsset } from '#shared/cfm';
+import { cfmBankSyncTimestamp, getCfmRecords, valueAsset } from '#shared/cfm';
 import {
   defaultAutomationConfig,
   validateAutomationConfig,
@@ -21,7 +20,7 @@ import {
   createBankSyncJobs,
   runCfmAutomation,
 } from './automation';
-import { getDeviceId, readRecords } from './store';
+import { getDeviceId } from './store';
 import { runReport } from './views';
 
 let running = false;
@@ -29,10 +28,12 @@ export async function runAutomation({
   now = new Date().toISOString(),
   deviceId,
   mode = 'application',
+  resumePaused = false,
 }: {
   now?: string;
   deviceId?: string;
   mode?: 'application' | 'headless';
+  resumePaused?: boolean;
 } = {}) {
   if (running) return { status: 'paused', reason: 'already-running', jobs: [] };
   running = true;
@@ -43,20 +44,42 @@ export async function runAutomation({
       ? validateAutomationConfig(raw.data)
       : defaultAutomationConfig();
     const providerMinimums: Record<string, number> = {};
-    for (const account of state.accounts)
+    for (const account of state.accounts) {
       providerMinimums[account.id] =
         account.account_sync_source === 'goCardless'
           ? 360
           : account.account_sync_source === 'simpleFin'
             ? 60
             : 15;
+    }
+    const simpleFinIds = config.bankConnectionIds.filter(id =>
+      state.accounts.some(
+        account =>
+          account.id === id && account.account_sync_source === 'simpleFin',
+      ),
+    );
     const jobs: CfmAutomationJob[] = createBankSyncJobs(
-      config,
+      {
+        ...config,
+        bankConnectionIds: config.bankConnectionIds.filter(
+          id => !simpleFinIds.includes(id),
+        ),
+      },
       providerMinimums,
     );
-    if (config.postAssetValuations)
-      for (const asset of getCfmRecords(state.records, 'asset'))
-        if (asset.data.policy.method !== 'manual')
+    if (simpleFinIds.length) {
+      jobs.push({
+        id: 'bank:simplefin-batch',
+        kind: 'bank-sync',
+        schedule: 'interval',
+        intervalMinutes: Math.max(60, config.bankSyncIntervalMinutes),
+        payload: { accountIds: simpleFinIds },
+      });
+    }
+
+    if (config.postAssetValuations) {
+      for (const asset of getCfmRecords(state.records, 'asset')) {
+        if (asset.data.policy.method !== 'manual') {
           jobs.push({
             id: `asset:${asset.id}`,
             kind: 'asset-valuation',
@@ -70,7 +93,10 @@ export async function runAutomation({
                     : 'daily',
             payload: { assetId: asset.id },
           });
-    if (config.generateReports)
+        }
+      }
+    }
+    if (config.generateReports) {
       for (const template of state.records.filter(
         record => record.kind === 'report-template',
       )) {
@@ -84,14 +110,16 @@ export async function runAutomation({
           (auto.cadence === 'monthly' ||
             auto.cadence === 'quarterly' ||
             auto.cadence === 'annual')
-        )
+        ) {
           jobs.push({
             id: `report:${template.id}`,
             kind: 'report',
             schedule: auto.cadence,
             payload: { templateId: template.id },
           });
+        }
       }
+    }
     const key = `${prefs.getPrefs()?.id || ''}`;
     const load = async (
       jobId: string,
@@ -102,6 +130,7 @@ export async function runAutomation({
     return await runCfmAutomation({
       config,
       jobs,
+      resumePaused,
       context: {
         deviceId: deviceId || (await getDeviceId()),
         ownerId: uuidv4(),
@@ -114,8 +143,9 @@ export async function runAutomation({
         compareAndSet: (jobId, expectedRevision, next) =>
           runMutator(async () => {
             const states = (await asyncStorage.getItem('cfm-job-states')) || {};
-            if (states[`${key}:${jobId}`]?.revision !== expectedRevision)
+            if (states[`${key}:${jobId}`]?.revision !== expectedRevision) {
               return false;
+            }
             await asyncStorage.setItem('cfm-job-states', {
               ...states,
               [`${key}:${jobId}`]: next,
@@ -124,35 +154,85 @@ export async function runAutomation({
           }),
       },
       execute: async ({ job, occurrence, idempotencyKey, priorFailures }) => {
-        const operationId = idempotencyKey.replace(/[^A-Za-z0-9:_-]/g, '_');
+        const digest = await crypto.subtle.digest(
+          'SHA-256',
+          new TextEncoder().encode(idempotencyKey),
+        );
+        const operationId =
+          'cfm-job-' +
+          [...new Uint8Array(digest)]
+            .map(value => value.toString(16).padStart(2, '0'))
+            .join('');
+
         if (job.kind === 'bank-sync') {
-          const account = state.accounts.find(
-            item => item.id === job.payload.connectionId,
-          );
-          if (!account?.account_sync_source)
+          const ids = Array.isArray(job.payload.accountIds)
+            ? job.payload.accountIds
+            : [String(job.payload.connectionId)];
+          const accounts = state.accounts.filter(item => ids.includes(item.id));
+          if (
+            !accounts.length ||
+            accounts.some(account => !account.account_sync_source)
+          ) {
             throw new CfmAutomationError('Bank connection is unavailable', {
               retryable: false,
               needsReauthorization: true,
             });
-          const result = await accountsApp.handlers['accounts-bank-sync']({
-            ids: [account.id],
-          });
-          if ('errors' in result && result.errors?.length)
-            throw new CfmAutomationError(JSON.stringify(result.errors), {
-              needsReauthorization: JSON.stringify(result.errors).includes(
-                'reauth',
+          }
+          const due = accounts.filter(
+            account =>
+              !account.last_sync ||
+              Date.parse(now) - cfmBankSyncTimestamp(account.last_sync) >=
+                Math.max(
+                  config.bankSyncIntervalMinutes,
+                  providerMinimums[account.id],
+                ) *
+                  60000,
+          );
+          if (!due.length) return;
+          const errors = Array.isArray(job.payload.accountIds)
+            ? (
+                await accountsApp.handlers['simplefin-batch-sync']({
+                  ids: due.map(account => account.id),
+                })
+              ).flatMap(item => item.res.errors)
+            : (
+                await accountsApp.handlers['accounts-bank-sync']({
+                  ids: due.map(account => account.id),
+                })
+              ).errors;
+          if (errors.length) {
+            throw new CfmAutomationError(JSON.stringify(errors), {
+              needsReauthorization: /reauth|expired|unauthorized/i.test(
+                JSON.stringify(errors),
               ),
-              retryAfterSeconds: 60,
+              retryAfterSeconds: /rate.?limit|429|too many/i.test(
+                JSON.stringify(errors),
+              )
+                ? Math.max(
+                    ...accounts.map(account => providerMinimums[account.id]),
+                  ) * 60
+                : 60,
             });
+          }
         } else if (job.kind === 'asset-valuation') {
           const current = await getState();
           const asset = getCfmRecords(current.records, 'asset').find(
             item => item.id === job.payload.assetId,
           );
-          if (!asset)
+          if (!asset) {
             throw new CfmAutomationError('Asset no longer exists', {
               retryable: false,
             });
+          }
+          if (occurrence.effectiveDate < asset.data.acquisitionDate) return;
+          if (
+            asset.data.disposalDate &&
+            asset.data.observations?.some(
+              row => row.date >= asset.data.disposalDate! && row.value === 0,
+            )
+          ) {
+            return;
+          }
           const value = valueAsset(asset.data, occurrence.effectiveDate).value;
           await runMutator(() =>
             valueAssetAccount({
@@ -160,7 +240,7 @@ export async function runAutomation({
               date: occurrence.effectiveDate,
               value,
               reason: 'Scheduled non-cash asset valuation',
-            modeled: true,
+              modeled: true,
               requestId: operationId,
             }),
           );
@@ -168,6 +248,10 @@ export async function runAutomation({
           await runMutator(() =>
             runReport({
               templateId: String(job.payload.templateId),
+              timeZone: config.timeZone,
+              warnings: priorFailures.map(
+                message => `Scheduled refresh failed before report: ${message}`,
+              ),
               asOf: occurrence.endDate,
               startDate: occurrence.startDate,
               endDate: occurrence.endDate,

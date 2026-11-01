@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 
@@ -57,8 +57,9 @@ const migrations = [];
 for (const path of files) {
   const code = read(path);
   const id = Number(path.split('/').at(-1).split('_')[0]);
-  if (path.endsWith('.sql')) db.exec(code);
-  else {
+  if (path.endsWith('.sql')) {
+    db.exec(code);
+  } else {
     // Schema generation runs the pinned migration body with an empty seed dataset.
     // Dashboard defaults are rows, subsequently copied from the user's snapshot.
     const body = code.replace(/^import[\s\S]*?from ['"][^'"]+['"];\s*/gm, '');
@@ -89,11 +90,12 @@ const schema = db
   )
   .all();
 const tables = {};
-for (const item of schema.filter(x => x.type === 'table'))
+for (const item of schema.filter(x => x.type === 'table')) {
   tables[item.name] = db
-    .prepare(`PRAGMA table_info("${item.name}")`)
+    .prepare(`PRAGMA table_info("${String(item.name)}")`)
     .all()
     .map(x => ({ name: x.name, type: x.type, pk: x.pk }));
+}
 const manifest = {
   formatVersion: 1,
   upstreamVersion: '26.10.0',

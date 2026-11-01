@@ -43,6 +43,7 @@ import type {
 import * as link from './link';
 import { getStartingBalancePayee } from './payees';
 import * as bankSync from './sync';
+import { runBankSyncLocked } from './sync-lock';
 
 // Shared base type for link account parameters
 type LinkAccountBaseParams = {
@@ -1825,7 +1826,11 @@ app.method('pluggyai-accounts', pluggyAiAccounts);
 app.method('akahu-accounts', akahuAccounts);
 app.method('gocardless-get-banks', getGoCardlessBanks);
 app.method('gocardless-create-web-token', createGoCardlessWebToken);
-app.method('accounts-bank-sync', accountsBankSync);
-app.method('simplefin-batch-sync', simpleFinBatchSync);
+app.method('accounts-bank-sync', args =>
+  runBankSyncLocked('accounts', args.ids, () => accountsBankSync(args)),
+);
+app.method('simplefin-batch-sync', args =>
+  runBankSyncLocked('simplefin', args.ids, () => simpleFinBatchSync(args)),
+);
 app.method('transactions-import', mutator(undoable(importTransactions)));
 app.method('account-unlink', mutator(unlinkAccount));

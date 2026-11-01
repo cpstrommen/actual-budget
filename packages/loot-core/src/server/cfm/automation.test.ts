@@ -239,10 +239,11 @@ describe('CFM durable automation', () => {
       jobs: [report, job],
       execute: async e => {
         order.push(e.job.kind);
-        if (e.job.kind === 'bank-sync')
+        if (e.job.kind === 'bank-sync') {
           throw new CfmAutomationError('Reconnect bank', {
             needsReauthorization: true,
           });
+        }
         failures = e.priorFailures;
       },
     });

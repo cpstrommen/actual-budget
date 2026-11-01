@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
+import { send } from '@actual-app/core/platform/client/connection';
 import { getAnnualPlanPerformance } from '@actual-app/core/shared/cfm';
 import type {
   CfmAnnualPlan,
   CfmRecord,
   CfmState,
 } from '@actual-app/core/types/models/cfm';
+import { addYears, format, parseISO } from 'date-fns';
 
 import { isAnnualPlan } from './records';
 import {
@@ -16,11 +18,12 @@ import {
   Choice,
   DataTable,
   Field,
-  Money,
-  Panel,
   fieldStyle,
   gridStyle,
+  Money,
   moneyInput,
+  newId,
+  Panel,
   parseMoney,
 } from './ui';
 import type { DeleteRecord, SaveRecord } from './ui';
@@ -105,7 +108,7 @@ export function CfmAnnualPlanning({
             };
           }),
       };
-      if (await save('annual-plan', data, editing?.id)) {
+      if (await save('annual-plan', data, editing?.id, editing?.updatedAt)) {
         setEditing(null);
         setAmount('');
         setMonthly('');
@@ -192,7 +195,9 @@ export function CfmAnnualPlanning({
                   <Money amount={performance.remaining} />
                 </Cell>
                 <Cell>
-                  <Action onPress={() => edit(record)}>{t('Edit')}</Action>
+                  <Action onPress={() => edit(record)}>
+                    <Trans>Edit</Trans>
+                  </Action>
                   <Action
                     disabled={busy}
                     onPress={() => {
@@ -202,20 +207,49 @@ export function CfmAnnualPlanning({
                         revision: 1,
                         datedAmounts: record.data.datedAmounts?.map(item => ({
                           ...item,
-                          date: `${record.data.year + 1}${item.date.slice(4)}`,
+                          date: format(
+                            addYears(parseISO(item.date), 1),
+                            'yyyy-MM-dd',
+                          ),
                         })),
                       });
                     }}
                   >
-                    {t('Copy to next year')}
+                    <Trans>Copy to next year</Trans>
                   </Action>
+                  <details>
+                    <summary>
+                      <Trans>Monthly funding preview</Trans>
+                    </summary>
+                    <p>
+                      {performance.monthlyAmounts.map(moneyInput).join(' · ')}
+                    </p>
+                    <p>
+                      <Trans>
+                        Applying replaces this category's twelve monthly budget
+                        amounts. Annual plans remain separate until you apply
+                        them.
+                      </Trans>
+                    </p>
+                    <Action
+                      disabled={busy}
+                      onPress={() => {
+                        void send('cfm-apply-annual-plan', {
+                          id: record.id,
+                          requestId: newId(),
+                        }).catch(onError);
+                      }}
+                    >
+                      <Trans>Apply all twelve amounts to monthly budgets</Trans>
+                    </Action>
+                  </details>
                   <Action
                     disabled={busy}
                     onPress={() => {
                       void remove(record);
                     }}
                   >
-                    {t('Delete')}
+                    <Trans>Delete</Trans>
                   </Action>
                 </Cell>
               </tr>
@@ -269,8 +303,9 @@ export function CfmAnnualPlanning({
                     value === 'equal' ||
                     value === 'monthly' ||
                     value === 'weighted'
-                  )
+                  ) {
                     setMethod(value);
+                  }
                 }}
                 options={[
                   ['equal', t('Equal monthly amounts')],
@@ -328,7 +363,7 @@ export function CfmAnnualPlanning({
               </Button>
               {editing && (
                 <Button onPress={() => setEditing(null)}>
-                  {t('Cancel editing')}
+                  <Trans>Cancel editing</Trans>
                 </Button>
               )}
             </p>

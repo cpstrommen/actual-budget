@@ -3,13 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import * as asyncStorage from '#platform/server/asyncStorage';
 import { createApp } from '#server/app';
 import { aqlQuery } from '#server/aql';
+import { setBudget } from '#server/budget/actions';
 import * as db from '#server/db';
-import { mutator, runMutator } from '#server/mutators';
+import { mutator } from '#server/mutators';
 import * as prefs from '#server/prefs';
 import { batchMessages } from '#server/sync';
 import { batchUpdateTransactions } from '#server/transactions';
 import { undoable } from '#server/undo';
 import {
+  allocateAnnualPlan,
   assertCfmAmount,
   assertCfmCurrency,
   assertCfmDate,
@@ -22,11 +24,7 @@ import {
 import { validateAutomationConfig } from '#shared/cfm-automation';
 import { validateReportTemplate } from '#shared/cfm-reports';
 import { q } from '#shared/query';
-import type {
-  AccountEntity,
-  CategoryEntity,
-  TransactionEntity,
-} from '#types/models';
+import type { TransactionEntity } from '#types/models';
 import type {
   CfmAccountKind,
   CfmAsset,
@@ -68,6 +66,7 @@ export async function getState(): Promise<CfmState> {
       ),
       getDeviceId(),
     ]);
+  const portability = await asyncStorage.getItem('cfm-portability-status');
   const jobStates = await getAutomationStates();
   records.push(
     ...jobStates.map(job => ({
@@ -84,6 +83,7 @@ export async function getState(): Promise<CfmState> {
     records,
     currency: currency?.value || 'USD',
     deviceId,
+    ...(portability?.budgetId === prefs.getPrefs()?.id ? { portability } : {}),
   };
 }
 
@@ -111,8 +111,9 @@ export async function createAccount(options: CreateCfmAccountOptions) {
     currency,
   };
   const previous = await priorOperation(requestId, request);
-  if (previous && typeof previous.accountId === 'string')
+  if (previous && typeof previous.accountId === 'string') {
     return { accountId: previous.accountId };
+  }
   const accountId = `cfm-account-${requestId}`;
   const classification: CfmRecord = {
     id: `classification:${accountId}:${date}`,
@@ -140,7 +141,7 @@ export async function createAccount(options: CreateCfmAccountOptions) {
       name: '',
       transfer_acct: accountId,
     });
-    if (initialBalance)
+    if (initialBalance) {
       await db.insertTransaction({
         id: `cfm-opening-${requestId}`,
         account: accountId,
@@ -150,6 +151,7 @@ export async function createAccount(options: CreateCfmAccountOptions) {
         starting_balance_flag: true,
         notes: 'Opening balance',
       });
+    }
     await writeRecord(classification);
     await completeOperation(requestId, request, { accountId });
   });
@@ -167,17 +169,20 @@ export async function saveRecord({
     record.kind === 'audit' ||
     record.kind === 'settlement' ||
     record.kind === 'report-run'
-  )
+  ) {
     throw new Error('Use the dedicated financial operation for this record');
+  }
   if (record.kind === 'report-template') validateReportTemplate(record.data);
   if (record.kind === 'automation') validateAutomationConfig(record.data);
   const previous = state.records.find(item => item.id === record.id);
-  if (previous && previous.kind !== record.kind)
+  if (previous && previous.kind !== record.kind) {
     throw new Error('A record cannot change its kind');
-  if (previous && previous.updatedAt !== record.updatedAt)
+  }
+  if (previous && previous.updatedAt !== record.updatedAt) {
     throw new Error(
       'This record changed on another device. Refresh before saving.',
     );
+  }
   if (
     record.kind === 'annual-plan' &&
     state.records.some(
@@ -187,8 +192,9 @@ export async function saveRecord({
         item.data.categoryId === record.data.categoryId &&
         item.data.year === record.data.year,
     )
-  )
+  ) {
     throw new Error('Edit the existing plan for this category and year');
+  }
   if (
     record.kind === 'asset' &&
     state.records.some(
@@ -197,40 +203,79 @@ export async function saveRecord({
         item.kind === 'asset' &&
         item.data.accountId === record.data.accountId,
     )
-  )
+  ) {
     throw new Error('An asset policy already exists for this account');
+  }
   if (
     record.kind === 'obligation' &&
     previous &&
-    ['amount', 'date', 'direction', 'accountId', 'sourceTransactionId', 'existingBalance'].some(
-      key => previous.data[key] !== record.data[key],
-    )
-  )
+    [
+      'amount',
+      'date',
+      'direction',
+      'accountId',
+      'sourceTransactionId',
+      'existingBalance',
+      'counterAccountId',
+      'categoryId',
+    ].some(key => previous.data[key] !== record.data[key])
+  ) {
     throw new Error(
       'Reverse an obligation before changing its original financial terms',
     );
-  const next: CfmRecord = { ...record, updatedAt: new Date().toISOString() };
-  if(next.kind==='asset') {
-    const typed=getCfmRecords([next],'asset')[0]!;
-    const account=state.accounts.find(item=>item.id===typed.data.accountId);
-    if(!account?.offbudget || account.closed || account.account_sync_source || account.bank)throw new Error('An asset requires an open manual tracking account');
-    const old=getCfmRecords(previous?[previous]:[],'asset')[0];
-    if(old) {
-      if(['accountId','acquisitionDate','acquisitionValue'].some(key=>previous?.data[key]!==next.data[key]))throw new Error('Original acquisition terms are immutable; record a new observation');
-      if(JSON.stringify(old.data.policy)!==JSON.stringify(typed.data.policy) && typed.data.policy.effectiveDate<=old.data.policy.effectiveDate)throw new Error('A policy revision needs a later effective date; historical policies are preserved');
-      typed.data.observations=old.data.observations;
-      typed.data.policyHistory=JSON.stringify(old.data.policy)===JSON.stringify(typed.data.policy)?old.data.policyHistory:[...(old.data.policyHistory||[]),old.data.policy];
-    }
-    next.data={...typed.data};
   }
-  if (next.kind === 'annual-plan')
+  const next: CfmRecord = { ...record, updatedAt: new Date().toISOString() };
+  if (next.kind === 'asset') {
+    const typed = getCfmRecords([next], 'asset')[0]!;
+    const account = state.accounts.find(
+      item => item.id === typed.data.accountId,
+    );
+    if (
+      !account?.offbudget ||
+      account.closed ||
+      account.account_sync_source ||
+      account.bank
+    ) {
+      throw new Error('An asset requires an open manual tracking account');
+    }
+    const old = getCfmRecords(previous ? [previous] : [], 'asset')[0];
+    if (old) {
+      if (
+        ['accountId', 'acquisitionDate', 'acquisitionValue'].some(
+          key => previous?.data[key] !== next.data[key],
+        )
+      ) {
+        throw new Error(
+          'Original acquisition terms are immutable; record a new observation',
+        );
+      }
+      if (
+        JSON.stringify(old.data.policy) !== JSON.stringify(typed.data.policy) &&
+        typed.data.policy.effectiveDate <= old.data.policy.effectiveDate &&
+        !typed.data.policyRestatementReason?.trim()
+      ) {
+        throw new Error(
+          'A policy revision needs a later effective date; historical policies are preserved',
+        );
+      }
+      typed.data.observations = old.data.observations;
+      typed.data.policyHistory =
+        JSON.stringify(old.data.policy) === JSON.stringify(typed.data.policy)
+          ? old.data.policyHistory
+          : [...(old.data.policyHistory || []), old.data.policy];
+    }
+    next.data = { ...typed.data };
+  }
+  if (next.kind === 'annual-plan') {
     next.data = {
       ...next.data,
       revision: Number(previous?.data.revision || 0) + 1,
     };
+  }
   await batchMessages(async () => {
-    if (next.kind === 'obligation' && !previous)
+    if (next.kind === 'obligation' && !previous) {
       await bookObligation(next, state);
+    }
     await writeRecord(next);
     await appendAudit(previous ? 'record-updated' : 'record-created', {
       recordId: record.id,
@@ -249,10 +294,11 @@ export async function deleteRecord({ id }: { id: string }): Promise<void> {
     record.kind === 'settlement' ||
     record.kind === 'audit' ||
     record.kind === 'report-run'
-  )
+  ) {
     throw new Error(
       'Financial history must be settled or reversed rather than deleted',
     );
+  }
   await batchMessages(async () => {
     await removeRecord(id);
     await appendAudit('record-deleted', { record });
@@ -265,8 +311,9 @@ export type SetBalanceOptions = {
   date: string;
   reason?: string;
   requestId: string;
+  expectedBalance?: number;
 };
-async function adjustment(options: SetBalanceOptions, requireManual = true) {
+async function adjustment(options: SetBalanceOptions) {
   const { accountId, targetBalance, date, reason, requestId } = options;
   assertCfmAmount(targetBalance);
   assertCfmDate(date);
@@ -279,27 +326,44 @@ async function adjustment(options: SetBalanceOptions, requireManual = true) {
     reason: reason || '',
   };
   const old = await priorOperation(requestId, request);
-  if (old)
+  if (old) {
     return {
       transactionId:
         typeof old.transactionId === 'string' ? old.transactionId : null,
       adjustment: Number(old.adjustment),
       balance: Number(old.balance),
     };
+  }
   const state = await getState();
-  if(getCfmRecords(state.records,'obligation').some(row=>row.data.accountId===accountId))throw new Error('Managed AR/AP balances must be changed through their obligations');
+  if (
+    getCfmRecords(state.records, 'obligation').some(
+      row => row.data.accountId === accountId,
+    )
+  ) {
+    throw new Error(
+      'Managed AR/AP balances must be changed through their obligations',
+    );
+  }
   const account = state.accounts.find(item => item.id === accountId);
   if (
     !account ||
     account.closed ||
-    (requireManual &&
-      (!account.offbudget ||
-        account.account_sync_source ||
-        account.account_id ||
-        account.bank))
-  )
+    !account.offbudget ||
+    account.account_sync_source ||
+    account.account_id ||
+    account.bank
+  ) {
     throw new Error('Set balance requires an open manual off-budget account');
+  }
   const balance = getAccountBalances(state.transactions, date)[accountId] || 0;
+  if (
+    options.expectedBalance !== undefined &&
+    options.expectedBalance !== balance
+  ) {
+    throw new Error(
+      'The ledger changed after the preview. Refresh and review the adjustment again.',
+    );
+  }
   const difference = targetBalance - balance;
   assertCfmAmount(difference);
   const transactionId = difference ? `cfm-adjustment-${requestId}` : null;
@@ -309,7 +373,7 @@ async function adjustment(options: SetBalanceOptions, requireManual = true) {
     balance: targetBalance,
   };
   await batchMessages(async () => {
-    if (transactionId)
+    if (transactionId) {
       await db.insertTransaction({
         id: transactionId,
         account: accountId,
@@ -319,6 +383,7 @@ async function adjustment(options: SetBalanceOptions, requireManual = true) {
         reconciled: false,
         notes: `CFM balance adjustment${reason ? ': ' + reason : ''}`,
       });
+    }
     await appendAudit('balance-observation', {
       accountId,
       date,
@@ -343,7 +408,7 @@ export async function valueAssetAccount({
   value,
   reason,
   requestId,
-  modeled=false,
+  modeled = false,
 }: {
   assetId: string;
   date: string;
@@ -357,23 +422,22 @@ export async function valueAssetAccount({
   const state = await getState();
   const typed = getCfmRecords([asset], 'asset')[0];
   if (!typed) throw new Error('Asset not found');
-  if(date<typed.data.acquisitionDate)throw new Error('A valuation cannot predate acquisition');
-  if(modeled)value=valueAsset(typed.data,date).value;
+  if (date < typed.data.acquisitionDate) {
+    throw new Error('A valuation cannot predate acquisition');
+  }
+  if (modeled) value = valueAsset(typed.data, date).value;
   const existing = typed.data.observations?.find(item => item.id === requestId);
   if (existing) return { transactionId: existing.transactionId || null, asset };
   let result: Awaited<ReturnType<typeof adjustment>> | undefined;
   let next: CfmRecord<CfmAsset> | undefined;
   await batchMessages(async () => {
-    result = await adjustment(
-      {
-        accountId: typed.data.accountId,
-        targetBalance: value,
-        date,
-        reason: reason || 'Asset valuation',
-        requestId,
-      },
-      false,
-    );
+    result = await adjustment({
+      accountId: typed.data.accountId,
+      targetBalance: value,
+      date,
+      reason: reason || 'Asset valuation',
+      requestId,
+    });
     next = {
       ...typed,
       updatedAt: new Date().toISOString(),
@@ -407,8 +471,9 @@ async function transferPayee(accountId: string): Promise<string> {
     'SELECT id FROM payees WHERE transfer_acct = ? AND tombstone = 0',
     [accountId],
   );
-  if (!payee)
+  if (!payee) {
     throw new Error('The control account does not have a transfer payee');
+  }
   return payee.id;
 }
 
@@ -420,6 +485,11 @@ async function allocateTransfer(
   id: string,
   state: CfmState,
 ) {
+  if (source.transfer_id) {
+    throw new Error(
+      'This transaction is already allocated to a transfer; choose an unallocated purchase, payment, or split.',
+    );
+  }
   const payee = await transferPayee(accountId);
   const existingChildren = state.transactions.filter(
     item => item.parent_id === source.id && item.is_child,
@@ -433,10 +503,11 @@ async function allocateTransfer(
     !remainder ||
     Math.sign(remainder.amount) !== Math.sign(amount) ||
     Math.abs(remainder.amount) < Math.abs(amount)
-  )
+  ) {
     throw new Error(
       'The source transaction has insufficient unallocated value',
     );
+  }
   const otherId = `cfm-counterpart-${id}`;
   const child: TransactionEntity = {
     id: `cfm-allocation-${id}`,
@@ -462,7 +533,13 @@ async function allocateTransfer(
   };
   const added: TransactionEntity[] = [child, counterpart];
   const updated: Partial<TransactionEntity>[] = [];
-  if (!source.is_parent) {
+  if (source.is_child) {
+    if (source.transfer_id) {
+      throw new Error('This split is already allocated to a transfer');
+    }
+    child.parent_id = source.parent_id;
+    updated.push({ id: source.id, amount: source.amount - amount });
+  } else if (!source.is_parent) {
     updated.push({ id: source.id, is_parent: true, category: undefined });
     added.push({
       ...source,
@@ -473,7 +550,9 @@ async function allocateTransfer(
       amount: source.amount - amount,
       transfer_id: undefined,
     });
-  } else updated.push({ id: remainder.id, amount: remainder.amount - amount });
+  } else {
+    updated.push({ id: remainder.id, amount: remainder.amount - amount });
+  }
   await batchUpdateTransactions({
     added,
     updated,
@@ -483,30 +562,92 @@ async function allocateTransfer(
   return [child.id, counterpart.id];
 }
 
+export async function applyAnnualPlan({
+  id,
+  requestId,
+}: {
+  id: string;
+  requestId: string;
+}) {
+  const record = await readRecord(id);
+  const plan = getCfmRecords(record ? [record] : [], 'annual-plan')[0];
+  if (!plan) throw new Error('Annual plan not found');
+  const request = {
+    operation: 'apply-annual-plan',
+    id,
+    revision: plan.data.revision,
+  };
+  if (await priorOperation(requestId, request)) return;
+  const allocations = allocateAnnualPlan(plan.data);
+  await batchMessages(async () => {
+    for (let index = 0; index < 12; index++) {
+      await setBudget({
+        category: plan.data.categoryId,
+        month: `${plan.data.year}-${String(index + 1).padStart(2, '0')}`,
+        amount: allocations[index],
+      });
+    }
+    await appendAudit('annual-plan-applied-to-envelopes', {
+      planId: id,
+      revision: plan.data.revision,
+      allocations,
+    });
+    await completeOperation(requestId, request, { applied: true });
+  });
+}
+
 async function bookObligation(record: CfmRecord, state: CfmState) {
   const item = getCfmRecords([record], 'obligation')[0];
   if (!item) throw new Error('Invalid obligation');
   const { accountId, amount, date, direction, sourceTransactionId } = item.data;
   const account = state.accounts.find(account => account.id === accountId);
-  if (!account?.offbudget || account.account_sync_source || account.closed)
+  if (!account?.offbudget || account.account_sync_source || account.closed) {
     throw new Error(
       'Obligations require an open manual off-budget control account',
     );
+  }
   const signed = direction === 'receivable' ? amount : -amount;
-  if(item.data.existingBalance) {
-    if(sourceTransactionId)throw new Error('Choose an existing balance or a source transaction, not both');
-    const balance=(getAccountBalances(state.transactions,date)[accountId]||0)*(direction==='receivable'?1:-1);
-    const allocated=getCfmRecords(state.records,'obligation').filter(row=>row.data.accountId===accountId).reduce((total,row)=>total+getObligationStatus(row.data,getCfmRecords(state.records,'settlement'),date,row.id).outstanding,0);
-    if(amount>balance-allocated)throw new Error('Existing control balance cannot cover this allocation');
-    await appendAudit('existing-control-balance-allocated',{obligationId:record.id,accountId,date,amount,availableBefore:balance-allocated});
+  if (item.data.existingBalance) {
+    if (sourceTransactionId) {
+      throw new Error(
+        'Choose an existing balance or a source transaction, not both',
+      );
+    }
+    const balance =
+      (getAccountBalances(state.transactions, date)[accountId] || 0) *
+      (direction === 'receivable' ? 1 : -1);
+    const allocated = getCfmRecords(state.records, 'obligation')
+      .filter(row => row.data.accountId === accountId)
+      .reduce(
+        (total, row) =>
+          total +
+          getObligationStatus(
+            row.data,
+            getCfmRecords(state.records, 'settlement'),
+            date,
+            row.id,
+          ).outstanding,
+        0,
+      );
+    if (amount > balance - allocated) {
+      throw new Error('Existing control balance cannot cover this allocation');
+    }
+    await appendAudit('existing-control-balance-allocated', {
+      obligationId: record.id,
+      accountId,
+      date,
+      amount,
+      availableBefore: balance - allocated,
+    });
     return;
   }
   if (sourceTransactionId) {
     const source = state.transactions.find(
       item => item.id === sourceTransactionId,
     );
-    if (!source || source.account === accountId)
+    if (!source || source.account === accountId || source.date !== date) {
       throw new Error('Source transaction not found or is the control account');
+    }
     await allocateTransfer(
       source,
       accountId,
@@ -515,13 +656,76 @@ async function bookObligation(record: CfmRecord, state: CfmState) {
       state,
     );
   } else {
-    await db.insertTransaction({
+    const control: TransactionEntity = {
       id: `cfm-recognition-${record.id}`,
       account: accountId,
       amount: signed,
       date,
       cleared: true,
       notes: `CFM ${direction}: ${item.data.counterparty}`,
+    };
+    const counterAccount = state.accounts.find(
+      row =>
+        row.id === item.data.counterAccountId &&
+        !row.closed &&
+        row.id !== accountId,
+    );
+    if (direction === 'payable' && !counterAccount) {
+      throw new Error(
+        'Select the expense or asset account for an unpaid payable, or allocate an existing control balance',
+      );
+    }
+    const added = [control];
+    if (counterAccount) {
+      const counterId = `cfm-counterpart-recognition-${record.id}`;
+      control.transfer_id = counterId;
+      control.payee = await transferPayee(counterAccount.id);
+      const counter: TransactionEntity = {
+        id: counterId,
+        account: counterAccount.id,
+        date,
+        amount: -signed,
+        cleared: true,
+        transfer_id: control.id,
+        payee: await transferPayee(accountId),
+        notes: control.notes,
+      };
+      if (counterAccount.offbudget) {
+        added.push(counter);
+      } else {
+        if (!item.data.categoryId) {
+          throw new Error('Choose the category for the non-cash recognition');
+        }
+        const parentId = `cfm-noncash-recognition-${record.id}`;
+        added.push(
+          { ...counter, parent_id: parentId, is_child: true },
+          {
+            id: parentId,
+            account: counterAccount.id,
+            date,
+            amount: 0,
+            is_parent: true,
+            cleared: true,
+            notes: control.notes,
+          },
+          {
+            id: `cfm-noncash-category-recognition-${record.id}`,
+            account: counterAccount.id,
+            date,
+            amount: signed,
+            is_child: true,
+            parent_id: parentId,
+            category: item.data.categoryId,
+            cleared: true,
+            notes: control.notes,
+          },
+        );
+      }
+    }
+    await batchUpdateTransactions({
+      added,
+      runTransfers: false,
+      learnCategories: false,
     });
   }
 }
@@ -536,7 +740,7 @@ export type SettleOptions = {
   reversesId?: string;
   notes?: string;
   requestId: string;
-  categoryId?:string;
+  categoryId?: string;
 };
 export async function settleObligation(options: SettleOptions) {
   const {
@@ -591,10 +795,11 @@ export async function settleObligation(options: SettleOptions) {
     date,
     obligationId,
   ).outstanding;
-  if (kind !== 'reversal' && amount > outstanding)
+  if (kind !== 'reversal' && amount > outstanding) {
     throw new Error(
       'Payment exceeds the outstanding amount; record any credit separately',
     );
+  }
   if (kind === 'reversal') {
     const prior = settlements.find(
       item => item.id === reversesId && item.data.obligationId === obligationId,
@@ -604,8 +809,9 @@ export async function settleObligation(options: SettleOptions) {
       prior.data.kind === 'reversal' ||
       prior.data.amount !== amount ||
       settlements.some(item => item.data.reversesId === reversesId)
-    )
+    ) {
       throw new Error('Select an unreversed settlement with the same amount');
+    }
   }
   const signed = obligation.data.direction === 'receivable' ? -amount : amount;
   const settlement: CfmRecord<CfmSettlement> = {
@@ -617,22 +823,23 @@ export async function settleObligation(options: SettleOptions) {
       amount,
       date,
       kind,
-      ...(accountId?{accountId}:{}),
-      ...(options.categoryId?{categoryId:options.categoryId}:{}),
+      ...(accountId ? { accountId } : {}),
+      ...(options.categoryId ? { categoryId: options.categoryId } : {}),
       ...(transactionId ? { transactionId } : {}),
       ...(reversesId ? { reversesId } : {}),
       ...(notes ? { notes } : {}),
     },
   };
-  validateCfmRecord(settlement,state);
+  validateCfmRecord(settlement, state);
   let transactionIds: string[] = [];
   await batchMessages(async () => {
     if (kind === 'payment' && transactionId) {
       const source = state.transactions.find(
         item => item.id === transactionId && item.account === accountId,
       );
-      if (!source || source.date !== date)
+      if (!source || source.date !== date) {
         throw new Error('Payment transaction date/account mismatch');
+      }
       transactionIds = await allocateTransfer(
         source,
         obligation.data.accountId,
@@ -660,8 +867,9 @@ export async function settleObligation(options: SettleOptions) {
               item.id !== obligation.data.accountId &&
               !item.closed,
           )
-        )
+        ) {
           throw new Error('Choose an open payment account');
+        }
         const cashId = `cfm-payment-${requestId}`;
         control.transfer_id = cashId;
         control.payee = await transferPayee(accountId);
@@ -675,23 +883,85 @@ export async function settleObligation(options: SettleOptions) {
           payee: await transferPayee(obligation.data.accountId),
           notes: control.notes,
         });
-      } else if (kind === 'reversal' || (kind==='writeoff' && obligation.data.direction==='receivable')) {
-        const prior=settlements.find(item=>item.id===reversesId);
-        const adjustmentAccountId=kind==='reversal' ? prior?.data.accountId || accountId : accountId;
-        const category=options.categoryId || prior?.data.categoryId || obligation.data.categoryId;
-        if(kind==='writeoff' && !category)throw new Error('Select a loss category for the receivable write-off');
-        if(category && !state.categories.some(item=>item.id===category && !item.tombstone))throw new Error('Unknown adjustment category');
-        if(kind==='writeoff' || prior?.data.kind==='payment' || (prior?.data.kind==='writeoff' && obligation.data.direction==='receivable')) {
-          const adjustmentAccount=state.accounts.find(item=>item.id===adjustmentAccountId && !item.closed && !item.offbudget && item.id!==obligation.data.accountId);
-          if(!adjustmentAccount)throw new Error('Choose an open on-budget account for the non-cash expense allocation');
-          const parentId=`cfm-noncash-${requestId}`;
-          const transferId=`cfm-noncash-transfer-${requestId}`;
-          control.transfer_id=transferId;
-          control.payee=await transferPayee(adjustmentAccountId);
+      } else if (
+        kind === 'reversal' ||
+        (kind === 'writeoff' && obligation.data.direction === 'receivable')
+      ) {
+        const prior = settlements.find(item => item.id === reversesId);
+        const adjustmentAccountId =
+          kind === 'reversal' ? prior?.data.accountId || accountId : accountId;
+        const category =
+          options.categoryId ||
+          prior?.data.categoryId ||
+          obligation.data.categoryId;
+        if (kind === 'writeoff' && !category) {
+          throw new Error(
+            'Select a loss category for the receivable write-off',
+          );
+        }
+        if (
+          category &&
+          !state.categories.some(
+            item => item.id === category && !item.tombstone,
+          )
+        ) {
+          throw new Error('Unknown adjustment category');
+        }
+        if (
+          kind === 'writeoff' ||
+          prior?.data.kind === 'payment' ||
+          (prior?.data.kind === 'writeoff' &&
+            obligation.data.direction === 'receivable')
+        ) {
+          const adjustmentAccount = state.accounts.find(
+            item =>
+              item.id === adjustmentAccountId &&
+              !item.closed &&
+              !item.offbudget &&
+              item.id !== obligation.data.accountId,
+          );
+          if (!adjustmentAccount) {
+            throw new Error(
+              'Choose an open on-budget account for the non-cash expense allocation',
+            );
+          }
+          const parentId = `cfm-noncash-${requestId}`;
+          const transferId = `cfm-noncash-transfer-${requestId}`;
+          control.transfer_id = transferId;
+          control.payee = await transferPayee(adjustmentAccountId);
           added.push(
-            {id:parentId,account:adjustmentAccountId,date,amount:0,is_parent:true,cleared:true,notes:control.notes},
-            {id:transferId,account:adjustmentAccountId,date,amount:-controlAmount,is_child:true,parent_id:parentId,transfer_id:controlId,payee:await transferPayee(obligation.data.accountId),cleared:true,notes:control.notes},
-            {id:`cfm-noncash-category-${requestId}`,account:adjustmentAccountId,date,amount:controlAmount,is_child:true,parent_id:parentId,category,cleared:true,notes:control.notes},
+            {
+              id: parentId,
+              account: adjustmentAccountId,
+              date,
+              amount: 0,
+              is_parent: true,
+              cleared: true,
+              notes: control.notes,
+            },
+            {
+              id: transferId,
+              account: adjustmentAccountId,
+              date,
+              amount: -controlAmount,
+              is_child: true,
+              parent_id: parentId,
+              transfer_id: controlId,
+              payee: await transferPayee(obligation.data.accountId),
+              cleared: true,
+              notes: control.notes,
+            },
+            {
+              id: `cfm-noncash-category-${requestId}`,
+              account: adjustmentAccountId,
+              date,
+              amount: controlAmount,
+              is_child: true,
+              parent_id: parentId,
+              category,
+              cleared: true,
+              notes: control.notes,
+            },
           );
         }
       }
@@ -715,6 +985,7 @@ export async function settleObligation(options: SettleOptions) {
 }
 
 export type CfmHandlers = {
+  'cfm-apply-annual-plan': typeof applyAnnualPlan;
   'cfm-get-state': typeof getState;
   'cfm-save-record': typeof saveRecord;
   'cfm-delete-record': typeof deleteRecord;
@@ -728,6 +999,7 @@ export type CfmHandlers = {
   'cfm-export-upstream': typeof exportForActualBudget;
 };
 export const app = createApp<CfmHandlers>();
+app.method('cfm-apply-annual-plan', mutator(undoable(applyAnnualPlan)));
 app.method('cfm-get-state', getState);
 app.method('cfm-project-liquidity', projectCfmLiquidity);
 app.method('cfm-export-upstream', exportForActualBudget);
@@ -741,10 +1013,11 @@ app.method('cfm-run-report', mutator(runReport));
 app.method('cfm-run-automation', runAutomation);
 app.service(() => {
   const timer = setInterval(() => {
-    if (prefs.getPrefs()?.id)
+    if (prefs.getPrefs()?.id) {
       void runAutomation({}).catch(() => {
         /* Persisted job state exposes failures in settings. */
       });
+    }
   }, 60000);
   return () => clearInterval(timer);
 });
@@ -753,7 +1026,8 @@ app.events.on('sync', event => {
   if (
     event.type === 'applied' &&
     event.tables?.some(table => !['kvcache', 'kvcache_key'].includes(table))
-  )
+  ) {
     scheduleRecoveryExport();
+  }
 });
 app.service(() => cancelRecoveryExport);

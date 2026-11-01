@@ -2,7 +2,9 @@
 /data/*
 !data/.gitkeep
 /data2
+.cfm-worker-data/
 Actual-*
+!packages/docs/docs/actual-cfm.md
 !actual-server.js
 **/xcuserdata/*
 export-2020-01-10.csv

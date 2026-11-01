@@ -81,7 +81,7 @@ export class ConfigurationPage {
       case 'Actual CFM':
         await this.page
           .getByRole('button', {
-            name: 'Actual CFM Import a file exported from Actual CFM',
+            name: 'Actual CFM / Actual Budget Import a file exported from Actual CFM',
           })
           .click();
         await this.page.getByRole('button', { name: 'Select file...' }).click();

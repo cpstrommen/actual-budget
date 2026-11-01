@@ -3,13 +3,13 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import {
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
   mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
   symlinkSync,
   writeFileSync,
-  rmSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -18,7 +18,7 @@ import { pathToFileURL } from 'node:url';
 
 import { unzipSync } from 'fflate';
 
-const root = path.resolve(import.meta.dirname, '..');
+const root = path.resolve(import.meta.dirname, '../../..');
 const manifest = JSON.parse(
   readFileSync(
     path.join(root, 'packages/loot-core/src/server/cfm/upstream-schema.json'),
@@ -63,11 +63,12 @@ try {
     ['api', 'api'],
     ['crdt', 'crdt'],
     ['vite-plugin-peggy', 'vite-plugin-peggy'],
-  ])
+  ]) {
     symlinkSync(
       path.join(upstream, 'packages', folder),
       path.join(modules, '@actual-app', name),
     );
+  }
   execute(
     process.execPath,
     [path.join(root, 'node_modules/vite/bin/vite.js'), 'build'],
@@ -82,23 +83,16 @@ try {
     import path from 'node:path';
     const destination=process.env.CFM_TEST_DIR;
     await mkdir(path.join(destination,'cfm'));
-    await api.init({dataDir:path.join(destination,'cfm')});
+    const engine=await api.init({dataDir:path.join(destination,'cfm')});
     try {
-      let checking,card,category;
-      await api.runImport('CFM portability acceptance',async()=>{
-        checking=await api.createAccount({name:'Checking',offbudget:false});
-        card=await api.createAccount({name:'Card',offbudget:false});
-        const group=await api.createCategoryGroup({name:'Expenses',is_income:false});
-        category=await api.createCategory({name:'Entertainment',group_id:group,is_income:false});
-        await api.addTransactions(checking,[{id:'opening-checking',date:'2026-01-01',amount:100000,notes:'Original note',cleared:true,reconciled:true},{id:'refund',date:'2026-02-01',amount:1000,category}]);
-        await api.addTransactions(card,[{id:'tickets',date:'2026-01-10',amount:-40000,category,notes:'Four tickets'}]);
-      });
-      const ar=await api.createCfmAccount({name:'Receivables',kind:'receivable',initialBalance:0,date:'2026-01-01',currency:'USD',requestId:'ar'});
-      for(const friend of ['Alice','Bob','Carol'])await api.saveCfmRecord({id:friend,kind:'obligation',updatedAt:new Date().toISOString(),data:{accountId:ar.accountId,direction:'receivable',counterparty:friend,amount:10000,currency:'USD',date:'2026-01-10',sourceTransactionId:'tickets',categoryId:category}});
-      await api.settleCfmObligation({obligationId:'Alice',amount:10000,date:'2026-02-01',accountId:checking,kind:'payment',requestId:'payment'});
-      const asset=await api.createCfmAccount({name:'Property',kind:'asset',initialBalance:30000000,date:'2026-01-01',currency:'USD',requestId:'property'});
-      await api.setCfmBalance({accountId:asset.accountId,targetBalance:31000000,date:'2026-06-01',reason:'Appraisal',requestId:'appraisal'});
-      await api.saveCfmRecord({id:'annual-plan',kind:'annual-plan',updatedAt:new Date().toISOString(),data:{year:2026,categoryId:category,amount:120000,currency:'USD',revision:1}});
+      const {createCfmExample}=await import(${JSON.stringify(pathToFileURL(path.join(root, 'scripts/create-cfm-example.mjs')).href)});
+      const {checking,category}=await createCfmExample(api);
+      await api.addTransactions(checking,Array.from({length:2000},(_,index)=>({id:'history-'+index,date:'2025-12-'+String(index%28+1).padStart(2,'0'),amount:index%3===0?0:index%3===1?123:-123,notes:'Historical imported entry '+index,cleared:index%2===0,reconciled:index%4===0,category})));
+      const closed=await api.createAccount({name:'Closed account',offbudget:true});
+      await api.addTransactions(closed,[{id:'closed-zero',date:'2025-12-31',amount:0,notes:'Retain zero entry'}]);await api.closeAccount(closed);
+      await api.addTransactions(checking,[{id:'deleted-entry',date:'2026-01-01',amount:-123,notes:'Deletion audit'}]);await api.deleteTransaction('deleted-entry');
+      // Local databases of unlocked encrypted budgets are plaintext; retain the source key identifier in the backup, never the upstream target.
+      await engine.send('save-prefs',{encryptKeyId:'synthetic-encrypted-source-key'});
       const native=await api.exportBudget();await writeFile(path.join(destination,'native.zip'),native);
       const result=await api.exportForActualBudget();
       await writeFile(path.join(destination,'compatible.zip'),result.data);
@@ -128,6 +122,23 @@ try {
     writeFileSync(databasePath, files['db.sqlite']);
     return new DatabaseSync(databasePath);
   }
+  const compatibleFiles = unzipSync(
+    readFileSync(path.join(temporary, 'compatible.zip')),
+  );
+  assert.equal(
+    JSON.parse(new TextDecoder().decode(compatibleFiles['metadata.json']))
+      .encryptKeyId,
+    null,
+  );
+  const recoveryFiles = unzipSync(
+    readFileSync(path.join(temporary, 'archive.zip')),
+  );
+  const originalFiles = unzipSync(recoveryFiles['full-cfm-backup.zip']);
+  assert.equal(
+    JSON.parse(new TextDecoder().decode(originalFiles['metadata.json']))
+      .encryptKeyId,
+    'synthetic-encrypted-source-key',
+  );
   const before = openZip('compatible.zip'),
     after = openZip('upstream-roundtrip.zip');
   const canonical = rows =>
@@ -151,12 +162,18 @@ try {
           'messages_clock',
           'messages_pending',
         ].includes(table)
-      )
+      ) {
         continue;
+      }
       const quote = `"${table.replaceAll('"', '""')}"`;
-      const derivedFilter=table==='__meta__'?" WHERE key!='view-hash'":'';
-      const original = before.prepare(`SELECT * FROM ${quote}${derivedFilter}`).all();
-      const imported = after.prepare(`SELECT * FROM ${quote}${derivedFilter}`).all();
+      const derivedFilter =
+        table === '__meta__' ? " WHERE key!='view-hash'" : '';
+      const original = before
+        .prepare(`SELECT * FROM ${quote}${derivedFilter}`)
+        .all();
+      const imported = after
+        .prepare(`SELECT * FROM ${quote}${derivedFilter}`)
+        .all();
       assert.equal(
         canonical(imported),
         canonical(original),
@@ -175,20 +192,85 @@ try {
     before.close();
     after.close();
   }
+  const originalNativeBackup = readFileSync(path.join(temporary, 'native.zip'));
   execute(process.execPath, [
     path.join(root, 'scripts/cfm-export-upstream.mjs'),
     path.join(temporary, 'native.zip'),
     path.join(temporary, 'offline'),
   ]);
+  execute(process.execPath, [
+    path.join(root, 'scripts/package-cfm-recovery.mjs'),
+    path.join(temporary, 'recovery-runtime'),
+  ]);
+  const runtimeManifest = JSON.parse(
+    readFileSync(
+      path.join(temporary, 'recovery-runtime/runtime-manifest.json'),
+      'utf8',
+    ),
+  );
+  assert.ok(runtimeManifest.files['examples/cfm-2026.zip']);
+  assert.ok(
+    unzipSync(
+      readFileSync(
+        path.join(temporary, 'recovery-runtime/examples/cfm-2026.zip'),
+      ),
+    )['db.sqlite']?.length,
+    'The packaged runtime must include a usable example budget',
+  );
+  execute(
+    process.execPath,
+    [
+      path.join(temporary, 'recovery-runtime/scripts/cfm-export-upstream.mjs'),
+      path.join(temporary, 'native.zip'),
+      path.join(temporary, 'packaged-offline'),
+    ],
+    path.join(temporary, 'recovery-runtime'),
+  );
+  const expected = openZip('compatible.zip');
+  try {
+    for (const folder of ['offline', 'packaged-offline']) {
+      const recovered = openZip(`${folder}/actual-budget.zip`);
+      try {
+        for (const table of Object.keys(manifest.tables)) {
+          const quote = `"${table.replaceAll('"', '""')}"`;
+          assert.equal(
+            canonical(recovered.prepare(`SELECT * FROM ${quote}`).all()),
+            canonical(expected.prepare(`SELECT * FROM ${quote}`).all()),
+            `${folder}: ${table} changed during offline recovery`,
+          );
+        }
+      } finally {
+        recovered.close();
+      }
+      const receipt = JSON.parse(
+        readFileSync(path.join(temporary, folder, 'receipt.json'), 'utf8'),
+      );
+      assert.equal(receipt.targetVersion, manifest.upstreamVersion);
+      const archive = unzipSync(
+        readFileSync(path.join(temporary, folder, 'cfm-recovery.zip')),
+      );
+      assert.ok(archive['receipt.json']?.length);
+      assert.ok(archive['full-cfm-backup.zip']?.length);
+    }
+  } finally {
+    expected.close();
+  }
+  assert.deepEqual(
+    readFileSync(path.join(temporary, 'native.zip')),
+    originalNativeBackup,
+    'Offline recovery modified its source backup',
+  );
   process.stdout.write(
-    `PASS: ${count} records, every dated ledger movement, native backup, and offline recovery survived the upstream round trip.\n`,
+    `PASS: ${count} records, every dated ledger movement, native backup, offline recovery, and packaged-runtime recovery survived the upstream round trip.\n`,
   );
 } catch (error) {
   if (error.stdout) process.stderr.write(error.stdout);
   if (error.stderr) process.stderr.write(error.stderr);
   throw error;
 } finally {
-  if (process.env.CFM_KEEP_TEST_FILES)
+  if (process.env.CFM_KEEP_TEST_FILES) {
     process.stdout.write(`Fixtures retained at ${temporary}\n`);
-  else rmSync(temporary, { recursive: true, force: true });
+  } else {
+    rmSync(temporary, { recursive: true, force: true });
+  }
 }

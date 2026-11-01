@@ -6,7 +6,7 @@ People managing their own finances who want to plan over a full year and underst
 
 ## Product Purpose
 
-Actual CFM is a personal fork of Actual Budget for cash flow management. It combines annual planning, liquidity forecasting, asset valuation, liabilities, and net equity in a local-first application. The existing ledger and monthly budgeting tools provide the foundation; the CFM additions are planned in [wishlist.md](wishlist.md).
+Actual CFM is a personal fork of Actual Budget for cash flow management. It combines annual planning, liquidity forecasting, asset valuation, liabilities, and net equity in a local-first application. The existing ledger and monthly budgeting tools provide the foundation; the implementation is recorded in [wishlist.md](wishlist.md).
 
 Success means being able to explain the annual plan, compare YTD actuals against seasonal expectations, assess short-term cash coverage, and produce a dated financial statement with traceable balances and valuation assumptions.
 
@@ -20,7 +20,7 @@ Success means being able to explain the annual plan, compare YTD actuals against
 
 ## Brand Personality
 
-Calm, precise, practical. Actual CFM should feel like a dependable personal financial workspace: clear tables, quiet controls, and explicit assumptions. Use the neutral greys from Strømmen's site as the direction for the planned theme refresh.
+Calm, precise, practical. Actual CFM should feel like a dependable personal financial workspace: clear tables, quiet controls, and explicit assumptions. Use the neutral greys from Strømmen's site through the semantic light, dark, and midnight themes.
 
 ## Design Principles
 

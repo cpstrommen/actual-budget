@@ -18,8 +18,9 @@ export async function readRecords(): Promise<CfmRecord[]> {
     if (!row.note) continue;
     const record: unknown = JSON.parse(row.note);
     validateCfmRecord(record);
-    if (`${CFM_NOTE_PREFIX}${record.id}` !== row.id)
+    if (`${CFM_NOTE_PREFIX}${record.id}` !== row.id) {
       throw new Error('CFM record identity mismatch');
+    }
     records.push(record);
   }
   return records;
@@ -72,8 +73,9 @@ export async function getDeviceId(): Promise<string> {
 }
 
 export function requireRequestId(id: string): void {
-  if (typeof id !== 'string' || !/^[A-Za-z0-9:_-]{1,160}$/.test(id))
+  if (typeof id !== 'string' || !/^[A-Za-z0-9:_-]{1,160}$/.test(id)) {
     throw new Error('A valid operation identifier is required');
+  }
 }
 
 export async function priorOperation(
@@ -83,13 +85,15 @@ export async function priorOperation(
   requireRequestId(id);
   const previous = await readRecord(`operation:${id}`);
   if (!previous) return undefined;
-  if (JSON.stringify(previous.data.request) !== JSON.stringify(request))
+  if (JSON.stringify(previous.data.request) !== JSON.stringify(request)) {
     throw new Error(
       'Operation identifier was already used for a different request',
     );
+  }
   const result = previous.data.result;
-  if (typeof result !== 'object' || result === null || Array.isArray(result))
+  if (typeof result !== 'object' || result === null || Array.isArray(result)) {
     throw new Error('Invalid operation receipt');
+  }
   return Object.fromEntries(Object.entries(result));
 }
 

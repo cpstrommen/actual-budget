@@ -1,10 +1,11 @@
-import { addYears, format, parseISO } from 'date-fns';
+import { addYears, format, parseISO, subDays } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 import { aqlQuery } from '#server/aql';
 import { getScheduleDates } from '#server/schedules/occurrences';
 import {
   buildBalanceSheet,
+  cfmBankSyncTimestamp,
   getAccountBalances,
   getAnnualPlanPerformance,
   getCfmRecords,
@@ -25,11 +26,12 @@ import type {
   CfmResolvedReportPeriod,
 } from '#shared/cfm-reports';
 import { q } from '#shared/query';
-import type { ScheduleEntity } from '#types/models';
+import { extractScheduleConds } from '#shared/schedules';
+import type { PayeeEntity, ScheduleEntity } from '#types/models';
 import type { CfmForecastEvent, CfmRecord, CfmState } from '#types/models/cfm';
 
 import { getState } from './app';
-import { readRecord, writeRecord } from './store';
+import { readRecord, requireRequestId, writeRecord } from './store';
 
 export type ProjectionOptions = {
   startDate: string;
@@ -46,52 +48,76 @@ export async function scheduleForecastEvents(
 ): Promise<CfmForecastEvent[]> {
   const result = await aqlQuery(q('schedules').select('*'));
   const schedules: ScheduleEntity[] = result.data;
+  const payees: PayeeEntity[] = (await aqlQuery(q('payees').select('*'))).data;
   const events: CfmForecastEvent[] = [];
   for (const schedule of schedules) {
-    if (schedule.completed || !schedule._account || !schedule._date) continue;
+    const conditions = extractScheduleConds(schedule._conditions || []);
+    const accountId: string | undefined =
+      schedule._account || conditions.account?.value;
+    const scheduledDate: ScheduleEntity['_date'] =
+      schedule._date || conditions.date?.value;
+    const scheduledAmount: ScheduleEntity['_amount'] =
+      schedule._amount ?? conditions.amount?.value;
+    const payeeId: string | undefined =
+      schedule._payee || conditions.payee?.value;
+    if (
+      schedule.completed ||
+      !accountId ||
+      !scheduledDate ||
+      scheduledAmount == null
+    ) {
+      continue;
+    }
     const amount =
-      typeof schedule._amount === 'number'
-        ? schedule._amount
-        : Math.round((schedule._amount.num1 + schedule._amount.num2) / 2);
-    for (const date of getScheduleDates(schedule._date, {
+      typeof scheduledAmount === 'number'
+        ? scheduledAmount
+        : Math.round((scheduledAmount.num1 + scheduledAmount.num2) / 2);
+    for (const date of getScheduleDates(scheduledDate, {
       start: startDate,
       end: endDate,
-    }))
+    })) {
       events.push({
         id: `schedule:${schedule.id}:${date}`,
         date,
-        accountId: schedule._account,
+        accountId,
         amount,
         currency,
         source: 'schedule',
+        transferAccountId: payees.find(payee => payee.id === payeeId)
+          ?.transfer_acct,
+        categoryId: schedule._actions?.find(
+          action => action.op === 'set' && action.field === 'category',
+        )?.value as string | undefined,
         scheduleId: schedule.id,
-        description: schedule.name || 'Scheduled transaction',
+        description: `${schedule.name || 'Scheduled transaction'}${typeof scheduledAmount === 'number' ? '' : ' (estimated midpoint of scheduled range)'}`,
       });
+    }
   }
   return events;
 }
 export async function projectCfmLiquidity(options: ProjectionOptions) {
   const state = await getState();
+  const forecastEvents = await scheduleForecastEvents(
+    options.startDate,
+    options.endDate,
+    state.currency,
+  );
   const staleAccountIds = state.accounts
     .filter(
       account =>
         account.account_sync_source &&
         (!account.last_sync ||
-          new Date(account.last_sync).getTime() < Date.now() - 86400000),
+          cfmBankSyncTimestamp(account.last_sync) < Date.now() - 86400000),
     )
     .map(account => account.id);
-  return projectLiquidity({
+  const projection = projectLiquidity({
     ...options,
     accounts: state.accounts,
     transactions: state.transactions,
     classifications: getCfmRecords(state.records, 'classification').map(
       item => item.data,
     ),
-    events: await scheduleForecastEvents(
-      options.startDate,
-      options.endDate,
-      state.currency,
-    ),
+    events: forecastEvents,
     obligations: getCfmRecords(state.records, 'obligation'),
     settlements: getCfmRecords(state.records, 'settlement'),
     annualPlans: getCfmRecords(state.records, 'annual-plan').map(
@@ -100,6 +126,16 @@ export async function projectCfmLiquidity(options: ProjectionOptions) {
     currency: state.currency,
     staleAccountIds,
   });
+  if (
+    forecastEvents.some(event =>
+      event.description?.includes('estimated midpoint'),
+    )
+  ) {
+    projection.warnings.push(
+      'Schedules with amount ranges use an estimated midpoint; actual cash movements may differ.',
+    );
+  }
+  return projection;
 }
 const column = (
   key: string,
@@ -110,7 +146,7 @@ function materialize(
   definition: CfmReportSectionDefinition,
   period: CfmResolvedReportPeriod,
   state: CfmState,
-  liquidity: Awaited<ReturnType<typeof projectCfmLiquidity>>,
+  liquidity: Awaited<ReturnType<typeof projectCfmLiquidity>> | undefined,
 ): CfmReportSection {
   const base = {
     id: definition.id,
@@ -141,11 +177,39 @@ function materialize(
           !definition.accountIds?.length ||
           definition.accountIds.includes(item.data.accountId),
       )
-      .map(item => ({
-        name: item.data.name,
-        account: item.data.accountId,
-        ...valueAsset(item.data, period.asOf),
-      }));
+      .map(item => {
+        const closing = valueAsset(item.data, period.asOf);
+        const opening = valueAsset(
+          item.data,
+          format(subDays(parseISO(period.startDate), 1), 'yyyy-MM-dd'),
+        ).value;
+        const additions =
+          item.data.acquisitionDate >= period.startDate &&
+          item.data.acquisitionDate <= period.asOf
+            ? item.data.acquisitionValue
+            : 0;
+        const disposalDate = item.data.disposalDate;
+        const disposals =
+          disposalDate &&
+          disposalDate >= period.startDate &&
+          disposalDate <= period.asOf
+            ? valueAsset(
+                item.data,
+                format(subDays(parseISO(disposalDate), 1), 'yyyy-MM-dd'),
+              ).value
+            : 0;
+        return {
+          name: item.data.name,
+          account: item.data.accountId,
+          ...closing,
+          opening,
+          additions,
+          disposals,
+          change: closing.value - opening - additions + disposals,
+          ledger: balances[item.data.accountId] || 0,
+        };
+      });
+
   const obligations = () =>
     getCfmRecords(state.records, 'obligation')
       .filter(
@@ -187,14 +251,13 @@ function materialize(
         balance: row.balance,
       })),
       totals: {
-        totalAssets: sheet.totalAssets,
-        totalLiabilities: sheet.totalLiabilities,
-        netEquity: sheet.netEquity,
+        name: 'Net equity',
+        balance: sheet.netEquity,
       },
       notes: sheet.warnings,
     };
   }
-  if (definition.type === 'annual-plan')
+  if (definition.type === 'annual-plan') {
     return {
       ...base,
       columns: [
@@ -231,7 +294,11 @@ function materialize(
           };
         }),
     };
-  if (definition.type === 'liquidity')
+  }
+  if (definition.type === 'liquidity') {
+    if (!liquidity) {
+      throw new Error('The liquidity section has no resolved scenario');
+    }
     return {
       ...base,
       columns: [
@@ -250,23 +317,35 @@ function materialize(
       })),
       notes: liquidity.warnings,
     };
-  if (definition.type === 'assets')
+  }
+  if (definition.type === 'assets') {
     return {
       ...base,
       columns: [
         column('name', 'Asset'),
-        column('value', 'Valuation', 'money'),
-        column('source', 'Valuation source'),
+        column('opening', 'Opening', 'money'),
+        column('additions', 'Acquired', 'money'),
+        column('disposals', 'Disposed', 'money'),
+        column('value', 'Closing', 'money'),
+        column('change', 'Valuation change', 'money'),
+        column('ledger', 'Ledger value', 'money'),
+        column('source', 'Source'),
         column('effectiveDate', 'Value date', 'date'),
       ],
       rows: assets().map(row => ({
         name: row.name,
         value: row.value,
+        opening: row.opening,
+        change: row.change,
+        additions: row.additions,
+        disposals: row.disposals,
+        ledger: row.ledger,
         source: row.source,
         effectiveDate: row.effectiveDate,
       })),
     };
-  if (definition.type === 'obligations')
+  }
+  if (definition.type === 'obligations') {
     return {
       ...base,
       columns: [
@@ -275,6 +354,8 @@ function materialize(
         column('dueDate', 'Due date', 'date'),
         column('outstanding', 'Outstanding', 'money'),
         column('status', 'Status'),
+        column('age', 'Days overdue', 'number'),
+        column('bucket', 'Aging bucket'),
       ],
       rows: obligations().map(row => ({
         counterparty: row.counterparty,
@@ -282,10 +363,24 @@ function materialize(
         dueDate: row.dueDate,
         outstanding: row.outstanding,
         status: row.status,
+        age: row.dueDate
+          ? Math.max(
+              0,
+              Math.floor(
+                (Date.parse(period.asOf) - Date.parse(row.dueDate)) / 86400000,
+              ),
+            )
+          : 0,
+        bucket: !row.dueDate
+          ? 'Undated'
+          : row.dueDate >= period.asOf
+            ? 'Current'
+            : `${Math.ceil(Math.max(1, (Date.parse(period.asOf) - Date.parse(row.dueDate)) / 86400000) / 30) * 30} day band`,
       })),
     };
+  }
   let data: Record<string, CfmReportCell>[] = [];
-  if (definition.source === 'transactions')
+  if (definition.source === 'transactions') {
     data = selectedTransactions
       .filter(
         row =>
@@ -302,7 +397,7 @@ function materialize(
         amount: row.amount,
         notes: row.notes || '',
       }));
-  else if (definition.source === 'categories')
+  } else if (definition.source === 'categories') {
     data = state.categories
       .filter(
         row =>
@@ -311,7 +406,7 @@ function materialize(
       )
       .map(row => ({
         name: row.name,
-        amount: state.transactions
+        amount: selectedTransactions
           .filter(
             transaction =>
               !transaction.is_parent &&
@@ -321,23 +416,24 @@ function materialize(
           )
           .reduce((sum, row) => sum + row.amount, 0),
       }));
-  else if (definition.source === 'assets')
+  } else if (definition.source === 'assets') {
     data = assets().map(row => ({
       name: row.name,
       amount: row.value,
       date: row.effectiveDate,
     }));
-  else if (definition.source === 'obligations')
+  } else if (definition.source === 'obligations') {
     data = obligations().map(row => ({
       name: row.counterparty,
       amount: row.outstanding,
       date: row.dueDate,
     }));
-  else
+  } else {
     data = selectedAccounts.map(row => ({
       name: row.name,
       amount: balances[row.id] || 0,
     }));
+  }
   const keys = [...new Set(data.flatMap(row => Object.keys(row)))];
   if (!keys.length) keys.push('name', 'amount');
   const columns = keys.map(key =>
@@ -375,26 +471,46 @@ export async function runReport({
   startDate,
   endDate,
   requestId,
+  warnings = [],
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone,
 }: {
   templateId: string;
   asOf: string;
   startDate?: string;
   endDate?: string;
   requestId?: string;
+  warnings?: string[];
+  timeZone?: string;
 }) {
+  if (requestId) requireRequestId(requestId);
   const id = requestId ? `report-run:${requestId}` : uuidv4();
   const previous = await readRecord(id);
-  if (previous) return previous;
+  if (previous) {
+    if (
+      previous.kind !== 'report-run' ||
+      previous.data.templateId !== templateId ||
+      previous.data.asOf !== asOf
+    ) {
+      throw new Error(
+        'Report operation identifier was already used for a different run',
+      );
+    }
+    return previous;
+  }
   const state = await getState();
   const record = state.records.find(
     item => item.kind === 'report-template' && item.id === templateId,
   );
   if (!record) throw new Error('Report template not found');
   const template = validateReportTemplate(record.data);
-  const projection = await projectCfmLiquidity({
-    startDate: asOf,
-    endDate: format(addYears(parseISO(asOf), 1), 'yyyy-MM-dd'),
-  });
+  const projection = template.sections.some(
+    section => section.type === 'liquidity',
+  )
+    ? await projectCfmLiquidity({
+        startDate: asOf,
+        endDate: format(addYears(parseISO(asOf), 1), 'yyyy-MM-dd'),
+      })
+    : undefined;
   const run = createReportRun({
     id,
     templateId,
@@ -402,14 +518,21 @@ export async function runReport({
     asOf,
     startDate,
     endDate,
-    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timeZone,
     currency: state.currency,
     createdAt: new Date().toISOString(),
-    sourceUpdatedAt: state.records
-      .map(row => row.updatedAt)
-      .sort()
-      .at(-1),
-    warnings: projection.warnings,
+    sourceUpdatedAt: new Date().toISOString(),
+    warnings: [
+      ...(projection?.warnings ||
+        state.accounts
+          .filter(
+            account =>
+              account.account_sync_source &&
+              cfmBankSyncTimestamp(account.last_sync) < Date.now() - 86400000,
+          )
+          .map(account => `Stale account data: ${account.name}`)),
+      ...warnings,
+    ],
     assumptions: [
       'Ledger amounts are signed integer minor units.',
       'Projected receipts and payments are scenarios; they do not post transactions.',

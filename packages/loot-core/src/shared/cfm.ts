@@ -64,6 +64,15 @@ export function assertCfmAmount(value: number, name = 'Amount'): void {
   }
 }
 
+/** Native accounts store epoch milliseconds as text; accept ISO timestamps in imports too. */
+export function cfmBankSyncTimestamp(value?: string | null): number {
+  if (!value) return 0;
+  const numeric = Number(value);
+  if (Number.isFinite(numeric) && numeric > 0) return numeric;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
 export function assertCfmCurrency(value: string): void {
   if (typeof value !== 'string' || !/^[A-Z]{3}$/.test(value)) {
     throw new Error('Currency must be a three-letter uppercase code.');
@@ -87,16 +96,18 @@ function sum(values: number[]): number {
 }
 
 function roundAmount(value: number): number {
-  if (!Number.isFinite(value))
+  if (!Number.isFinite(value)) {
     throw new Error('Financial calculation is not finite.');
+  }
   const result = Math.round(value);
   assertCfmAmount(result);
   return result === 0 ? 0 : result;
 }
 
 function requiredText(value: string, name: string): void {
-  if (typeof value !== 'string' || !value.trim())
+  if (typeof value !== 'string' || !value.trim()) {
     throw new Error(`${name} is required.`);
+  }
 }
 
 function dayNumber(date: string): number {
@@ -293,10 +304,12 @@ export function validateCfmClassification(
   requiredText(value.accountId, 'Account');
   assertCfmDate(value.effectiveDate);
   assertCfmCurrency(value.currency);
-  if (!accountKinds.includes(value.kind))
+  if (!accountKinds.includes(value.kind)) {
     throw new Error('Unknown account classification.');
-  if (typeof value.isLiquid !== 'boolean')
+  }
+  if (typeof value.isLiquid !== 'boolean') {
     throw new Error('Liquidity eligibility must be explicit.');
+  }
   if (value.isLiquid && value.kind !== 'cash' && value.kind !== 'investment') {
     throw new Error(
       'Only cash or explicitly selected investment accounts can be available liquidity.',
@@ -307,13 +320,15 @@ export function validateCfmClassification(
       throw new Error('Payment and statement days must be between 1 and 31.');
     }
   }
-  if (value.paymentAccountId === value.accountId)
+  if (value.paymentAccountId === value.accountId) {
     throw new Error('An account cannot pay itself.');
+  }
 }
 
 export function validateCfmAnnualPlan(value: CfmAnnualPlan): void {
-  if (!Number.isInteger(value.year) || value.year < 1000 || value.year > 9998)
+  if (!Number.isInteger(value.year) || value.year < 1000 || value.year > 9998) {
     throw new Error('Invalid plan year.');
+  }
   requiredText(value.categoryId, 'Category');
   assertCfmCurrency(value.currency);
   nonnegative(value.amount, 'Annual amount');
@@ -321,43 +336,51 @@ export function validateCfmAnnualPlan(value: CfmAnnualPlan): void {
   let dated = 0;
   for (const item of value.datedAmounts ?? []) {
     assertCfmDate(item.date);
-    if (Number(item.date.slice(0, 4)) !== value.year)
+    if (Number(item.date.slice(0, 4)) !== value.year) {
       throw new Error('Dated expenses must be inside the plan year.');
+    }
     nonnegative(item.amount, 'Dated amount');
     dated = sum([dated, item.amount]);
   }
-  if (dated > value.amount)
+  if (dated > value.amount) {
     throw new Error('Dated expenses exceed the annual plan.');
+  }
   if (value.monthlyAmounts !== undefined) {
-    if (value.monthlyAmounts.length !== 12)
+    if (value.monthlyAmounts.length !== 12) {
       throw new Error('A plan requires exactly twelve monthly amounts.');
+    }
     value.monthlyAmounts.forEach(amount =>
       nonnegative(amount, 'Monthly amount'),
     );
-    if (sum(value.monthlyAmounts) + dated !== value.amount)
+    if (sum(value.monthlyAmounts) + dated !== value.amount) {
       throw new Error(
         'Monthly and dated amounts must sum to the annual amount.',
       );
+    }
   }
   if (value.monthlyWeights !== undefined) {
-    if (value.monthlyWeights.length !== 12)
+    if (value.monthlyWeights.length !== 12) {
       throw new Error('A plan requires exactly twelve monthly weights.');
+    }
     value.monthlyWeights.forEach(weight =>
       nonnegative(weight, 'Monthly weight'),
     );
-    if (!sum(value.monthlyWeights))
+    if (!sum(value.monthlyWeights)) {
       throw new Error('At least one monthly weight must be positive.');
+    }
   }
   if (
     value.allocationMethod === 'monthly' &&
     value.monthlyAmounts === undefined
-  )
+  ) {
     throw new Error('Monthly allocations are required.');
+  }
   if (
     value.allocationMethod === 'weighted' &&
     value.monthlyWeights === undefined
-  )
+  ) {
     throw new Error('Monthly weights are required.');
+  }
 }
 
 export function validateCfmAsset(value: CfmAsset): void {
@@ -368,57 +391,67 @@ export function validateCfmAsset(value: CfmAsset): void {
   nonnegative(value.acquisitionValue, 'Acquisition value');
   if (value.disposalDate !== undefined) {
     assertCfmDate(value.disposalDate);
-    if (value.disposalDate < value.acquisitionDate)
+    if (value.disposalDate < value.acquisitionDate) {
       throw new Error('Disposal cannot precede acquisition.');
+    }
   }
   const dates = new Map<string, string>();
   for (const policy of [...(value.policyHistory ?? []), value.policy]) {
     assertCfmDate(policy.effectiveDate);
-    if (policy.effectiveDate < value.acquisitionDate)
+    if (policy.effectiveDate < value.acquisitionDate) {
       throw new Error('A valuation policy cannot precede acquisition.');
+    }
     const encoded = JSON.stringify(policy);
     const prior = dates.get(policy.effectiveDate);
-    if (prior && prior !== encoded)
+    if (prior && prior !== encoded) {
       throw new Error(
         'Conflicting valuation policies have the same effective date.',
       );
+    }
     dates.set(policy.effectiveDate, encoded);
-    if (policy.baseValue !== undefined)
+    if (policy.baseValue !== undefined) {
       nonnegative(policy.baseValue, 'Valuation base');
-    if (policy.residualValue !== undefined)
+    }
+    if (policy.residualValue !== undefined) {
       nonnegative(policy.residualValue, 'Residual value');
+    }
     if (
       (policy.residualValue ?? 0) > (policy.baseValue ?? value.acquisitionValue)
-    )
+    ) {
       throw new Error('Residual value exceeds the asset value.');
+    }
     if (
       policy.method === 'straight-line' &&
       (!Number.isInteger(policy.usefulLifeMonths) ||
         (policy.usefulLifeMonths ?? 0) <= 0 ||
         (policy.usefulLifeMonths ?? 0) > 12000)
-    )
+    ) {
       throw new Error(
         'Straight-line depreciation requires a positive useful life in months.',
       );
+    }
     if (policy.method === 'fixed-rate') {
       if (
         policy.annualRateBasisPoints === undefined ||
         !Number.isSafeInteger(policy.annualRateBasisPoints) ||
         policy.annualRateBasisPoints < -10000 ||
         policy.annualRateBasisPoints > 1000000
-      )
+      ) {
         throw new Error(
           'Annual rate must be integer basis points between -10000 and 1000000.',
         );
+      }
     }
     const seen = new Set<string>();
     for (const item of policy.schedule ?? []) {
       assertCfmDate(item.date);
       nonnegative(item.amount, 'Scheduled value');
-      if (item.date < policy.effectiveDate)
+      if (item.date < policy.effectiveDate) {
         throw new Error('Scheduled values cannot precede their policy.');
-      if (seen.has(item.date))
+      }
+      if (seen.has(item.date)) {
         throw new Error('An asset schedule has duplicate dates.');
+      }
       seen.add(item.date);
     }
   }
@@ -426,18 +459,21 @@ export function validateCfmAsset(value: CfmAsset): void {
   for (const observation of value.observations ?? []) {
     requiredText(observation.id, 'Observation ID');
     requiredText(observation.source, 'Observation source');
-    if (ids.has(observation.id))
+    if (ids.has(observation.id)) {
       throw new Error('Duplicate valuation observation ID.');
+    }
     ids.add(observation.id);
     assertCfmDate(observation.date);
     if (
       observation.date < value.acquisitionDate ||
       (value.disposalDate && observation.date > value.disposalDate)
-    )
+    ) {
       throw new Error('Observation date is outside the asset holding period.');
+    }
     nonnegative(observation.value, 'Observed value');
-    if (!Number.isFinite(Date.parse(observation.recordedAt)))
+    if (!Number.isFinite(Date.parse(observation.recordedAt))) {
       throw new Error('Observation requires a recorded timestamp.');
+    }
   }
 }
 
@@ -450,8 +486,9 @@ export function validateCfmObligation(value: CfmObligation): void {
   for (const date of [value.dueDate, value.expectedDate]) {
     if (date !== undefined) {
       assertCfmDate(date);
-      if (date < value.date)
+      if (date < value.date) {
         throw new Error('An obligation date cannot precede its creation date.');
+      }
     }
   }
 }
@@ -460,15 +497,18 @@ export function validateCfmSettlement(value: CfmSettlement): void {
   requiredText(value.obligationId, 'Obligation');
   assertCfmDate(value.date);
   positive(value.amount, 'Settlement amount');
-  if (value.kind === 'reversal' && !value.reversesId)
+  if (value.kind === 'reversal' && !value.reversesId) {
     throw new Error('A reversal must identify the settlement it reverses.');
-  if (value.kind !== 'reversal' && value.reversesId)
+  }
+  if (value.kind !== 'reversal' && value.reversesId) {
     throw new Error('Only reversals may reference another settlement.');
+  }
   if (
     (value.kind === 'writeoff' || value.kind === 'reversal') &&
     !value.notes?.trim()
-  )
+  ) {
     throw new Error('Write-offs and reversals require a reason.');
+  }
 }
 
 export function validateCfmRecord(
@@ -478,7 +518,7 @@ export function validateCfmRecord(
   if (
     !isObject(record) ||
     typeof record.id !== 'string' ||
-    !record.id.trim() ||
+    !/^[A-Za-z0-9:_-]+$/.test(record.id) ||
     record.id.length > 200 ||
     !recordKinds.some(kind => kind === record.kind) ||
     !isObject(record.data) ||
@@ -490,8 +530,9 @@ export function validateCfmRecord(
   const value = record.data;
   switch (record.kind) {
     case 'classification':
-      if (!isClassification(value))
+      if (!isClassification(value)) {
         throw new Error('Invalid account classification.');
+      }
       validateCfmClassification(value);
       break;
     case 'annual-plan':
@@ -519,15 +560,22 @@ export function validateCfmRecord(
     Object.entries(value),
   );
   const currency = fields.currency;
-  if (currency !== undefined && currency !== state.currency)
+  if (currency !== undefined && currency !== state.currency) {
     throw new Error('The record currency does not match this budget.');
-  for (const key of ['accountId', 'paymentAccountId', 'linkedDebtAccountId']) {
+  }
+  for (const key of [
+    'accountId',
+    'paymentAccountId',
+    'linkedDebtAccountId',
+    'counterAccountId',
+  ]) {
     const id = fields[key];
     if (
       id !== undefined &&
       !state.accounts.some(account => account.id === id && !account.tombstone)
-    )
+    ) {
       throw new Error(`Unknown account in ${key}.`);
+    }
   }
   const categoryId = fields.categoryId;
   if (
@@ -535,8 +583,9 @@ export function validateCfmRecord(
     !state.categories.some(
       category => category.id === categoryId && !category.tombstone,
     )
-  )
+  ) {
     throw new Error('Unknown category.');
+  }
   if (record.kind === 'settlement' && isSettlement(value)) {
     const obligation = getCfmRecords(state.records, 'obligation').find(
       item => item.id === value.obligationId,
@@ -592,10 +641,11 @@ export function getAccountClassification(
       item &&
       prior.effectiveDate === item.effectiveDate &&
       JSON.stringify(prior) !== JSON.stringify(item)
-    )
+    ) {
       throw new Error(
         'Conflicting classifications have the same effective date.',
       );
+    }
   }
   return eligible.at(-1);
 }
@@ -610,12 +660,13 @@ function ledgerRows(
     assertCfmAmount(transaction.amount);
     rows.set(transaction.id, transaction);
     for (const child of transaction.subtransactions ?? []) {
-      if (!child.tombstone)
+      if (!child.tombstone) {
         rows.set(child.id, {
           ...child,
           is_child: true,
           parent_id: transaction.id,
         });
+      }
     }
   }
   return [...rows.values()];
@@ -633,8 +684,9 @@ export function getAccountBalances(
     if (
       row.date > asOf ||
       (row.is_child && row.parent_id && ids.has(row.parent_id))
-    )
+    ) {
       continue;
+    }
     balances[row.account] = sum([balances[row.account] ?? 0, row.amount]);
   }
   return balances;
@@ -695,8 +747,9 @@ export function getAnnualPlanPerformance(
   const end = `${plan.year}-12-31`;
   const cutoff = asOf < start ? asOf : asOf > end ? end : asOf;
   let expectedYtd = 0;
-  if (asOf >= end) expectedYtd = plan.amount;
-  else if (asOf >= start) {
+  if (asOf >= end) {
+    expectedYtd = plan.amount;
+  } else if (asOf >= start) {
     const month = Number(asOf.slice(5, 7)) - 1;
     expectedYtd = sum(regular.slice(0, month));
     const current = regular[month] ?? 0;
@@ -837,7 +890,7 @@ function actualYears(from: string, to: string): number {
 export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
   validateCfmAsset(asset);
   assertCfmDate(asOf);
-  if (asOf < asset.acquisitionDate)
+  if (asOf < asset.acquisitionDate) {
     return {
       value: 0,
       asOf,
@@ -845,7 +898,8 @@ export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
       source: 'acquisition',
       method: 'manual',
     };
-  if (asset.disposalDate && asOf >= asset.disposalDate)
+  }
+  if (asset.disposalDate && asOf >= asset.disposalDate) {
     return {
       value: 0,
       asOf,
@@ -853,9 +907,11 @@ export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
       source: 'disposed',
       method: asset.policy.method,
     };
+  }
   const policies = new Map<string, CfmAssetPolicy>();
-  for (const policy of [...(asset.policyHistory ?? []), asset.policy])
+  for (const policy of [...(asset.policyHistory ?? []), asset.policy]) {
     policies.set(policy.effectiveDate, policy);
+  }
   const events = [
     ...[...policies.values()]
       .filter(policy => policy.effectiveDate <= asOf)
@@ -930,10 +986,11 @@ export function getObligationStatus(
   assertCfmDate(asOf);
   const ids = new Set(settlements.map(record => record.data.obligationId));
   const id = obligationId ?? (ids.size === 1 ? [...ids][0] : undefined);
-  if (!id && ids.size > 1)
+  if (!id && ids.size > 1) {
     throw new Error(
       'Specify the obligation ID when evaluating multiple obligations.',
     );
+  }
   const events = settlements
     .filter(record => !id || record.data.obligationId === id)
     .sort(
@@ -951,26 +1008,30 @@ export function getObligationStatus(
   for (const record of events) {
     const item = record.data;
     validateCfmSettlement(item);
-    if (item.date < obligation.date)
+    if (item.date < obligation.date) {
       throw new Error('A settlement cannot precede its obligation.');
+    }
     if (applied.has(record.id)) throw new Error('Duplicate settlement ID.');
     if (item.date > asOf) continue;
     if (item.kind === 'reversal') {
       const prior = item.reversesId ? applied.get(item.reversesId) : undefined;
-      if (!prior || prior.kind === 'reversal')
+      if (!prior || prior.kind === 'reversal') {
         throw new Error(
           'The reversed settlement is missing or is itself a reversal.',
         );
-      if (item.amount > prior.amount - prior.reversed)
+      }
+      if (item.amount > prior.amount - prior.reversed) {
         throw new Error('Reversal exceeds the unreversed settlement.');
+      }
       prior.reversed += item.amount;
       if (prior.kind === 'payment') paid -= item.amount;
       else writtenOff -= item.amount;
     } else {
-      if (item.amount > obligation.amount - paid - writtenOff)
+      if (item.amount > obligation.amount - paid - writtenOff) {
         throw new Error(
           'Settlement exceeds the outstanding amount; allocate overpayments explicitly.',
         );
+      }
       if (item.kind === 'payment') paid = sum([paid, item.amount]);
       else writtenOff = sum([writtenOff, item.amount]);
     }
@@ -1011,22 +1072,25 @@ export function createBalanceSheet(
       account.id,
       asOf,
     );
-    if (classification && classification.currency !== currency)
+    if (classification && classification.currency !== currency) {
       throw new Error(
         `Cannot combine ${classification.currency} and ${currency} in one financial view.`,
       );
+    }
     const kind = classification?.kind ?? 'unclassified';
     const isLiability = classification
       ? liability(classification.kind)
       : balance < 0;
     const rowWarnings: string[] = [];
-    if (!classification)
+    if (!classification) {
       rowWarnings.push(`Unclassified account: ${account.name}`);
+    }
     if (
       classification &&
       ((isLiability && balance > 0) || (!isLiability && balance < 0))
-    )
+    ) {
       rowWarnings.push(`Unusual balance sign: ${account.name}`);
+    }
     const group = isLiability
       ? classification?.liabilityTerm === 'long-term' ||
         (classification?.kind === 'loan' &&
@@ -1105,12 +1169,15 @@ export function buildBalanceSheet(input: {
 }
 
 function eventIdentity(event: CfmForecastEvent): string {
-  if (event.occurrenceId)
+  if (event.occurrenceId) {
     return `occurrence:${event.occurrenceId}:${event.accountId}`;
-  if (event.scheduleId)
+  }
+  if (event.scheduleId) {
     return `schedule:${event.scheduleId}:${event.date}:${event.accountId}`;
-  if (event.obligationId)
+  }
+  if (event.obligationId) {
     return `obligation:${event.obligationId}:${event.date}:${event.accountId}`;
+  }
   if (event.transactionId) return `transaction:${event.transactionId}`;
   return `event:${event.id}`;
 }
@@ -1161,12 +1228,15 @@ export function projectLiquidity(
   assertCfmDate(startDate);
   assertCfmDate(endDate);
   assertCfmCurrency(currency);
-  if (endDate < startDate || dayNumber(endDate) - dayNumber(startDate) > 3660)
+  if (endDate < startDate || dayNumber(endDate) - dayNumber(startDate) > 3660) {
     throw new Error('Projection horizon must be between zero and 3660 days.');
-  if (input.receivableDelayDays !== undefined)
+  }
+  if (input.receivableDelayDays !== undefined) {
     nonnegative(input.receivableDelayDays, 'Receivable delay');
-  if (input.minimumCash !== undefined)
+  }
+  if (input.minimumCash !== undefined) {
     assertCfmAmount(input.minimumCash, 'Minimum cash');
+  }
   const rows = ledgerRows(input.transactions);
   const balances = getAccountBalances(input.transactions, startDate);
   const sheet = createBalanceSheet(
@@ -1177,6 +1247,17 @@ export function projectLiquidity(
     currency,
   );
   const warnings = [...sheet.warnings];
+  for (
+    let year = Number(startDate.slice(0, 4));
+    year <= Number(endDate.slice(0, 4));
+    year++
+  ) {
+    if (!input.annualPlans?.some(plan => plan.year === year)) {
+      warnings.push(
+        `No annual plans for ${year}; only posted transactions, schedules, and obligations are projected.`,
+      );
+    }
+  }
   const accountIds = new Set(input.accounts.map(account => account.id));
   const eligible = new Set(
     input.accounts
@@ -1198,8 +1279,9 @@ export function projectLiquidity(
     .filter(account => !eligible.has(account.id))
     .map(account => account.id);
   const openingLiquidity = sum([...eligible].map(id => balances[id] ?? 0));
-  if (input.staleAccountIds?.length)
+  if (input.staleAccountIds?.length) {
     warnings.push(`Stale account data: ${input.staleAccountIds.join(', ')}`);
+  }
   const proposed: CfmForecastEvent[] = [];
   for (const row of rows) {
     if (row.is_child || row.date <= startDate || row.date > endDate) continue;
@@ -1219,13 +1301,15 @@ export function projectLiquidity(
   const undatedObligations: string[] = [];
   const settlements = input.settlements ?? [];
   const defaultCash = input.planAccountId ?? [...eligible][0];
-  if (input.planAccountId && !eligible.has(input.planAccountId))
+  if (input.planAccountId && !eligible.has(input.planAccountId)) {
     throw new Error('The forecast plan account must be eligible liquidity.');
+  }
   for (const record of input.obligations ?? []) {
     const obligation = record.data;
     validateCfmObligation(obligation);
-    if (obligation.currency !== currency)
+    if (obligation.currency !== currency) {
       throw new Error('Obligation currency differs from projection currency.');
+    }
     const status = getObligationStatus(
       obligation,
       settlements,
@@ -1238,8 +1322,9 @@ export function projectLiquidity(
       undatedObligations.push(record.id);
       continue;
     }
-    if (obligation.direction === 'receivable' && !input.includeReceivables)
+    if (obligation.direction === 'receivable' && !input.includeReceivables) {
       continue;
+    }
     if (!defaultCash) {
       warnings.push('No eligible cash account for obligation projections.');
       continue;
@@ -1263,7 +1348,7 @@ export function projectLiquidity(
         .map(item => item.data.amount),
     );
     const amount = Math.max(0, status.outstanding - futureSettled);
-    if (amount)
+    if (amount) {
       proposed.push({
         id: `obligation:${record.id}`,
         date: forecastDate,
@@ -1274,17 +1359,20 @@ export function projectLiquidity(
         obligationId: record.id,
         categoryId: obligation.categoryId,
       });
+    }
   }
   for (const event of proposed) {
     assertCfmDate(event.date);
     assertCfmAmount(event.amount);
-    if (event.currency !== currency)
+    if (event.currency !== currency) {
       throw new Error('Forecast events use different currencies.');
+    }
     if (
       !accountIds.has(event.accountId) ||
       (event.transferAccountId && !accountIds.has(event.transferAccountId))
-    )
+    ) {
       throw new Error('Forecast event references an unknown account.');
+    }
   }
   const actualTransactions = new Map(rows.map(row => [row.id, row]));
   const postedScheduleKeys = new Set(
@@ -1296,22 +1384,25 @@ export function projectLiquidity(
   for (const event of proposed.sort(
     (a, b) => eventPriority(a) - eventPriority(b) || a.id.localeCompare(b.id),
   )) {
-    if (event.date <= startDate || event.date > endDate || event.nonCash)
+    if (event.date <= startDate || event.date > endDate || event.nonCash) {
       continue;
+    }
     if (
       event.source !== 'transaction' &&
       event.transactionId &&
       actualTransactions.has(event.transactionId)
-    )
+    ) {
       continue;
+    }
     if (
       event.source !== 'transaction' &&
       event.scheduleId &&
       postedScheduleKeys.has(
         `${event.scheduleId}:${event.date}:${event.accountId}`,
       )
-    )
+    ) {
       continue;
+    }
     const key = eventIdentity(event);
     if (!deduplicated.has(key)) deduplicated.set(key, event);
   }
@@ -1319,8 +1410,9 @@ export function projectLiquidity(
   // Fill only the category/month amount not already represented by posted or committed events.
   for (const plan of input.annualPlans ?? []) {
     validateCfmAnnualPlan(plan);
-    if (plan.currency !== currency)
+    if (plan.currency !== currency) {
       throw new Error('Annual plan currency differs from projection currency.');
+    }
     if (!defaultCash) {
       warnings.push('No eligible cash account for annual plan projections.');
       continue;
@@ -1386,7 +1478,7 @@ export function projectLiquidity(
         )
         .sort((a, b) => a.date.localeCompare(b.date))) {
         const amount = Math.min(remaining, dated.amount);
-        if (amount)
+        if (amount) {
           events.push({
             id: `plan:${plan.categoryId}:${dated.date}`,
             accountId: defaultCash,
@@ -1396,9 +1488,10 @@ export function projectLiquidity(
             source: 'plan',
             categoryId: plan.categoryId,
           });
+        }
         remaining -= amount;
       }
-      if (remaining && last <= endDate)
+      if (remaining && last <= endDate) {
         events.push({
           id: `plan:${plan.categoryId}:${prefix}`,
           accountId: defaultCash,
@@ -1408,6 +1501,7 @@ export function projectLiquidity(
           source: 'plan',
           categoryId: plan.categoryId,
         });
+      }
     }
   }
   // Cards affect liquid cash on payment, not on purchase. Existing explicit card transfers take precedence.
@@ -1448,36 +1542,19 @@ export function projectLiquidity(
         event.transferAccountId === account.id ||
         (event.accountId === account.id && event.amount > 0),
     );
+    const expectedPayments = new Map<string, number>();
     const addPayment = (date: string, amount: number) => {
-      if (date > endDate || !amount) return;
-      const explicitlyPaid = sum(
-        explicit
-          .filter(
-            event =>
-              event.date.slice(0, 7) === date.slice(0, 7) &&
-              (event.accountId === account.id ||
-                event.transferAccountId === account.id ||
-                event.description === account.id),
-          )
-          .map(event => Math.abs(event.amount)),
-      );
-      const effective = Math.max(0, amount - explicitlyPaid);
-      if (!effective) return;
-      const key = `${account.id}:${date}`;
-      const prior = automaticCardPayments.get(key);
-      automaticCardPayments.set(key, {
-        id: `card:${key}`,
-        date,
-        accountId: paymentAccount,
-        amount: (prior?.amount ?? 0) - effective,
-        currency,
-        source: 'card-payment',
-        description: account.id,
-      });
+      if (date <= endDate && amount) {
+        expectedPayments.set(
+          date,
+          sum([expectedPayments.get(date) || 0, amount]),
+        );
+      }
     };
-    if (debt)
+    if (debt) {
       addPayment(nextPaymentDate(startDate, classification.paymentDay), debt);
-    for (const event of cardEvents)
+    }
+    for (const event of cardEvents) {
       addPayment(
         paymentDate(
           event.date,
@@ -1486,13 +1563,43 @@ export function projectLiquidity(
         ),
         -event.amount,
       );
+    }
+    const appliedExplicit = new Set<string>();
+    for (const [date, amount] of [...expectedPayments].sort(([a], [b]) =>
+      a.localeCompare(b),
+    )) {
+      const matching = explicit.filter(
+        event =>
+          !appliedExplicit.has(event.id) &&
+          event.date.slice(0, 7) === date.slice(0, 7) &&
+          (event.accountId === account.id ||
+            event.transferAccountId === account.id ||
+            event.description === account.id),
+      );
+      const effective = Math.max(
+        0,
+        amount - sum(matching.map(event => Math.abs(event.amount))),
+      );
+      for (const event of matching) appliedExplicit.add(event.id);
+      if (!effective) continue;
+      const key = `${account.id}:${date}`;
+      automaticCardPayments.set(key, {
+        id: `card:${key}`,
+        date,
+        accountId: paymentAccount,
+        amount: -effective,
+        currency,
+        source: 'card-payment',
+        description: account.id,
+      });
+    }
   }
   events.push(...automaticCardPayments.values());
   const movements: CfmForecastEvent[] = [];
   for (const event of events) {
     if (event.nonCash) continue;
     if (eligible.has(event.accountId)) movements.push(event);
-    if (event.transferAccountId && eligible.has(event.transferAccountId))
+    if (event.transferAccountId && eligible.has(event.transferAccountId)) {
       movements.push({
         ...event,
         id: `${event.id}:counterpart`,
@@ -1500,6 +1607,7 @@ export function projectLiquidity(
         amount: -event.amount,
         transferAccountId: event.accountId,
       });
+    }
   }
   movements.sort(
     (a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id),
@@ -1541,12 +1649,13 @@ export function projectLiquidity(
       prior.outflows = sum([prior.outflows, point.outflows]);
       prior.closing = point.closing;
       prior.events.push(...point.events);
-    } else
+    } else {
       monthly.push({
         ...point,
         date: point.date.slice(0, 7),
         events: [...point.events],
       });
+    }
   }
   const currentLiabilities = sheet.currentLiabilities;
   return {

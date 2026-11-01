@@ -6,7 +6,7 @@ Actual CFM is a personal fork of [Actual Budget](https://github.com/actualbudget
 
 The aim is to answer practical questions: Are annual expenses on track despite seasonal spending? Can available cash cover upcoming obligations? What are assets worth today, and how does that change the overall financial position?
 
-## Direction
+## Cash Flow Workspace
 
 - Annual category plans with seasonal allocations and year-to-date comparisons.
 - Liquidity projections that connect cash balances with credit cards, upcoming bills, receivables, and payables.
@@ -15,7 +15,7 @@ The aim is to answer practical questions: Are annual expenses on track despite s
 - Simple balance updates for manual off-budget accounts and configurable bank synchronization.
 - A restrained grey visual identity drawn from Strømmen's site (implemented).
 
-The financial additions above are **planned features**. The distinct CFM identity, icons, and neutral theme are implemented. [wishlist.md](wishlist.md) contains the feature requirements, implementation phases, dependencies, and acceptance criteria. The existing application still includes Actual's monthly budgeting workflows while the CFM features are developed.
+Open **Cash flow management** in the sidebar for these features. [The usage guide](packages/docs/docs/actual-cfm.md) covers the workflows; [wishlist.md](wishlist.md) records the implementation and acceptance criteria. The inherited monthly budgeting tools remain available.
 
 ## Run This Fork
 
@@ -26,7 +26,7 @@ yarn install
 yarn start
 ```
 
-Open `http://localhost:3001`. For sample data, choose **Don't use a server**, then **View demo** on the setup screen.
+Open `http://localhost:3001`. For sample data, choose **Try the demo** on the setup screen.
 
 To run the frontend with a local sync server:
 
@@ -74,4 +74,4 @@ Actual CFM is derived from Actual Budget and retains its [MIT license](LICENSE.t
 
 ## Data Portability
 
-Returning to upstream Actual Budget without losing transaction or dated balance history is a release requirement. Before any CFM financial schema extension ships, implement and test an upstream-compatible exporter plus an offline recovery path. Preserve CFM-only records in open audit/archive formats. Native database backups alone are not a downgrade guarantee. See [the return guide](packages/docs/docs/migration/return-to-actual-budget.md) and the portability section in [wishlist.md](wishlist.md) for current status and acceptance criteria.
+Use **Export for Actual Budget** to create a separate file for the pinned Actual Budget 26.10.0 target, with a CFM audit/recovery archive. The exporter preserves transaction and dated balance history and has an unmodified upstream import/export test. A packaged offline converter keeps the exit available after maintenance ends. See [the return guide](packages/docs/docs/migration/return-to-actual-budget.md) for the procedure and supported target.

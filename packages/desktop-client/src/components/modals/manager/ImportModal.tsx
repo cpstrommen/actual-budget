@@ -89,7 +89,7 @@ export function ImportModal() {
             </Button>
             <Button style={itemStyle} onPress={() => onSelectType('actual')}>
               <span style={{ fontWeight: 700 }}>
-                Actual CFM / Actual Budget
+                <Trans>Actual CFM / Actual Budget</Trans>
               </span>
               <View style={{ color: theme.pageTextLight }}>
                 <div>

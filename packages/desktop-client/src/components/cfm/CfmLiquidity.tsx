@@ -13,11 +13,11 @@ import {
   Choice,
   DataTable,
   Field,
+  fieldStyle,
+  gridStyle,
   Metric,
   Money,
   Panel,
-  fieldStyle,
-  gridStyle,
   parseMoney,
 } from './ui';
 

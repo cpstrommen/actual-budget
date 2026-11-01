@@ -4,15 +4,17 @@ const fs = require('node:fs');
 const path = require('node:path');
 let sharp;
 try {
+  // oxlint-disable-next-line actual/no-extraneous-dependencies -- Optional generator uses the pinned sharp-cli environment above.
   sharp = require('sharp');
 } catch {
   const bin = process.env.PATH.split(path.delimiter).find(
     p => p.includes('/_npx/') && p.endsWith('/node_modules/.bin'),
   );
-  if (!bin)
+  if (!bin) {
     throw new Error(
       'Run with sharp installed, or use the npm exec command above.',
     );
+  }
   sharp = require(path.join(bin, '..', 'sharp'));
 }
 const root = path.resolve(__dirname, '..');
@@ -39,8 +41,9 @@ async function main() {
     'maskable-192x192.png': 192,
     'maskable-512x512.png': 512,
   };
-  for (const [name, size] of Object.entries(sizes))
+  for (const [name, size] of Object.entries(sizes)) {
     await raster(web + name, size);
+  }
   await raster('packages/desktop-electron/icons/icon.png', 1024);
   await raster('packages/docs/static/img/favicon.webp', 96);
   await raster('packages/docs/static/img/logo.webp', 192);
@@ -48,11 +51,12 @@ async function main() {
     .png()
     .toFile(path.join(root, 'packages/docs/static/img/cfm-social.png'));
   const frames = [];
-  for (const size of [16, 32, 48, 64, 256])
+  for (const size of [16, 32, 48, 64, 256]) {
     frames.push({
       size,
       data: await sharp(icon).resize(size, size).png().toBuffer(),
     });
+  }
   const header = Buffer.alloc(6 + frames.length * 16);
   header.writeUInt16LE(1, 2);
   header.writeUInt16LE(frames.length, 4);
@@ -100,8 +104,9 @@ async function main() {
   async function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const file = path.join(dir, entry.name);
-      if (entry.isDirectory()) await walk(file);
-      else if (
+      if (entry.isDirectory()) {
+        await walk(file);
+      } else if (
         file.endsWith('.png') &&
         /(?:ic_launcher|AppIcon|splash)/i.test(file)
       ) {

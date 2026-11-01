@@ -164,7 +164,11 @@ export type GlobalPrefs = Partial<{
 export type GlobalPrefsJson = Partial<{
   'cfm-device-id': string;
   'cfm-job-states': Record<string, CfmAutomationJobState>;
-  'cfm-portability-status': { updatedAt: string; error?: string };
+  'cfm-portability-status': {
+    updatedAt: string;
+    budgetId?: string;
+    error?: string;
+  };
   'user-id'?: string;
   'user-key'?: string;
   'encrypt-keys'?: string;

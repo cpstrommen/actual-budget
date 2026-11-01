@@ -212,13 +212,15 @@ export function Action({
 /** Convert the user's decimal amount without floating-point multiplication. */
 export function parseMoney(value: string): number {
   const normalized = value.trim().replaceAll(',', '');
-  if (!/^[+-]?\d+(?:\.\d{0,2})?$/.test(normalized))
+  if (!/^[+-]?\d+(?:\.\d{0,2})?$/.test(normalized)) {
     throw new Error('Enter a monetary amount with at most two decimal places.');
+  }
   const negative = normalized.startsWith('-');
   const [whole, fraction = ''] = normalized.replace(/^[+-]/, '').split('.');
   const amount = Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
-  if (!Number.isSafeInteger(amount))
+  if (!Number.isSafeInteger(amount)) {
     throw new Error('The amount is too large.');
+  }
   return negative ? -amount : amount;
 }
 
@@ -239,5 +241,6 @@ export type SaveRecord = <T extends Record<string, unknown>>(
   kind: CfmRecordKind,
   data: T,
   id?: string,
+  expectedUpdatedAt?: string,
 ) => Promise<boolean>;
 export type DeleteRecord = (record: CfmRecord) => Promise<boolean>;

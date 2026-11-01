@@ -23,10 +23,10 @@ import {
   Choice,
   DataTable,
   Field,
-  Panel,
   fieldStyle,
   gridStyle,
   newId,
+  Panel,
 } from './ui';
 import type { DeleteRecord, SaveRecord } from './ui';
 
@@ -129,7 +129,14 @@ export function CfmReports({
         notes,
         autoGenerate: { enabled: auto, cadence },
       };
-      if (await save('report-template', template, editing?.record.id)) {
+      if (
+        await save(
+          'report-template',
+          template,
+          editing?.record.id,
+          editing?.record.updatedAt,
+        )
+      ) {
         setEditing(null);
         setName('');
         setSections([]);
@@ -158,12 +165,13 @@ export function CfmReports({
   function print(report: CfmReportRun) {
     try {
       const popup = window.open('', '_blank');
-      if (!popup)
+      if (!popup) {
         throw new Error(
           t(
             'Allow a new window to print this report, or export HTML and print it from your browser.',
           ),
         );
+      }
       popup.document.open();
       popup.document.write(getReportDocuments(report).html);
       popup.document.close();
@@ -244,16 +252,18 @@ export function CfmReports({
                     });
                   }}
                 >
-                  {t('Generate and archive')}
+                  <Trans>Generate and archive</Trans>
                 </Action>
-                <Action onPress={() => edit(item)}>{t('Edit')}</Action>
+                <Action onPress={() => edit(item)}>
+                  <Trans>Edit</Trans>
+                </Action>
                 <Action
                   disabled={busy}
                   onPress={() => {
                     void remove(item.record);
                   }}
                 >
-                  {t('Delete template')}
+                  <Trans>Delete template</Trans>
                 </Action>
               </Cell>
             </tr>
@@ -294,8 +304,9 @@ export function CfmReports({
                     value === 'annual' ||
                     value === 'ytd' ||
                     value === 'custom'
-                  )
+                  ) {
                     setPeriod(value);
+                  }
                 }}
                 options={[
                   ['monthly', t('Monthly')],
@@ -313,8 +324,9 @@ export function CfmReports({
                     value === 'monthly' ||
                     value === 'quarterly' ||
                     value === 'annual'
-                  )
+                  ) {
                     setCadence(value);
+                  }
                 }}
                 options={[
                   ['monthly', t('Monthly')],
@@ -403,12 +415,13 @@ export function CfmReports({
                           value === 'categories' ||
                           value === 'assets' ||
                           value === 'obligations'
-                        )
+                        ) {
                           updateSection(section.id, {
                             source: value,
                             xKey: value === 'transactions' ? 'date' : 'name',
                             valueKeys: ['amount'],
                           });
+                        }
                       }}
                       options={[
                         ['accounts', t('Accounts')],
@@ -429,8 +442,9 @@ export function CfmReports({
                             value === 'bar' ||
                             value === 'line' ||
                             value === 'pie'
-                          )
+                          ) {
                             updateSection(section.id, { chartType: value });
+                          }
                         }}
                         options={[
                           ['bar', t('Bar')],

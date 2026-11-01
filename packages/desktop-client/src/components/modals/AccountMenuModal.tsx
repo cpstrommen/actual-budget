@@ -7,6 +7,7 @@ import { MobileSheetSection } from '#components/mobile/MobileSheetSection';
 import { validateAccountName } from '#components/util/accountValidation';
 import { useAccount } from '#hooks/useAccount';
 import { useAccounts } from '#hooks/useAccounts';
+import { useNavigate } from '#hooks/useNavigate';
 import { useNotes } from '#hooks/useNotes';
 import { useSyncedPref } from '#hooks/useSyncedPref';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -26,6 +27,7 @@ export function AccountMenuModal({
   onReconcile,
 }: AccountMenuModalProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const account = useAccount(accountId);
   const { data: accounts = [] } = useAccounts();
   const notes = useNotes(`account-${accountId}`);
@@ -67,6 +69,20 @@ export function AccountMenuModal({
               label={t('Edit notes')}
               onPress={() => onEditNotes?.(account.id)}
             />
+            {account.offbudget &&
+              !account.closed &&
+              !account.bank &&
+              !account.account_sync_source && (
+                <MobileSheetRow
+                  label={t('Set balance')}
+                  onPress={() => {
+                    onClose?.();
+                    void navigate(
+                      `/cfm?account=${encodeURIComponent(account.id)}`,
+                    );
+                  }}
+                />
+              )}
             {onReconcile && (
               <MobileSheetRow
                 label={t('Reconcile')}

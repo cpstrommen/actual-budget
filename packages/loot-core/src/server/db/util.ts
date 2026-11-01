@@ -31,6 +31,9 @@ export async function incrFetch(
 export function whereIn(ids: string[], field: string) {
   const ids2 = [...new Set(ids)];
 
-  const filter = `${field} IN (` + ids2.map(id => `'${id}'`).join(',') + ')';
+  const filter =
+    `${field} IN (` +
+    ids2.map(id => `'${id.replaceAll("'", "''")}'`).join(',') +
+    ')';
   return filter;
 }

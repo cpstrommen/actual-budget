@@ -3,8 +3,10 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { getObligationStatus } from '@actual-app/core/shared/cfm';
+import { integerToCurrency } from '@actual-app/core/shared/util';
 import type {
   CfmObligation,
+  CfmRecord,
   CfmState,
 } from '@actual-app/core/types/models/cfm';
 
@@ -15,11 +17,11 @@ import {
   Choice,
   DataTable,
   Field,
-  Money,
-  Panel,
   fieldStyle,
   gridStyle,
+  Money,
   newId,
+  Panel,
   parseMoney,
   today,
 } from './ui';
@@ -53,6 +55,13 @@ export function CfmObligations({
   onError,
 }: Props) {
   const { t } = useTranslation();
+  const [details, setDetails] = useState<CfmRecord<CfmObligation> | null>(null);
+  const [transactionSearch, setTransactionSearch] = useState('');
+  function patchDetails(change: Partial<CfmObligation>) {
+    setDetails(current =>
+      current ? { ...current, data: { ...current.data, ...change } } : null,
+    );
+  }
   const obligations = state.records.filter(isObligation);
   const settlements = state.records.filter(isSettlement);
   const [direction, setDirection] = useState<'receivable' | 'payable'>(
@@ -64,6 +73,9 @@ export function CfmObligations({
   const [date, setDate] = useState(today());
   const [dueDate, setDueDate] = useState('');
   const [source, setSource] = useState('');
+  const [obligationId, setObligationId] = useState(newId);
+  const [counterAccountId, setCounterAccountId] = useState('');
+  const [existingBalance, setExistingBalance] = useState(false);
   const [categoryId, setCategoryId] = useState('');
   const [notes, setNotes] = useState('');
   const [disputed, setDisputed] = useState(false);
@@ -90,6 +102,26 @@ export function CfmObligations({
       )
       .map(account => [account.id, account.name] satisfies [string, string]),
   ];
+  const sourceRows = state.transactions
+    .filter(row => !row.id.startsWith('cfm-'))
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const transactionLabel = (row: CfmState['transactions'][number]) =>
+    `${row.date} · ${state.accounts.find(account => account.id === row.account)?.name || ''} · ${integerToCurrency(row.amount)} · ${row.notes || ''}`;
+  const matches = sourceRows
+    .filter(row =>
+      transactionLabel(row)
+        .toLocaleLowerCase()
+        .includes(transactionSearch.toLocaleLowerCase()),
+    )
+    .slice(0, 200);
+  function transactionOptions(selectedId: string): Array<[string, string]> {
+    const selected = sourceRows.find(row => row.id === selectedId);
+    return [
+      ...new Map(
+        [...(selected ? [selected] : []), ...matches].map(row => [row.id, row]),
+      ).values(),
+    ].map(row => [row.id, transactionLabel(row)]);
+  }
   async function create() {
     try {
       const data: CfmObligation = {
@@ -109,9 +141,12 @@ export function CfmObligations({
         ...(categoryId ? { categoryId } : {}),
         notes,
         disputed,
+        existingBalance,
+        ...(counterAccountId ? { counterAccountId } : {}),
       };
-      if (await save('obligation', data)) {
+      if (await save('obligation', data, obligationId)) {
         setCounterparty('');
+        setObligationId(newId());
         setAmount('');
         setNotes('');
         setSource('');
@@ -208,6 +243,14 @@ export function CfmObligations({
                   </Action>
                   <Action
                     disabled={busy}
+                    onPress={() =>
+                      setDetails({ ...record, data: { ...record.data } })
+                    }
+                  >
+                    <Trans>Update details</Trans>
+                  </Action>
+                  <Action
+                    disabled={busy}
                     onPress={() => {
                       void save(
                         'obligation',
@@ -226,6 +269,77 @@ export function CfmObligations({
           })}
         </DataTable>
       </Panel>
+      {details && (
+        <Panel title={t('Update obligation details')}>
+          <form
+            onSubmit={event => {
+              event.preventDefault();
+              void save(
+                'obligation',
+                details.data,
+                details.id,
+                details.updatedAt,
+              ).then(saved => {
+                if (saved) setDetails(null);
+              });
+            }}
+          >
+            <fieldset disabled={busy} style={{ border: 0, padding: 0 }}>
+              <div style={gridStyle}>
+                <Field label={t('Counterparty name')}>
+                  <input
+                    style={fieldStyle}
+                    value={details.data.counterparty}
+                    onChange={event =>
+                      patchDetails({ counterparty: event.target.value })
+                    }
+                    required
+                  />
+                </Field>
+                <Field label={t('Due date')}>
+                  <input
+                    style={fieldStyle}
+                    type="date"
+                    value={details.data.dueDate || ''}
+                    onChange={event =>
+                      patchDetails({ dueDate: event.target.value || undefined })
+                    }
+                  />
+                </Field>
+                <Field label={t('Expected collection date')}>
+                  <input
+                    style={fieldStyle}
+                    type="date"
+                    value={details.data.expectedDate || ''}
+                    onChange={event =>
+                      patchDetails({
+                        expectedDate: event.target.value || undefined,
+                      })
+                    }
+                  />
+                </Field>
+              </div>
+              <Field label={t('Obligation notes')}>
+                <textarea
+                  style={fieldStyle}
+                  value={details.data.notes || ''}
+                  onChange={event =>
+                    patchDetails({ notes: event.target.value })
+                  }
+                />
+              </Field>
+              <p>
+                <Button type="submit" variant="primary">
+                  <Trans>Save obligation details</Trans>
+                </Button>{' '}
+                <Button onPress={() => setDetails(null)}>
+                  <Trans>Cancel editing</Trans>
+                </Button>
+              </p>
+            </fieldset>
+          </form>
+        </Panel>
+      )}
       <Panel title={t('Create an obligation')}>
         <p>
           <Trans>
@@ -234,6 +348,19 @@ export function CfmObligations({
             including a separate item for each person.
           </Trans>
         </p>
+        <Field
+          label={t('Find a ledger transaction')}
+          hint={t(
+            'Search by date, amount, account, or notes. The selectors show up to 200 matches.',
+          )}
+        >
+          <input
+            style={fieldStyle}
+            value={transactionSearch}
+            onChange={event => setTransactionSearch(event.target.value)}
+          />
+        </Field>
+
         <form
           onSubmit={event => {
             event.preventDefault();
@@ -249,8 +376,9 @@ export function CfmObligations({
                 label={t('Direction')}
                 value={direction}
                 onChange={value => {
-                  if (value === 'receivable' || value === 'payable')
+                  if (value === 'receivable' || value === 'payable') {
                     setDirection(value);
+                  }
                 }}
                 options={[
                   ['receivable', t('Owed to me (AR)')],
@@ -271,6 +399,22 @@ export function CfmObligations({
                 onChange={setAccountId}
                 options={controlAccounts}
                 required
+              />
+              <Choice
+                label={t('Expense / asset recognition account')}
+                value={counterAccountId}
+                onChange={setCounterAccountId}
+                options={[
+                  ['', t('No additional recognition')],
+                  ...state.accounts
+                    .filter(
+                      account => !account.closed && account.id !== accountId,
+                    )
+                    .map(
+                      account =>
+                        [account.id, account.name] satisfies [string, string],
+                    ),
+                ]}
               />
               <Field label={t('Original amount')}>
                 <input
@@ -298,18 +442,22 @@ export function CfmObligations({
                   onChange={event => setDueDate(event.target.value)}
                 />
               </Field>
-              <Field
-                label={t('Source transaction ID')}
-                hint={t(
-                  'Optional; copy the ledger transaction ID to link an existing purchase.',
-                )}
-              >
-                <input
-                  style={fieldStyle}
-                  value={source}
-                  onChange={event => setSource(event.target.value)}
-                />
-              </Field>
+              <Choice
+                label={t('Purchase or deposit to allocate')}
+                value={source}
+                onChange={value => {
+                  setSource(value);
+                  const transaction = state.transactions.find(
+                    row => row.id === value,
+                  );
+                  if (transaction) setDate(transaction.date);
+                }}
+                options={[
+                  ['', t('No linked transaction')],
+                  ...transactionOptions(source),
+                ]}
+              />
+
               <Choice
                 label={t('Expense / loss category')}
                 value={categoryId}
@@ -325,6 +473,25 @@ export function CfmObligations({
                 ]}
               />
             </div>
+            <p>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={existingBalance}
+                  onChange={event => setExistingBalance(event.target.checked)}
+                />
+                <Trans>
+                  Allocate from this control account's existing balance
+                </Trans>
+              </label>
+            </p>
+            <p>
+              <Trans>
+                This preserves the ledger balance and only itemizes the
+                unallocated amount. A linked source purchase instead creates a
+                transfer allocation.
+              </Trans>
+            </p>
             <Field label={t('Notes')}>
               <input
                 style={fieldStyle}
@@ -353,6 +520,14 @@ export function CfmObligations({
         </form>
       </Panel>
       <Panel title={t('Settlement or write-off')}>
+        <p>
+          <Trans>
+            A reversal reopens the obligation without moving cash. Use Undo to
+            remove a mistaken newly entered payment. For an overpayment,
+            allocate the excess deposit to a separate payable credit and refund
+            or settle that credit explicitly.
+          </Trans>
+        </p>
         <form
           onSubmit={event => {
             event.preventDefault();
@@ -388,8 +563,9 @@ export function CfmObligations({
                     value === 'payment' ||
                     value === 'writeoff' ||
                     value === 'reversal'
-                  )
+                  ) {
                     setKind(value);
+                  }
                 }}
                 options={[
                   ['payment', t('Record / match payment')],
@@ -428,22 +604,29 @@ export function CfmObligations({
                         [account.id, account.name] satisfies [string, string],
                     ),
                 ]}
-                required={kind === 'payment'}
+                required={kind === 'payment' || kind === 'writeoff'}
               />
               {kind === 'payment' && (
-                <Field
-                  label={t('Existing payment transaction ID')}
-                  hint={t(
-                    'Optional; match an imported deposit/payment instead of creating a duplicate.',
-                  )}
-                >
-                  <input
-                    style={fieldStyle}
-                    value={transactionId}
-                    onChange={event => setTransactionId(event.target.value)}
-                  />
-                </Field>
+                <Choice
+                  label={t('Match a posted payment')}
+                  value={transactionId}
+                  onChange={value => {
+                    setTransactionId(value);
+                    const transaction = state.transactions.find(
+                      row => row.id === value,
+                    );
+                    if (transaction) {
+                      setPaymentAccount(transaction.account);
+                      setPaymentDate(transaction.date);
+                    }
+                  }}
+                  options={[
+                    ['', t('Create a new payment')],
+                    ...transactionOptions(transactionId),
+                  ]}
+                />
               )}
+
               {kind === 'reversal' && (
                 <Choice
                   label={t('Settlement to reverse')}

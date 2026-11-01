@@ -29,6 +29,8 @@ export type CfmState = {
   transactions: TransactionEntity[];
   records: CfmRecord[];
   currency: string;
+  portability?: { updatedAt: string; error?: string };
+  warnings?: string[];
 };
 
 export type CfmAccountKind =
@@ -100,6 +102,7 @@ export type CfmAsset = {
   acquisitionValue: number;
   policy: CfmAssetPolicy;
   policyHistory?: CfmAssetPolicy[];
+  policyRestatementReason?: string;
   observations?: CfmAssetObservation[];
   disposalDate?: string;
   linkedDebtAccountId?: string;
@@ -116,6 +119,7 @@ export type CfmObligation = {
   expectedDate?: string;
   sourceTransactionId?: string;
   existingBalance?: boolean;
+  counterAccountId?: string;
   categoryId?: string;
   disputed?: boolean;
   notes?: string;
@@ -123,7 +127,7 @@ export type CfmObligation = {
 
 export type CfmSettlement = {
   obligationId: string;
-  categoryId?:string;
+  categoryId?: string;
   date: string;
   amount: number;
   kind: 'payment' | 'writeoff' | 'reversal';

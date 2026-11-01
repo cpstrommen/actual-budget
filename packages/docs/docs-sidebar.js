@@ -25,6 +25,7 @@ const sidebars = {
   ],
   docs: [
     'index',
+    'actual-cfm',
     {
       type: 'category',
       label: 'Getting Started',
@@ -76,6 +77,7 @@ const sidebars = {
             'migration/ynab4',
             'migration/nynab',
             'migration/return-to-actual-budget',
+            'migration/cfm-format',
           ],
         },
         'getting-started/tips-tricks',

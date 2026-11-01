@@ -50,7 +50,7 @@ export function LanguageSettings() {
               feel free to make a suggestion on{' '}
               <Link
                 variant="external"
-                to={'https://github.com/cpstrommen/actual-budget/issues'}
+                to="https://github.com/cpstrommen/actual-budget/issues"
                 linkColor="purple"
               >
                 the Actual CFM issue tracker

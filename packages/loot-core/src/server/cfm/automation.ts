@@ -76,8 +76,9 @@ export class CfmAutomationError extends Error {
       if (
         !Number.isFinite(options.retryAfterSeconds) ||
         options.retryAfterSeconds < 0
-      )
+      ) {
         throw new Error('Invalid retry delay');
+      }
       this.retryAfterSeconds = options.retryAfterSeconds;
     }
   }
@@ -93,18 +94,23 @@ export async function runCfmAutomation(
 ): Promise<CfmAutomationTickResult> {
   const config = validateAutomationConfig(options.config);
   const { context, store } = options;
-  if (!config.enabled)
+  if (!config.enabled) {
     return { status: 'paused', reason: 'disabled', jobs: [] };
-  if (config.schedulerId !== context.deviceId)
+  }
+  if (config.schedulerId !== context.deviceId) {
     return { status: 'paused', reason: 'different-device', jobs: [] };
-  if (config.mode !== context.mode)
+  }
+  if (config.mode !== context.mode) {
     return { status: 'paused', reason: 'wrong-mode', jobs: [] };
-  if (!context.isUnlocked)
+  }
+  if (!context.isUnlocked) {
     return { status: 'paused', reason: 'locked', jobs: [] };
+  }
   const now = Date.parse(context.now);
   if (!Number.isFinite(now)) throw new Error('Invalid automation timestamp');
-  if (!context.ownerId)
+  if (!context.ownerId) {
     throw new Error('An automation lease owner is required');
+  }
   const lease = (options.leaseDurationSeconds ?? 900) * 1000;
   const retryBase = (options.retryBaseSeconds ?? 60) * 1000;
   const maxRetry = (options.maxRetrySeconds ?? 3600) * 1000;
@@ -113,8 +119,9 @@ export async function runCfmAutomation(
     lease <= 0 ||
     retryBase <= 0 ||
     maxRetry < retryBase
-  )
+  ) {
     throw new Error('Invalid automation lease or retry configuration');
+  }
   const results: CfmAutomationTickResult['jobs'] = [];
   const failures: string[] = [];
   const seen = new Set<string>();
@@ -123,8 +130,9 @@ export async function runCfmAutomation(
     (a, b) => rank[a.kind] - rank[b.kind] || a.id.localeCompare(b.id, 'en'),
   );
   for (const job of jobs) {
-    if (!job.id || seen.has(job.id))
+    if (!job.id || seen.has(job.id)) {
       throw new Error('Automation job IDs must be present and unique');
+    }
     seen.add(job.id);
     if (options.signal?.aborted) break;
     const previous = await store.load(job.id);
@@ -180,8 +188,9 @@ export async function runCfmAutomation(
     }
     let error: unknown;
     try {
-      if (options.signal?.aborted)
+      if (options.signal?.aborted) {
         throw new CfmAutomationError('Automation was cancelled');
+      }
       await options.execute({
         job,
         occurrence,
@@ -204,8 +213,9 @@ export async function runCfmAutomation(
       continue;
     }
     const completedAt = options.clock?.() ?? context.now;
-    if (!Number.isFinite(Date.parse(completedAt)))
+    if (!Number.isFinite(Date.parse(completedAt))) {
       throw new Error('Invalid automation completion timestamp');
+    }
     let next: CfmAutomationJobState;
     if (error !== undefined) {
       const message = error instanceof Error ? error.message : String(error);
@@ -238,7 +248,7 @@ export async function runCfmAutomation(
           : {}),
       };
       failures.push(`${job.id}: ${message}`);
-    } else
+    } else {
       next = {
         jobId: job.id,
         revision: claimed.revision + 1,
@@ -249,6 +259,7 @@ export async function runCfmAutomation(
         lastSuccessAt: completedAt,
         nextAttemptAt: occurrence.nextDueAt,
       };
+    }
     if (!(await store.compareAndSet(job.id, claimed.revision, next))) {
       results.push({
         jobId: job.id,
@@ -273,8 +284,9 @@ export function createBankSyncJobs(
 ): CfmAutomationJob[] {
   return config.bankConnectionIds.map(id => {
     const minimum = providerMinimumIntervals[id] ?? 15;
-    if (!Number.isFinite(minimum) || minimum <= 0)
+    if (!Number.isFinite(minimum) || minimum <= 0) {
       throw new Error('Invalid provider refresh interval');
+    }
     return {
       id: `bank-sync:${id}`,
       kind: 'bank-sync',

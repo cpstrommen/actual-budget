@@ -16,6 +16,7 @@ const typesDir = path.resolve(__dirname, '@types');
 function cleanOutputDirs() {
   return {
     name: 'clean-output-dirs',
+    apply: 'build' as const,
     buildStart() {
       if (fs.existsSync(distDir)) fs.rmSync(distDir, { recursive: true });
       if (fs.existsSync(typesDir)) fs.rmSync(typesDir, { recursive: true });
@@ -30,6 +31,7 @@ function cleanOutputDirs() {
 function copyNodeRuntimeAssets() {
   return {
     name: 'copy-node-runtime-assets',
+    apply: 'build' as const,
     closeBundle() {
       fs.cpSync(migrationsDir, path.join(distDir, 'migrations'), {
         recursive: true,

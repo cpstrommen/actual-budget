@@ -5,7 +5,9 @@ import { join } from 'node:path';
 import * as sqlite from '#platform/server/sqlite';
 import * as db from '#server/db';
 import * as prefs from '#server/prefs';
-import { undo, clearUndo, withUndo } from '#server/undo';
+import { createSchedule } from '#server/schedules/app';
+import { batchUpdateTransactions } from '#server/transactions';
+import { clearUndo, undo, withUndo } from '#server/undo';
 import { safeUnzip } from '#server/util/zip';
 import {
   getAccountBalances,
@@ -23,10 +25,15 @@ import {
   valueAssetAccount,
 } from './app';
 import { convertCfmDatabase, exportForActualBudget } from './portability';
+import {
+  projectCfmLiquidity,
+  runReport,
+  scheduleForecastEvents,
+} from './views';
 
 let temporaryDirectory: string;
 beforeEach(async () => {
-  global.stepForwardInTime(Date.parse('2026-10-31T12:00:00Z'));
+  vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-10-31T12:00:00Z'));
   temporaryDirectory = await mkdtemp(join(tmpdir(), 'actual-cfm-test-'));
   vi.stubEnv('ACTUAL_DATA_DIR', temporaryDirectory);
   await global.emptyDatabase()();
@@ -48,6 +55,7 @@ afterEach(async () => {
   db.closeDatabase();
   prefs.unloadPrefs();
   vi.unstubAllEnvs();
+  vi.restoreAllMocks();
   await rm(temporaryDirectory, { recursive: true, force: true });
 });
 
@@ -289,4 +297,360 @@ test('realized valuations create dated non-cash ledger history and export withou
   await expect(
     exportForActualBudget({ targetVersion: 'unsupported' }),
   ).rejects.toThrow('pinned');
+});
+
+test('write-offs, allocation reversals, and payable recognition change expenses without moving cash', async () => {
+  await account('checking', false);
+  await account('ar');
+  await account('ap');
+  await db.insertTransaction({
+    id: 'opening-ar',
+    account: 'ar',
+    date: '2026-01-01',
+    amount: 10000,
+  });
+  await saveRecord({
+    record: envelope('old-claim', 'obligation', {
+      accountId: 'ar',
+      direction: 'receivable',
+      counterparty: 'Alice',
+      amount: 10000,
+      currency: 'USD',
+      date: '2026-01-01',
+      existingBalance: true,
+      categoryId: 'tickets',
+    }),
+  });
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-01-01').ar,
+  ).toBe(10000);
+  await settleObligation({
+    obligationId: 'old-claim',
+    amount: 4000,
+    date: '2026-01-10',
+    accountId: 'checking',
+    kind: 'writeoff',
+    notes: 'Uncollectible',
+    requestId: 'loss',
+  });
+  let state = await getState();
+  expect(getAccountBalances(state.transactions, '2026-02-01')).toMatchObject({
+    checking: 0,
+    ar: 6000,
+  });
+  expect(
+    state.transactions
+      .filter(row => row.category === 'tickets' && !row.is_parent)
+      .reduce((sum, row) => sum + row.amount, 0),
+  ).toBe(-4000);
+  await settleObligation({
+    obligationId: 'old-claim',
+    amount: 4000,
+    date: '2026-01-11',
+    accountId: 'checking',
+    kind: 'reversal',
+    reversesId: 'settlement:loss',
+    notes: 'Recovery now expected',
+    requestId: 'restore',
+  });
+  await saveRecord({
+    record: envelope('invoice', 'obligation', {
+      accountId: 'ap',
+      direction: 'payable',
+      counterparty: 'Vendor',
+      amount: 5000,
+      currency: 'USD',
+      date: '2026-01-12',
+      counterAccountId: 'checking',
+      categoryId: 'tickets',
+    }),
+  });
+  state = await getState();
+  expect(getAccountBalances(state.transactions, '2026-02-01')).toMatchObject({
+    checking: 0,
+    ar: 10000,
+    ap: -5000,
+  });
+  expect(
+    state.transactions
+      .filter(row => row.category === 'tickets' && !row.is_parent)
+      .reduce((sum, row) => sum + row.amount, 0),
+  ).toBe(-5000);
+  await expect(
+    batchUpdateTransactions({
+      updated: [{ id: 'cfm-recognition-invoice', amount: 1 }],
+    }),
+  ).rejects.toThrow('managed');
+  // An unchanged bank-import refresh must not be mistaken for a financial edit.
+  await batchUpdateTransactions({
+    updated: [
+      { id: 'cfm-recognition-invoice', amount: -5000, date: '2026-01-12' },
+    ],
+  });
+  await batchUpdateTransactions({
+    updated: [{ id: 'cfm-recognition-invoice', notes: 'Additional note' }],
+  });
+});
+
+test('scheduled realization does not compound a simple-rate policy or rewrite historical policies', async () => {
+  await account('investment');
+  await db.insertTransaction({
+    id: 'opening-investment',
+    account: 'investment',
+    date: '2026-01-01',
+    amount: 120000,
+  });
+  const asset = await saveRecord({
+    record: envelope('holding', 'asset', {
+      accountId: 'investment',
+      name: 'Holding',
+      currency: 'USD',
+      acquisitionDate: '2026-01-01',
+      acquisitionValue: 120000,
+      policy: {
+        method: 'fixed-rate',
+        effectiveDate: '2026-01-01',
+        baseValue: 120000,
+        annualRateBasisPoints: 1200,
+        compound: false,
+        postingFrequency: 'monthly',
+      },
+    }),
+  });
+  await valueAssetAccount({
+    assetId: asset.id,
+    date: '2026-02-01',
+    value: 0,
+    modeled: true,
+    requestId: 'feb',
+  });
+  await valueAssetAccount({
+    assetId: asset.id,
+    date: '2026-03-01',
+    value: 0,
+    modeled: true,
+    requestId: 'mar',
+  });
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-03-01')
+      .investment,
+  ).toBe(122400);
+  const current = (await getState()).records.find(row => row.id === asset.id)!;
+  await expect(
+    saveRecord({
+      record: {
+        ...current,
+        data: {
+          ...current.data,
+          policy: { method: 'manual', effectiveDate: '2026-01-01' },
+        },
+      },
+    }),
+  ).rejects.toThrow('later effective');
+});
+
+test('every report section materializes and an archive survives subsequent ledger and template edits', async () => {
+  await account('checking', false);
+  await db.insertTransaction({
+    id: 'income',
+    account: 'checking',
+    date: '2026-01-01',
+    amount: 100000,
+  });
+  await account('asset');
+  await saveRecord({
+    record: envelope('report-asset', 'asset', {
+      accountId: 'asset',
+      name: 'Car',
+      currency: 'USD',
+      acquisitionDate: '2026-01-01',
+      acquisitionValue: 120000,
+      policy: {
+        method: 'straight-line',
+        effectiveDate: '2026-01-01',
+        usefulLifeMonths: 60,
+      },
+    }),
+  });
+  const sections = [
+    'balance-sheet',
+    'annual-plan',
+    'assets',
+    'obligations',
+    'liquidity',
+    'table',
+    'chart',
+  ].map(type => ({
+    id: type,
+    type,
+    title: type,
+    ...(type === 'table' || type === 'chart'
+      ? {
+          source: 'accounts',
+          valueKeys: ['amount'],
+          xKey: 'name',
+          chartType: 'bar',
+        }
+      : {}),
+  }));
+  const template = await saveRecord({
+    record: envelope('report-template', 'report-template', {
+      name: 'Annual statement',
+      period: 'annual',
+      revision: 1,
+      sections,
+    }),
+  });
+  const run = await runReport({
+    templateId: template.id,
+    asOf: '2026-10-31',
+    requestId: 'report-2026',
+  });
+  const original = JSON.stringify(run.data);
+  expect(
+    Array.isArray(run.data.sections) &&
+      run.data.sections.find(section => section.id === 'assets')?.rows[0],
+  ).toMatchObject({
+    opening: 0,
+    additions: 120000,
+    disposals: 0,
+    change: -18000,
+    value: 102000,
+  });
+  expect(Array.isArray(run.data.sections) && run.data.sections.length).toBe(7);
+  await db.insertTransaction({
+    id: 'correction',
+    account: 'checking',
+    date: '2026-01-01',
+    amount: 1000,
+  });
+  await saveRecord({
+    record: {
+      ...template,
+      data: { ...template.data, name: 'Revised template', revision: 2 },
+    },
+  });
+  expect(
+    JSON.stringify(
+      (await getState()).records.find(row => row.id === run.id)?.data,
+    ),
+  ).toBe(original);
+  expect((await exportForActualBudget()).archive.length).toBeGreaterThan(0);
+});
+
+test('native transfer schedules replace automatic card payments without counting cash twice', async () => {
+  await account('checking', false);
+  await account('card', false);
+  await db.insertTransaction({
+    id: 'cash-opening',
+    account: 'checking',
+    date: '2026-01-01',
+    amount: 100000,
+  });
+  await db.insertTransaction({
+    id: 'card-opening',
+    account: 'card',
+    date: '2026-01-01',
+    amount: -10000,
+  });
+  await saveRecord({
+    record: envelope('checking-class', 'classification', {
+      accountId: 'checking',
+      kind: 'cash',
+      effectiveDate: '2026-01-01',
+      currency: 'USD',
+      isLiquid: true,
+    }),
+  });
+  await saveRecord({
+    record: envelope('card-class', 'classification', {
+      accountId: 'card',
+      kind: 'credit-card',
+      effectiveDate: '2026-01-01',
+      currency: 'USD',
+      isLiquid: false,
+      paymentAccountId: 'checking',
+      statementDay: 15,
+      paymentDay: 10,
+    }),
+  });
+  await createSchedule({
+    schedule: { name: 'Card payment' },
+    conditions: [
+      { field: 'date', op: 'is', value: '2026-11-10' },
+      { field: 'account', op: 'is', value: 'checking' },
+      { field: 'payee', op: 'is', value: 'payee-card' },
+      { field: 'amount', op: 'is', value: -5000 },
+    ],
+  });
+  const events = await scheduleForecastEvents(
+    '2026-11-01',
+    '2026-11-30',
+    'USD',
+  );
+  expect(events[0]?.transferAccountId).toBe('card');
+  expect(
+    (
+      await projectCfmLiquidity({
+        startDate: '2026-11-01',
+        endDate: '2026-11-30',
+      })
+    ).closingLiquidity,
+  ).toBe(90000);
+});
+
+test('unsupported financial tables refuse conversion while leaving the source ledger intact', async () => {
+  await account('checking');
+  await db.insertTransaction({
+    id: 'retained',
+    account: 'checking',
+    date: '2026-01-01',
+    amount: 12345,
+  });
+  db.execQuery(
+    'CREATE TABLE unsupported_financial_data (id TEXT PRIMARY KEY, amount INTEGER)',
+  );
+  db.runQuery('INSERT INTO unsupported_financial_data VALUES (?,?)', [
+    'retained',
+    6789,
+  ]);
+  await expect(exportForActualBudget()).rejects.toThrow(
+    'Unsupported financial table',
+  );
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-01-01').checking,
+  ).toBe(12345);
+  expect(
+    (
+      await db.first<{ amount: number }>(
+        'SELECT amount FROM unsupported_financial_data',
+      )
+    )?.amount,
+  ).toBe(6789);
+});
+
+test('allocating an imported transaction with an apostrophe in its identifier preserves the split', async () => {
+  await account('card', false);
+  await account('ar');
+  await db.insertTransaction({
+    id: "merchant's-id",
+    account: 'card',
+    amount: -20000,
+    date: '2026-01-01',
+    category: 'tickets',
+  });
+  await saveRecord({
+    record: envelope('safe-obligation', 'obligation', {
+      accountId: 'ar',
+      direction: 'receivable',
+      counterparty: 'Friend',
+      amount: 10000,
+      currency: 'USD',
+      date: '2026-01-01',
+      sourceTransactionId: "merchant's-id",
+    }),
+  });
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-01-01'),
+  ).toMatchObject({ card: -20000, ar: 10000 });
 });

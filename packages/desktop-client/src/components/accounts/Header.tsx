@@ -47,6 +47,7 @@ import { useDateFormat } from '#hooks/useDateFormat';
 import { useFeatureFlag } from '#hooks/useFeatureFlag';
 import { useLocale } from '#hooks/useLocale';
 import { useLocalPref } from '#hooks/useLocalPref';
+import { useNavigate } from '#hooks/useNavigate';
 import { useSplitsExpanded } from '#hooks/useSplitsExpanded';
 import { useSyncedPref } from '#hooks/useSyncedPref';
 import { useSyncServerStatus } from '#hooks/useSyncServerStatus';
@@ -183,6 +184,7 @@ export function AccountHeader({
   onMergeTransactions,
 }: AccountHeaderProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [reconcileOpen, setReconcileOpen] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -403,6 +405,20 @@ export function AccountHeader({
             />
           )}
           <View style={{ flex: '0 0 auto' }}>
+            {account?.offbudget &&
+              !account.closed &&
+              !account.bank &&
+              !account.account_sync_source && (
+                <Button
+                  onPress={() =>
+                    void navigate(
+                      `/cfm?account=${encodeURIComponent(account.id)}`,
+                    )
+                  }
+                >
+                  <Trans>Set balance</Trans>
+                </Button>
+              )}
             {account && (
               <Tooltip
                 style={{

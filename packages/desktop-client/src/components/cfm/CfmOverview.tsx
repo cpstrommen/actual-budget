@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
-import { buildBalanceSheet } from '@actual-app/core/shared/cfm';
+import {
+  buildBalanceSheet,
+  getAccountBalances,
+} from '@actual-app/core/shared/cfm';
 import type {
   CfmAccountClassification,
   CfmAccountKind,
@@ -15,12 +18,12 @@ import {
   Choice,
   DataTable,
   Field,
-  Metric,
-  Money,
-  Panel,
   fieldStyle,
   gridStyle,
+  Metric,
+  Money,
   newId,
+  Panel,
   parseMoney,
   today,
 } from './ui';
@@ -32,12 +35,14 @@ type Props = {
   save: SaveRecord;
   busy: boolean;
   onError: (error: unknown) => void;
+  initialAccountId?: string;
   setBalance: (input: {
     accountId: string;
     targetBalance: number;
     date: string;
     reason: string;
     requestId: string;
+    expectedBalance?: number;
   }) => Promise<boolean>;
 };
 
@@ -48,6 +53,7 @@ export function CfmOverview({
   busy,
   onError,
   setBalance,
+  initialAccountId,
 }: Props) {
   const { t } = useTranslation();
   const [accountId, setAccountId] = useState('');
@@ -59,11 +65,22 @@ export function CfmOverview({
   const [paymentAccountId, setPaymentAccountId] = useState('');
   const [paymentDay, setPaymentDay] = useState('');
   const [statementDay, setStatementDay] = useState('');
-  const [balanceAccountId, setBalanceAccountId] = useState('');
+  const [balanceAccountId, setBalanceAccountId] = useState(
+    initialAccountId || '',
+  );
   const [target, setTarget] = useState('');
   const [balanceDate, setBalanceDate] = useState(today());
   const [reason, setReason] = useState('');
   const [requestId, setRequestId] = useState(newId);
+  const previewBalance = balanceDate
+    ? getAccountBalances(state.transactions, balanceDate)[balanceAccountId] || 0
+    : 0;
+  let proposedAdjustment: number | undefined;
+  try {
+    if (target) proposedAdjustment = parseMoney(target) - previewBalance;
+  } catch {
+    /* Incomplete input remains editable. */
+  }
   const classifications = state.records
     .filter(isClassification)
     .map(record => record.data);
@@ -116,7 +133,13 @@ export function CfmOverview({
         ...(paymentDay ? { paymentDay: Number(paymentDay) } : {}),
         ...(statementDay ? { statementDay: Number(statementDay) } : {}),
       };
-      await save('classification', data);
+      const existing = state.records.find(
+        record =>
+          record.kind === 'classification' &&
+          record.data.accountId === accountId &&
+          record.data.effectiveDate === effectiveDate,
+      );
+      await save('classification', data, existing?.id);
     } catch (error) {
       onError(error);
     }
@@ -130,6 +153,7 @@ export function CfmOverview({
           date: balanceDate,
           reason,
           requestId,
+          expectedBalance: previewBalance,
         })
       ) {
         setTarget('');
@@ -157,44 +181,110 @@ export function CfmOverview({
             Investments are distinct from available cash.
           </Trans>
         </p>
-        {sheet.warnings.map(warning => (
-          <p key={warning} role="note">
-            {t(warning)}
-          </p>
-        ))}
-        <DataTable
-          headers={[
-            t('Account'),
-            t('Classification'),
-            t('Section'),
-            t('Signed balance'),
-          ]}
+        {!!sheet.warnings.length && (
+          <details>
+            <summary>
+              {t('Review {{count}} account notices', {
+                count: sheet.warnings.length,
+              })}
+            </summary>
+            {sheet.warnings.map(warning => (
+              <p key={warning} role="note">
+                {t(warning)}
+              </p>
+            ))}
+          </details>
+        )}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,320px),1fr))',
+            gap: 24,
+          }}
         >
-          {sheet.rows.map(row => (
-            <tr key={row.accountId}>
-              <Cell>{row.name}</Cell>
-              <Cell>
-                {names.get(row.kind === 'unclassified' ? 'asset' : row.kind) ??
-                  t('Unclassified')}
-              </Cell>
-              <Cell>{t(row.group)}</Cell>
-              <Cell right>
-                <Money amount={row.balance} />
-                {row.warnings.map(warning => (
-                  <div key={warning}>{t(warning)}</div>
+          {([false, true] as const).map(liabilities => (
+            <div key={String(liabilities)}>
+              <h3>
+                {liabilities ? t('Liabilities and net equity') : t('Assets')}
+              </h3>
+              <DataTable
+                headers={[
+                  t('Account'),
+                  t('Classification'),
+                  t('Signed balance'),
+                ]}
+              >
+                {(liabilities
+                  ? [
+                      ['current-liabilities', t('Current liabilities')],
+                      ['long-term-liabilities', t('Long-term liabilities')],
+                    ]
+                  : [
+                      ['liquidity', t('Liquidity')],
+                      ['equities', t('Equities / investments')],
+                      ['other-assets', t('Other assets')],
+                    ]
+                ).map(([group, label]) => (
+                  <Fragment key={group}>
+                    <tr>
+                      <th
+                        colSpan={3}
+                        scope="colgroup"
+                        style={{ textAlign: 'left', padding: 8 }}
+                      >
+                        {label}
+                      </th>
+                    </tr>
+                    {sheet.rows
+                      .filter(row => row.group === group)
+                      .map(row => (
+                        <tr key={row.accountId}>
+                          <Cell>{row.name}</Cell>
+                          <Cell>
+                            {row.kind === 'unclassified'
+                              ? t('Unclassified')
+                              : names.get(row.kind)}
+                          </Cell>
+                          <Cell right>
+                            <Money amount={row.balance} />
+                            {row.warnings.map(warning => (
+                              <div key={warning}>{t(warning)}</div>
+                            ))}
+                          </Cell>
+                        </tr>
+                      ))}
+                  </Fragment>
                 ))}
-              </Cell>
-            </tr>
+                <tr>
+                  <Cell>
+                    {liabilities ? t('Total liabilities') : t('Total assets')}
+                  </Cell>
+                  <Cell />
+                  <Cell right>
+                    <Money
+                      amount={
+                        liabilities
+                          ? -sheet.totalLiabilities
+                          : sheet.totalAssets
+                      }
+                    />
+                  </Cell>
+                </tr>
+                {liabilities && (
+                  <tr>
+                    <Cell>
+                      <Trans>Net equity</Trans>
+                    </Cell>
+                    <Cell />
+                    <Cell right>
+                      <Money amount={sheet.netEquity} />
+                    </Cell>
+                  </tr>
+                )}
+              </DataTable>
+            </div>
           ))}
-          <tr>
-            <Cell>{t('Net equity')}</Cell>
-            <Cell />
-            <Cell />
-            <Cell right>
-              <Money amount={sheet.netEquity} />
-            </Cell>
-          </tr>
-        </DataTable>
+        </div>
       </Panel>
       <Panel title={t('Account classification')}>
         <p>
@@ -303,6 +393,17 @@ export function CfmOverview({
       </Panel>
       <Panel title={t('Set balance')}>
         <p>
+          <Trans>Ledger balance at effective date:</Trans>{' '}
+          <Money amount={previewBalance} />
+          {proposedAdjustment !== undefined && (
+            <>
+              {' '}
+              · <Trans>Proposed adjustment:</Trans>{' '}
+              <Money amount={proposedAdjustment} />
+            </>
+          )}
+        </p>
+        <p>
           <Trans>
             Enter a signed target balance for a manual off-budget account. A
             dated adjustment records the difference without rewriting history or
@@ -350,7 +451,6 @@ export function CfmOverview({
                   style={fieldStyle}
                   value={reason}
                   onChange={event => setReason(event.target.value)}
-                  required
                 />
               </Field>
             </div>

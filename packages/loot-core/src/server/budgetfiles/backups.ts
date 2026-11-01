@@ -143,9 +143,16 @@ export async function makeBackup(id: string) {
       'binary',
     );
     const recoveryFiles: Record<string, Uint8Array> = {};
-    for (const name of ['cfm-upstream.zip', 'cfm-recovery.zip', 'cfm-portability-receipt.json']) {
+    for (const name of [
+      'cfm-upstream.zip',
+      'cfm-recovery.zip',
+      'cfm-portability-receipt.json',
+    ]) {
       if (await fs.exists(fs.join(budgetDir, name))) {
-        recoveryFiles[name] = await fs.readFile(fs.join(budgetDir, name), 'binary');
+        recoveryFiles[name] = await fs.readFile(
+          fs.join(budgetDir, name),
+          'binary',
+        );
       }
     }
     const zipped = safeZip({
