@@ -412,7 +412,7 @@ export function AccountHeader({
                 <Button
                   onPress={() =>
                     void navigate(
-                      `/cfm?account=${encodeURIComponent(account.id)}`,
+                      `/balances?account=${encodeURIComponent(account.id)}`,
                     )
                   }
                 >

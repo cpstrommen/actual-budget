@@ -1,7 +1,13 @@
+import { useLocation } from 'react-router';
+
 import { spacing } from '@actual-app/components/tokens';
 import { View } from '@actual-app/components/view';
 
-import { getSidebarMenuItemPath } from '#components/sidebar/sidebarMenu';
+import {
+  getSidebarGroupForPath,
+  getSidebarMenuItemPath,
+} from '#components/sidebar/sidebarMenu';
+import { SidebarSections } from '#components/sidebar/SidebarSections';
 import { useSidebarMenuItemDetails } from '#components/sidebar/useSidebarMenuItemDetails';
 import { useSidebarMenu } from '#hooks/useSidebarMenu';
 
@@ -10,6 +16,7 @@ import { NavRow } from './NavRow';
 export function PrimaryNav() {
   const { sidebarItems } = useSidebarMenu();
   const itemDetails = useSidebarMenuItemDetails();
+  const location = useLocation();
 
   return (
     <View
@@ -20,12 +27,15 @@ export function PrimaryNav() {
       }}
     >
       {sidebarItems.map(item => (
-        <NavRow
-          key={item.id}
-          title={itemDetails[item.id].title}
-          Icon={itemDetails[item.id].Icon}
-          to={getSidebarMenuItemPath(item.id, true)}
-        />
+        <View key={item.id}>
+          <NavRow
+            title={itemDetails[item.id].title}
+            Icon={itemDetails[item.id].Icon}
+            to={getSidebarMenuItemPath(item.id, true)}
+            selected={getSidebarGroupForPath(location.pathname) === item.id}
+          />
+          <SidebarSections id={item.id} />
+        </View>
       ))}
     </View>
   );

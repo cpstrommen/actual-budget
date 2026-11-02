@@ -53,14 +53,26 @@ export function SettingsNav() {
         Icon={SvgCog}
         to="/settings/general"
       />
-      {menuItems.map(item => (
-        <SettingsNavLink
-          key={item.id}
-          title={itemDetails[item.id].title}
-          Icon={itemDetails[item.id].Icon}
-          to={getSidebarMenuItemPath(item.id, false)}
-        />
-      ))}
+      <SettingsNavLink
+        title={t('Automation')}
+        Icon={SvgSettingsSliderAlternate}
+        to="/settings/automation"
+      />
+      <SettingsNavLink
+        title={t('Schedules')}
+        Icon={itemDetails.schedules.Icon}
+        to="/settings/schedules"
+      />
+      {menuItems
+        .filter(item => item.id !== 'schedules')
+        .map(item => (
+          <SettingsNavLink
+            key={item.id}
+            title={itemDetails[item.id].title}
+            Icon={itemDetails[item.id].Icon}
+            to={getSidebarMenuItemPath(item.id, false)}
+          />
+        ))}
       <SettingsNavLink
         title={t('Advanced')}
         Icon={SvgSettingsSliderAlternate}

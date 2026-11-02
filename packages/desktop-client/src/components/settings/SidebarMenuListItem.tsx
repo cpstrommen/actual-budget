@@ -98,7 +98,11 @@ export function SidebarMenuListItem({
           size="small"
           style={{ color: theme.pageTextSubdued, fontStyle: 'italic' }}
         >
-          <Trans>Always shown</Trans>
+          {item.id === 'schedules' ? (
+            <Trans>In Settings</Trans>
+          ) : (
+            <Trans>Always shown</Trans>
+          )}
         </Text>
       ) : (
         <Toggle

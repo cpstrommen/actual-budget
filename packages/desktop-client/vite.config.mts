@@ -21,6 +21,8 @@ import { build, defineConfig, loadEnv } from 'vite';
 import type { Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+import { cfmPreview } from './preview/plugin';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Compile every workspace package that ships React components. Workspace
 // imports resolve to their real paths under packages/<name>/src, so any
@@ -261,9 +263,20 @@ const pluginsServiceAssets = (): Plugin => ({
 export default defineConfig(async ({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const isVitest = process.env.VITEST === 'true';
+  const isCfmPreview =
+    command === 'serve' && env.REACT_APP_CFM_PREVIEW === 'true';
+  if (isCfmPreview && !env.CFM_PREVIEW_SAMPLE) {
+    throw new Error('Run yarn preview:ui to prepare the CFM preview sample.');
+  }
   const devHeaders = {
     'Cross-Origin-Opener-Policy': 'same-origin',
     'Cross-Origin-Embedder-Policy': 'require-corp',
+    ...(isCfmPreview
+      ? {
+          'Content-Security-Policy':
+            "connect-src 'self' ws://127.0.0.1:* ws://localhost:*; frame-ancestors 'self'",
+        }
+      : {}),
   };
 
   // Forward Netlify env variables
@@ -312,6 +325,11 @@ export default defineConfig(async ({ mode, command }) => {
 
   return {
     base: '/',
+    define: {
+      'import.meta.env.REACT_APP_CFM_PREVIEW': JSON.stringify(
+        isCfmPreview ? 'true' : 'false',
+      ),
+    },
     envPrefix: 'REACT_APP_',
     build: {
       minify: 'oxc',
@@ -337,7 +355,7 @@ export default defineConfig(async ({ mode, command }) => {
             let extType = info[info.length - 1];
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
               extType = 'img';
-            } else if (/woff|woff2/.test(extType)) {
+            } else if (/woff|woff2|ttf/.test(extType)) {
               extType = 'media';
             }
             return `static/${extType}/[name].[hash][extname]`;
@@ -367,6 +385,7 @@ export default defineConfig(async ({ mode, command }) => {
       tsconfigPaths: true,
     },
     plugins: [
+      isCfmPreview ? cfmPreview(env.CFM_PREVIEW_SAMPLE, devHeaders) : undefined,
       // electron (desktop) builds do not support PWA
       mode === 'desktop'
         ? undefined
@@ -397,7 +416,7 @@ export default defineConfig(async ({ mode, command }) => {
             },
             workbox: {
               globPatterns: [
-                '**/*.{js,css,html,txt,wasm,sql,sqlite,ico,png,woff2,webmanifest}',
+                '**/*.{js,css,html,txt,wasm,sql,sqlite,ico,png,woff2,ttf,webmanifest}',
               ],
               ignoreURLParametersMatching: [/^v$/],
               navigateFallback: '/index.html',

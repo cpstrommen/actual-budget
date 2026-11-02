@@ -11,6 +11,8 @@ import type {
 } from '@actual-app/core/types/models/cfm';
 import { addYears, format, parseISO } from 'date-fns';
 
+import { Link } from '#components/common/Link';
+
 import { isAnnualPlan } from './records';
 import {
   Action,
@@ -122,6 +124,14 @@ export function CfmAnnualPlanning({
   return (
     <>
       <Panel title={t('Annual plan and year-to-date performance')}>
+        <p>
+          <Trans>
+            Annual budgets use the same categories as your monthly budget.
+          </Trans>{' '}
+          <Link variant="internal" to="/budget">
+            <Trans>Manage budget categories</Trans>
+          </Link>
+        </p>
         <div style={gridStyle}>
           <Field label={t('Year')}>
             <input

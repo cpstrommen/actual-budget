@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { ButtonWithLoading } from '@actual-app/components/button';
 import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
-import { send } from '@actual-app/core/platform/client/connection';
+import { listen, send } from '@actual-app/core/platform/client/connection';
+import type { CfmState } from '@actual-app/core/types/models/cfm';
 import { format } from 'date-fns';
 
 import { useMetadataPref } from '#hooks/useMetadataPref';
@@ -18,6 +19,19 @@ export function ExportBudget() {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [budgetName] = useMetadataPref('budgetName');
   const [encryptKeyId] = useMetadataPref('encryptKeyId');
+
+  const [portability, setPortability] = useState<CfmState['portability']>();
+  useEffect(() => {
+    const refresh = () => {
+      void send('cfm-get-state')
+        .then(state => setPortability(state.portability))
+        .catch(() => setPortability(undefined));
+    };
+    refresh();
+    return listen('sync-event', event => {
+      if (event.type === 'applied' || event.type === 'success') refresh();
+    });
+  }, []);
 
   async function onExportUpstream() {
     setIsLoading(true);
@@ -110,6 +124,20 @@ export function ExportBudget() {
         </div>
       }
     >
+      <Text style={{ color: theme.pageTextSubdued }}>
+        {portability?.updatedAt
+          ? t('Last automatic recovery export: {{date}}', {
+              date: portability.updatedAt,
+            })
+          : t('No automatic recovery export is available yet.')}
+      </Text>
+      {portability?.error && (
+        <Text style={{ color: theme.errorText }}>
+          {t('Automatic recovery export failed: {{error}}', {
+            error: portability.error,
+          })}
+        </Text>
+      )}
       {error && (
         <Text style={{ color: theme.errorText }}>
           <Trans>

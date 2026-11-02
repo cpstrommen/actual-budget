@@ -19,7 +19,7 @@ export type ServerHandlers = {
   'get-server-url': () => Promise<string | null>;
 
   'set-server-url': (arg: {
-    url: string;
+    url: string | null;
     validate?: boolean;
   }) => Promise<{ error?: string }>;
 

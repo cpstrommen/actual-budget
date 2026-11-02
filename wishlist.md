@@ -25,6 +25,10 @@ Validation includes the full core and UI suites, focused financial/automation re
 
 ## Requested Features
 
+### WIP: calculated credit-card auto-payments
+
+Plan a configurable credit-card payment calculator under **Balances**, feeding **Summary → Liquidity**. Each card should link to its paying bank account and support statement-balance, full-balance, minimum-payment, and fixed-amount policies, with statement/payment dates. Project the resulting dated bank outflow and card liability reduction together, account for charges, refunds, pending or posted payments, and avoid counting native payment schedules twice. Show the calculation and assumptions before enabling a policy. This is a WIP design item; do not imply that existing timing-based projections calculate a provider's actual statement or minimum-payment amount. Add fixtures for multiple cards sharing one bank account, backdated charges, partial payments, changed statement cycles, and insufficient liquidity before implementing automatic posting.
+
 1. **Set balance:** For manual off-budget accounts without bank sync, enter the current balance and automatically post the debit or credit needed to reach it.
 2. **Report packages and balance sheet:** Customize monthly, quarterly, annual, YTD, and arbitrary-period reports with charts and tables. Save reusable formats, automatically generate and archive reports, and present accounts in a balance sheet with assets on the left and liabilities on the right, grouped into Equities, Liquidity, and Assets as appropriate. Consider a standardized export format, potentially LaTeX.
 3. **Asset accounts and valuation:** Track assets with manually assigned values, depreciation/appreciation schedules, or a fixed rate of change.

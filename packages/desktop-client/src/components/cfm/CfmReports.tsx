@@ -162,7 +162,7 @@ export function CfmReports({
       onError(error);
     }
   }
-  function print(report: CfmReportRun) {
+  async function print(report: CfmReportRun) {
     try {
       const popup = window.open('', '_blank');
       if (!popup) {
@@ -175,6 +175,7 @@ export function CfmReports({
       popup.document.open();
       popup.document.write(getReportDocuments(report).html);
       popup.document.close();
+      await popup.document.fonts.ready;
       popup.focus();
       popup.print();
     } catch (error) {
@@ -639,7 +640,7 @@ export function CfmReports({
                     {format.toUpperCase()}
                   </Action>
                 ))}
-                <Action onPress={() => print(record.data)}>
+                <Action onPress={() => void print(record.data)}>
                   {t('Print / save PDF')}
                 </Action>
               </Cell>

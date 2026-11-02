@@ -1,7 +1,15 @@
 // @ts-strict-ignore
 import { patchFetchForSqlJS } from '#mocks/util';
 
-import { execQuery, init, openDatabase, runQuery, transaction } from './index';
+import {
+  closeDatabase,
+  execQuery,
+  exportDatabase,
+  init,
+  openDatabase,
+  runQuery,
+  transaction,
+} from './index';
 
 beforeAll(async () => {
   const baseURL = `${__dirname}/../../../../../../node_modules/@jlongster/sql.js/dist/`;
@@ -16,6 +24,43 @@ CREATE TABLE textstrings (id TEXT PRIMARY KEY, string TEXT);
 `;
 
 describe('Web sqlite', () => {
+  it('keeps the live connection usable after an export', async () => {
+    const db = await openDatabase();
+    try {
+      execQuery(db, initSQL);
+      execQuery(db, 'PRAGMA journal_mode=MEMORY; PRAGMA cache_size=-64000;');
+      runQuery(db, "INSERT INTO textstrings VALUES ('original', 'ÄBC')");
+      const settings = () => ({
+        journal: runQuery(db, 'PRAGMA journal_mode', [], true),
+        cache: runQuery(db, 'PRAGMA cache_size', [], true),
+      });
+      const before = settings();
+      await exportDatabase(db);
+      expect(settings()).toEqual(before);
+      expect(
+        runQuery(
+          db,
+          'SELECT UNICODE_LOWER(string) AS value FROM textstrings',
+          [],
+          true,
+        ),
+      ).toEqual([{ value: 'äbc' }]);
+      transaction(db, () => {
+        runQuery(db, "INSERT INTO numbers VALUES ('after-export', 42)");
+      });
+      const restored = await openDatabase(await exportDatabase(db));
+      try {
+        expect(runQuery(restored, 'SELECT * FROM numbers', [], true)).toEqual([
+          { id: 'after-export', number: 42 },
+        ]);
+      } finally {
+        closeDatabase(restored);
+      }
+    } finally {
+      closeDatabase(db);
+    }
+  });
+
   it('should rollback transactions', async () => {
     const db = await openDatabase();
     execQuery(db, initSQL);

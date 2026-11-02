@@ -86,7 +86,12 @@ export class Navigation {
   }
 
   async goToBudgetPage() {
-    await this.page.getByRole('link', { name: 'Budget', exact: true }).click();
+    await this.page
+      .getByRole('link', { name: 'Planning', exact: true })
+      .click();
+    await this.page
+      .getByRole('link', { name: 'Monthly budget', exact: true })
+      .click();
 
     const budgetPage = new BudgetPage(this.page);
     await budgetPage.waitFor({ state: 'visible' });
@@ -94,7 +99,8 @@ export class Navigation {
   }
 
   async goToSchedulesPage() {
-    await this.page.getByRole('link', { name: 'Schedules' }).click();
+    const settingsPage = await this.goToSettingsPage();
+    await settingsPage.goToSection('Schedules');
 
     return new SchedulesPage(this.page);
   }

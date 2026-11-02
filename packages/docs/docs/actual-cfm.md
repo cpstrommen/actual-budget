@@ -1,6 +1,15 @@
 # Using Actual CFM
 
-Open **Cash flow management** in the sidebar. The as-of date controls historical statements and report cutoffs. Monthly budgets, account registers, imports, reconciliation, and existing reports remain available.
+Use the left menu to move between the four work areas:
+
+- **Summary**: financial position and liquidity scenarios.
+- **Reports**: the standard charts and reports, plus archived report packages.
+- **Balances**: account classifications, manual balance adjustments, tracking accounts, asset valuations, depreciation and amortization, accounts receivable, and accounts payable.
+- **Planning**: annual budgets and the original monthly budget for funding and tracking execution.
+
+**Settings** contains **Automation** and **Schedules** beside each other. Exports and recovery status are under **Settings → General → Data → Export**. Manual bank refresh remains in **All accounts**. On narrow screens, choose a work area in the bottom navigation and its page from the section selector.
+
+The as-of date controls historical statements and report cutoffs. Account registers, imports, and reconciliation remain available.
 
 To bring an existing deployment and its history into CFM, start with [Migrating from Actual Budget](migration/from-actual-budget.md).
 
@@ -17,15 +26,15 @@ Import that ZIP as a new Actual CFM file and select **2026-10-31**. It includes 
 
 ## Financial position and manual balances
 
-Classify accounts as cash, investment holdings, other assets, credit cards, loans, receivables, or payables. Classification is separate from monthly-budget participation. Give changes an effective date. Select available liquid accounts explicitly; restricted cash, investments, and AR are excluded by default. Specify current/long-term debt and card payment account, statement day, and payment day.
+In **Balances → Accounts and balances**, classify accounts as cash, investment holdings, other assets, credit cards, loans, receivables, or payables. Classification is separate from monthly-budget participation. Give changes an effective date. Select available liquid accounts explicitly; restricted cash, investments, and AR are excluded by default. Specify current/long-term debt and card payment account, statement day, and payment day.
 
-The balance sheet uses dated ledger values and derives net equity as assets less liabilities. Mortgage debt remains a liability while property retains its gross asset value. Review unclassified accounts and unusual-sign warnings.
+**Summary → Financial position** uses dated ledger values and derives net equity as assets less liabilities. Mortgage debt remains a liability while property retains its gross asset value. Review unclassified accounts and unusual-sign warnings.
 
 Create manual tracking accounts here. **Set balance** is also available in an eligible account's register. Enter a signed target, date, and reason. Review the existing balance and proposed difference. The core rejects a stale preview, includes cleared/uncleared transactions through that date, preserves later entries, and creates no transaction for zero difference. Undo reverses the operation. Bank-linked, on-budget, and managed obligation accounts use their own workflows.
 
 ## Annual planning
 
-Save an annual amount by category/year. Choose equal allocations, twelve exact custom amounts, or twelve integer weights. Dated one-off amounts are included in the annual total and enter expected YTD on their due dates. A November insurance bill therefore does not distort spring comparisons.
+In **Planning → Annual budget**, save an annual amount by category/year. These are the same categories used by the monthly budget and transaction ledger; category renames carry through automatically. Manage categories in **Planning → Monthly budget**. Choose equal allocations, twelve exact custom amounts, or twelve integer weights. Dated one-off amounts are included in the annual total and enter expected YTD on their due dates. A November insurance bill therefore does not distort spring comparisons.
 
 Expense actuals include refunds, exclude transfers, and count splits once. Positive expense variance means over plan. Choose prorated or full-current-month expectation. Next-year copies are independent. Report snapshots retain the revision and materialized figures used.
 
@@ -33,13 +42,13 @@ Plans do not fund envelopes automatically. Open **Monthly funding preview** to r
 
 ## Assets
 
-Choose a manual tracking account whose acquisition balance is already in the ledger. Add a manual, straight-line, fixed annual percentage, or dated-schedule policy. Set frequency, compounding, residual value, useful life, linked debt, and disposal date as applicable. A policy revision requires a later effective date and retains earlier policies.
+In **Balances → Assets**, choose a manual tracking account whose acquisition balance is already in the ledger. Add a manual, straight-line depreciation/amortization, fixed annual percentage, or dated-schedule policy. Straight-line policies can amortize intangible assets over their useful life. Set frequency, compounding, residual value, useful life, linked debt, and disposal date as applicable. A policy revision requires a later effective date and retains earlier policies.
 
 The table distinguishes modeled and observed values. **Record value and ledger adjustment** realizes a dated non-cash observation. The balance sheet uses the ledger; the asset preview may show unposted modeled values. It never adds both. Optional automatic realization preserves the original simple/compound basis. Disposal ends the model; record actual proceeds separately and realize the disposed value in the ledger.
 
 ## Receivables, payables, and credits
 
-Create manual control accounts, then individual obligations by counterparty. Linking a source transaction/split allocates its value using ordinary split/transfer entries. For a new unpaid payable, choose an expense recognition account/category or an off-budget asset account. Non-cash zero-total splits recognize expenses; paired asset/liability entries recognize financed assets. Cash moves on payment.
+Create manual control accounts in **Balances → Accounts and balances**, then individual obligations by counterparty under **Balances → Accounts receivable** or **Accounts payable**. Linking a source transaction/split allocates its value using ordinary split/transfer entries. For a new unpaid payable, choose an expense recognition account/category or an off-budget asset account. Non-cash zero-total splits recognize expenses; paired asset/liability entries recognize financed assets. Cash moves on payment.
 
 For four $100 tickets on a $400 card charge, create three $100 receivables linked to that charge. The card stays -$400, entertainment becomes $100, and AR becomes $300. Match imported deposits to settlements, including partial payments. Allocate a single deposit to several items through separate settlement operations without duplicating its cash amount.
 
@@ -51,19 +60,19 @@ Write-offs need a reason. AR uses the obligation's loss category and an on-budge
 
 ## Liquidity scenarios
 
-Choose 30/60/90 days, a 12-month view, or an end date. Select a cash account for residual annual-plan estimates, optional AR collections, collection delay, and minimum cash threshold. Review daily/monthly cash, minimum cash/date, shortfalls, liability coverage, exclusions, stale accounts, missing card timing, and undated obligations.
+In **Summary → Liquidity**, choose 30/60/90 days, a 12-month view, or an end date. Select a cash account for residual annual-plan estimates, optional AR collections, collection delay, and minimum cash threshold. Review daily/monthly cash, minimum cash/date, shortfalls, liability coverage, exclusions, stale accounts, missing card timing, and undated obligations.
 
-Posted transactions replace matching schedule occurrences. Selected-cash transfers net to zero; transfers to excluded accounts reduce cash. Card purchases affect debt while payment cycles determine cash movement. Annual estimates cover the remaining plan after actuals and known events. Zero liabilities show an unavailable ratio instead of infinity. Scenarios do not post transactions.
+Posted transactions replace matching schedule occurrences. Selected-cash transfers net to zero; transfers to excluded accounts reduce cash. Card purchases affect debt while payment cycles determine cash movement. Annual estimates cover the remaining plan after actuals and known events. Zero liabilities show an unavailable ratio instead of infinity. Scenarios do not post transactions. Calculated credit-card auto-payment amounts are a WIP roadmap item: the current timing assumptions do not calculate actual statement balances or minimum payments. See [the roadmap](https://github.com/cpstrommen/actual-budget/blob/master/wishlist.md) for the planned bank-account payment projections.
 
 ## Report packages
 
-Create ordered balance-sheet, annual-plan, liquidity, asset, AR/AP, and filtered chart/table sections. Choose monthly, quarterly, annual, YTD, or custom periods and generate at the selected as-of date. Stock values use that date; transaction tables use resolved start/end dates. Liquidity is a forward scenario from the as-of date.
+In **Reports → Report packages**, create ordered balance-sheet, annual-plan, liquidity, asset, AR/AP, and filtered chart/table sections. Choose monthly, quarterly, annual, YTD, or custom periods and generate at the selected as-of date. Stock values use that date; transaction tables use resolved start/end dates. Liquidity is a forward scenario from the as-of date.
 
 Runs retain template revision, calculation version, dates, currency, timezone, assumptions, warnings, and materialized results. Later ledger/template edits do not rewrite them. Export HTML, CSV, or JSON. **Print / save PDF** uses browser printing, with embedded charts and repeating table headings. Snapshots sync and back up with the budget; independently saved files do not sync automatically.
 
 ## Automation
 
-Select one scheduler identity, budget timezone, refresh interval, and bank accounts. Enable asset realization and report schedules separately. Application mode requires a running, unlocked app and performs one bounded catch-up after suspension. History shows success, next attempt, backoff, and reconnection errors. Retry paused jobs after reconnecting a bank.
+In **Settings → Automation**, select one scheduler identity, budget timezone, refresh interval, and bank accounts. Enable asset realization and report schedules separately. Application mode requires a running, unlocked app and performs one bounded catch-up after suspension. History shows success, next attempt, backoff, and reconnection errors. Retry paused jobs after reconnecting a bank.
 
 Headless mode needs a separately launched worker with local credentials:
 
@@ -78,4 +87,4 @@ Use one worker/data directory per selected identity. Its local lock prevents dup
 
 ## Leaving the fork
 
-Use **Export for Actual Budget** and retain both ZIP files. The [return guide](migration/return-to-actual-budget.md) covers the pinned target, preserved history, receipt, and offline recovery after maintenance ends. The [format specification](migration/cfm-format.md) describes the open archive.
+Use **Settings → General → Data → Export → Export for Actual Budget** and retain both ZIP files. The [return guide](migration/return-to-actual-budget.md) covers the pinned target, preserved history, receipt, and offline recovery after maintenance ends. The [format specification](migration/cfm-format.md) describes the open archive.

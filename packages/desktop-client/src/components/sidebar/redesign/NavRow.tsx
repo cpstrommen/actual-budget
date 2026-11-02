@@ -14,9 +14,10 @@ type NavRowProps = {
     | ComponentType<SVGProps<SVGElement>>
     | ComponentType<SVGProps<SVGSVGElement>>;
   to: string;
+  selected?: boolean;
 };
 
-export function NavRow({ title, Icon, to }: NavRowProps) {
+export function NavRow({ title, Icon, to, selected }: NavRowProps) {
   return (
     <View style={{ flexShrink: 0 }}>
       <Link
@@ -35,6 +36,13 @@ export function NavRow({ title, Icon, to }: NavRowProps) {
           textDecoration: 'none',
           color: theme.sidebarItemText,
           ':hover': { backgroundColor: theme.sidebarItemBackgroundHover },
+          ...(selected
+            ? {
+                backgroundColor: theme.sidebarItemBackgroundSelected,
+                color: theme.sidebarItemTextSelected,
+                fontWeight: 600,
+              }
+            : {}),
         }}
         activeStyle={{
           backgroundColor: theme.sidebarItemBackgroundSelected,

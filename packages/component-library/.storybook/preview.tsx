@@ -1,5 +1,7 @@
 import { type ReactNode } from 'react';
 
+import '../../../assets/fonts/geologica/font.css';
+
 import type { Preview } from '@storybook/react-vite';
 
 import darkThemeCss from '../src/themes/dark.css?inline';

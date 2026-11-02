@@ -25,7 +25,7 @@ You can fetch new transactions [automatically](#automatic-syncing) or manually.
 
 #### Automatic Syncing
 
-Configure automatic bank refreshes in **Cash flow management → Automation**. Select one scheduler identity, the budget timezone, an interval, and the accounts to refresh. Enable it after checking a manual refresh; provider limits and retry backoff still apply.
+Configure automatic bank refreshes in **Settings → Automation**. Select one scheduler identity, the budget timezone, an interval, and the accounts to refresh. Enable it after checking a manual refresh; provider limits and retry backoff still apply.
 
 Application mode requires an open, unlocked CFM client and performs bounded catch-up after suspension. Running jobs while all clients are closed requires the separately configured headless worker. See [CFM automation](../actual-cfm.md#automation) for setup, credentials, and the selected-writer requirements.
 

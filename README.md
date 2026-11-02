@@ -15,7 +15,7 @@ The aim is to answer practical questions: Are annual expenses on track despite s
 - Simple balance updates for manual off-budget accounts and configurable bank synchronization.
 - A restrained grey visual identity drawn from Strømmen's site (implemented).
 
-Open **Cash flow management** in the sidebar for these features. [The usage guide](packages/docs/docs/actual-cfm.md) covers the workflows; [wishlist.md](wishlist.md) records the implementation and acceptance criteria. The inherited monthly budgeting tools remain available.
+Use **Summary**, **Reports**, **Balances**, and **Planning** in the left menu for these features. [The usage guide](packages/docs/docs/actual-cfm.md) covers the workflows; [wishlist.md](wishlist.md) records the implementation and acceptance criteria. The inherited monthly budgeting tools remain available.
 
 ## Run This Fork
 
@@ -42,6 +42,14 @@ yarn build:server
 ```
 
 The upstream hosted demo, Docker images, npm packages, and desktop downloads are Actual Budget builds. Build from this checkout to use Actual CFM changes.
+
+## Preview UI Changes
+
+```sh
+yarn preview:ui
+```
+
+This opens **http://127.0.0.1:3002/__cfm-preview** with a populated CFM sample, live updates, theme and screen-size controls, and a reset button. It uses separate local browser storage and needs no sync server. Review changes here before deploying them. See [the preview guide](packages/docs/docs/development/ui-preview.md) for options and verification.
 
 ## Project Layout
 

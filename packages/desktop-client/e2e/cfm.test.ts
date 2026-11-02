@@ -10,11 +10,9 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
 }, testInfo) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Try the demo', exact: true }).click();
-  await page.waitForURL(/\/(budget|cfm)/);
-  await page.goto('/cfm');
-  await expect(
-    page.getByRole('heading', { name: 'Actual CFM', exact: true }),
-  ).toBeVisible();
+  await page.waitForURL(/\/(budget|cfm|summary)/);
+  await page.goto('/balances');
+  await expect(page.getByLabel('Account name', { exact: true })).toBeVisible();
   await page
     .getByLabel('Account name', { exact: true })
     .fill('CFM test property');
@@ -27,10 +25,11 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
   await page.getByLabel('Target balance', { exact: true }).fill('1200');
   await page.getByLabel('Reason', { exact: true }).fill('Appraisal');
   await page.getByRole('button', { name: 'Record balance adjustment' }).click();
+  await page.getByRole('link', { name: 'Summary', exact: true }).click();
   await expect(
     page.getByRole('row').filter({ hasText: 'CFM test property' }).first(),
   ).toContainText('1,200.00');
-  await page.getByRole('button', { name: 'Annual plan', exact: true }).click();
+  await page.getByRole('link', { name: 'Planning', exact: true }).click();
   const category = page.getByLabel('Category', { exact: true });
   await category.selectOption({ index: 1 });
   await page.getByLabel('Annual amount', { exact: true }).fill('1200');
@@ -38,8 +37,9 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
     .getByRole('button', { name: 'Save annual plan', exact: true })
     .click();
   await expect(page.getByText('Revision 1', { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Reports', exact: true }).click();
   await page
-    .getByRole('button', { name: 'Report packages', exact: true })
+    .getByRole('link', { name: 'Report packages', exact: true })
     .click();
   await page
     .getByLabel('Name', { exact: true })
@@ -57,9 +57,6 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
     page.getByRole('button', { name: 'Print / save PDF', exact: true }),
   ).toBeVisible();
   await page.reload();
-  await page
-    .getByRole('button', { name: 'Report packages', exact: true })
-    .click();
   await expect(
     page.getByRole('button', { name: 'Print / save PDF', exact: true }),
   ).toBeVisible();
@@ -69,8 +66,12 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
   if (!file) throw new Error('Report download was not created');
   const html = await readFile(file, 'utf8');
   expect(html).toContain('CFM test property');
+  expect(html).toContain('font-family:Geologica');
+  expect(html).toContain('SIL OPEN FONT LICENSE');
+  expect(html).toContain('data:font/ttf;base64,');
   const printPage = await page.context().newPage();
   await printPage.setContent(html);
+  await printPage.evaluate(() => document.fonts.ready);
   await printPage.pdf({
     path: testInfo.outputPath('report-preview.pdf'),
     format: 'A4',
@@ -82,9 +83,7 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
     fullPage: true,
   });
   await printPage.close();
-  await page
-    .getByRole('button', { name: 'Financial position', exact: true })
-    .click();
+  await page.getByRole('link', { name: 'Summary', exact: true }).click();
   for (const theme of ['auto', 'dark', 'midnight'] as const) {
     await page.evaluate(theme => window.Actual.setTheme(theme), theme);
     await expect(page.locator('[data-theme]')).toHaveAttribute(
@@ -96,6 +95,7 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
       fullPage: true,
     });
   }
+  await page.getByRole('link', { name: 'Settings', exact: true }).click();
   const downloads: Download[] = [];
   const collect = (download: Download) => downloads.push(download);
   page.on('download', collect);
@@ -108,7 +108,7 @@ test('CFM workspace posts an observed balance, retains annual plans, and archive
     download.suggestedFilename().includes('for-Actual-Budget'),
   );
   const archiveDownload = downloads.find(download =>
-    download.suggestedFilename().includes('audit-and-recovery'),
+    download.suggestedFilename().includes('CFM-recovery'),
   );
   const upstreamPath = await upstreamDownload?.path(),
     archivePath = await archiveDownload?.path();
@@ -134,8 +134,8 @@ test('receivables can be updated, partially settled, and written off from the wo
 }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Try the demo', exact: true }).click();
-  await page.waitForURL(/\/(budget|cfm)/);
-  await page.goto('/cfm');
+  await page.waitForURL(/\/(budget|cfm|summary)/);
+  await page.goto('/balances');
   await page
     .getByLabel('Account name', { exact: true })
     .fill('CFM receivables');
@@ -144,7 +144,7 @@ test('receivables can be updated, partially settled, and written off from the wo
     .selectOption('receivable');
   await page.getByRole('button', { name: 'Create tracking account' }).click();
   await page
-    .getByRole('button', { name: 'Receivables / payables', exact: true })
+    .getByRole('link', { name: 'Accounts receivable', exact: true })
     .click();
   await page.getByLabel('Counterparty', { exact: true }).fill('Test friend');
   await page

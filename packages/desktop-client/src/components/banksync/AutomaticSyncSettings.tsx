@@ -14,7 +14,7 @@ export function AutomaticSyncSettings() {
           configured.
         </Trans>
       </Paragraph>
-      <Link to="/cfm?tab=automation">
+      <Link to="/settings/automation">
         <Trans>Open CFM automation settings</Trans>
       </Link>
     </div>

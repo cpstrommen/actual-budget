@@ -253,6 +253,11 @@ export async function openDatabase(pathOrBuffer?: string | Uint8Array) {
     db = new SQL.Database();
   }
 
+  registerFunctions(db);
+  return db;
+}
+
+function registerFunctions(db: Database) {
   // Define Unicode-aware LOWER, UPPER, and LIKE implementation.
   // This is necessary because sql.js uses SQLite build without ICU support.
   //
@@ -264,7 +269,6 @@ export async function openDatabase(pathOrBuffer?: string | Uint8Array) {
   db.create_function('UNICODE_LIKE', unicodeLike);
   db.create_function('REGEXP', regexp);
   db.create_function('NORMALISE', normalise);
-  return db;
 }
 
 export function closeDatabase(db: Database) {
@@ -272,5 +276,25 @@ export function closeDatabase(db: Database) {
 }
 
 export async function exportDatabase(db: Database) {
-  return db.export();
+  const [{ journal_mode: journalMode }] = runQuery<{ journal_mode: string }>(
+    db,
+    'PRAGMA journal_mode',
+    [],
+    true,
+  );
+  const [{ cache_size: cacheSize }] = runQuery<{ cache_size: number }>(
+    db,
+    'PRAGMA cache_size',
+    [],
+    true,
+  );
+  // sql.js closes and reopens the connection when exporting. Restore its
+  // settings and functions before a later edit can use it. In particular,
+  // DELETE journals cannot be stored by absurd-sql's database-only backend.
+  const data = db.export();
+  db.exec(
+    `PRAGMA journal_mode=${journalMode}; PRAGMA cache_size=${cacheSize};`,
+  );
+  registerFunctions(db);
+  return data;
 }

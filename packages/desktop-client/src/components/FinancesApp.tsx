@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from '#redux';
 import { UserAccessPage } from './admin/UserAccess/UserAccessPage';
 import { UserDirectoryPage } from './admin/UserDirectory/UserDirectoryPage';
 import { BankSyncStatus } from './BankSyncStatus';
+import { CfmRedirect } from './cfm/CfmRedirect';
 import { CommandBar } from './CommandBar';
 import { ContextMenu } from './ContextMenu';
 import { EnableBankingCallback } from './EnableBankingCallback';
@@ -41,6 +42,7 @@ import { NarrowAlternate, WideComponent } from './responsive';
 import { useMultiuserEnabled } from './ServerContext';
 import {
   AdvancedSettings,
+  AutomationSettings,
   ExperimentalSettings,
   GeneralSettings,
   Settings,
@@ -48,6 +50,7 @@ import {
 } from './settings';
 import { FloatableSidebar } from './sidebar';
 import { SidebarMenuRoute } from './sidebar/SidebarMenuRoute';
+import { MobileSectionNavigation } from './sidebar/SidebarSections';
 import { StartPageRedirect } from './StartPageRedirect';
 import { ManageTagsPage } from './tags/ManageTagsPage';
 import { Titlebar } from './Titlebar';
@@ -258,8 +261,51 @@ export function FinancesApp() {
                   <BankSyncStatus />
                   {isNarrowWidth && <MobilePageHeaderSlot />}
 
+                  <MobileSectionNavigation />
                   <Routes>
-                    <Route path="/cfm" element={<CfmWorkspace />} />
+                    <Route path="/cfm" element={<CfmRedirect />} />
+                    <Route
+                      path="/summary"
+                      element={<CfmWorkspace key="summary" section="summary" />}
+                    />
+                    <Route
+                      path="/summary/liquidity"
+                      element={
+                        <CfmWorkspace key="liquidity" section="liquidity" />
+                      }
+                    />
+                    <Route
+                      path="/balances"
+                      element={
+                        <CfmWorkspace key="accounts" section="accounts" />
+                      }
+                    />
+                    <Route
+                      path="/balances/assets"
+                      element={<CfmWorkspace key="assets" section="assets" />}
+                    />
+                    <Route
+                      path="/balances/receivables"
+                      element={
+                        <CfmWorkspace key="receivables" section="receivables" />
+                      }
+                    />
+                    <Route
+                      path="/balances/payables"
+                      element={
+                        <CfmWorkspace key="payables" section="payables" />
+                      }
+                    />
+                    <Route
+                      path="/planning"
+                      element={<CfmWorkspace key="annual" section="annual" />}
+                    />
+                    <Route
+                      path="/reports/packages"
+                      element={
+                        <CfmWorkspace key="packages" section="reports" />
+                      }
+                    />
                     <Route path="/" element={<StartPageRedirect />} />
 
                     <Route path="/reports/*" element={<Reports />} />
@@ -398,6 +444,10 @@ export function FinancesApp() {
                     <Route path="/settings" element={<Settings />}>
                       <Route index element={<SettingsIndex />} />
                       <Route path="general" element={<GeneralSettings />} />
+                      <Route
+                        path="automation"
+                        element={<AutomationSettings />}
+                      />
                       <Route
                         path="schedules"
                         element={
@@ -558,6 +608,9 @@ export function FinancesApp() {
 
                 <Routes>
                   <Route path="/budget" element={<MobileNavTabs />} />
+                  <Route path="/summary/*" element={<MobileNavTabs />} />
+                  <Route path="/balances/*" element={<MobileNavTabs />} />
+                  <Route path="/planning/*" element={<MobileNavTabs />} />
                   <Route path="/accounts" element={<MobileNavTabs />} />
                   <Route path="/settings/*" element={<MobileNavTabs />} />
                   <Route path="/notifications" element={<MobileNavTabs />} />

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Actual CFM — UI preview</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/preview/preview.css" />
+  </head>
+  <body>
+    <header>
+      <div class="identity">
+        <strong>Actual CFM</strong
+        ><span id="caption">UI preview · sample data</span>
+      </div>
+      <label
+        ><span id="theme-label">Theme</span>
+        <select id="theme" aria-label="Theme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="midnight">Midnight</option>
+        </select></label
+      >
+      <label
+        ><span id="viewport-label">Screen size</span>
+        <select id="viewport" aria-label="Screen size">
+          <option value="full">Full width</option>
+          <option value="820">Tablet · 820 px</option>
+          <option value="390">Phone · 390 px</option>
+        </select></label
+      >
+      <button id="reset" disabled>Reset sample</button>
+      <span id="status" role="status">Loading the sample…</span>
+    </header>
+    <div class="canvas">
+      <iframe
+        id="app"
+        title="Actual CFM sample application"
+        src="/summary"
+      ></iframe>
+    </div>
+    <script type="module" src="/preview/controls.ts"></script>
+  </body>
+</html>

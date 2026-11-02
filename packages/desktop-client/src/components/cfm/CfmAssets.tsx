@@ -314,7 +314,10 @@ export function CfmAssets({
                 }}
                 options={[
                   ['manual', t('Manual observations')],
-                  ['straight-line', t('Straight-line depreciation')],
+                  [
+                    'straight-line',
+                    t('Straight-line depreciation / amortization'),
+                  ],
                   ['fixed-rate', t('Fixed annual percentage')],
                   ['schedule', t('Explicit valuation schedule')],
                 ]}
@@ -362,7 +365,9 @@ export function CfmAssets({
                 <>
                   <Field
                     label={t('Annual change (%)')}
-                    hint={t('Negative depreciates; positive appreciates.')}
+                    hint={t(
+                      'Negative depreciates or amortizes; positive appreciates.',
+                    )}
                   >
                     <input
                       style={fieldStyle}

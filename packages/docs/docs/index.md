@@ -12,6 +12,8 @@ The cash flow workspace includes annual plans with YTD comparisons, asset valuat
 
 Already running Actual Budget? Follow [Migrating from Actual Budget to Actual CFM](migration/from-actual-budget.md) to move your deployment and ledger, configure CFM, and retain a verified return path.
 
+For formatting review before deployment, use [Local UI Preview](development/ui-preview.md).
+
 ## Using the Inherited Features
 
 The guides in this site describe functionality inherited from Actual Budget. Monthly budgeting remains available alongside the CFM workspace. Start with [building from source](install/build-from-source.md) to run this fork. Upstream hosted services and downloads contain Actual Budget builds.

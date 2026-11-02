@@ -78,7 +78,7 @@ export function AccountMenuModal({
                   onPress={() => {
                     onClose?.();
                     void navigate(
-                      `/cfm?account=${encodeURIComponent(account.id)}`,
+                      `/balances?account=${encodeURIComponent(account.id)}`,
                     );
                   }}
                 />

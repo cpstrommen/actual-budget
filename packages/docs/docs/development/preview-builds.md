@@ -1,4 +1,8 @@
-# Upstream Preview Builds
+# Preview Builds
+
+For this fork, use [Local UI Preview](./ui-preview.md): `yarn preview:ui` opens the actual CFM interface with synthetic data, live updates, theme controls, and responsive viewports. Reviewing changes locally does not update deployed instances.
+
+## Upstream Preview Builds
 
 The upstream Actual Budget project deploys pull-request previews to Netlify. These are upstream builds, not previews of Actual CFM.
 

@@ -37,7 +37,12 @@ export function ItemContent({
       {children}
     </Button>
   ) : (
-    <Link variant="internal" to={to} style={style} activeStyle={activeStyle}>
+    <Link
+      variant="internal"
+      to={to}
+      style={{ ...style, ...(forceActive ? activeStyle : {}) }}
+      activeStyle={activeStyle}
+    >
       {children}
     </Link>
   );

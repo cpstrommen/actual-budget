@@ -50,6 +50,8 @@ describe('SettingsNav', () => {
 
     expect(hrefs).toEqual([
       '/settings/general',
+      '/settings/automation',
+      '/settings/schedules',
       '/settings/payees',
       '/settings/tags',
       '/settings/rules',
@@ -72,6 +74,7 @@ describe('SettingsNav', () => {
 
     expect(hrefs).toEqual([
       '/settings/general',
+      '/settings/automation',
       '/settings/schedules',
       '/settings/tags',
       '/settings/rules',

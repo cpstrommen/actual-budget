@@ -39,6 +39,7 @@ export type SettlementInput = {
   reversesId?: string;
 };
 type Props = {
+  directionFilter?: 'receivable' | 'payable';
   state: CfmState;
   asOf: string;
   save: SaveRecord;
@@ -47,6 +48,7 @@ type Props = {
   onError: (error: unknown) => void;
 };
 export function CfmObligations({
+  directionFilter,
   state,
   asOf,
   save,
@@ -62,10 +64,22 @@ export function CfmObligations({
       current ? { ...current, data: { ...current.data, ...change } } : null,
     );
   }
-  const obligations = state.records.filter(isObligation);
-  const settlements = state.records.filter(isSettlement);
+  const obligations = state.records
+    .filter(isObligation)
+    .filter(
+      record => !directionFilter || record.data.direction === directionFilter,
+    );
+  const settlements = state.records
+    .filter(isSettlement)
+    .filter(
+      record =>
+        !directionFilter ||
+        obligations.some(
+          obligation => obligation.id === record.data.obligationId,
+        ),
+    );
   const [direction, setDirection] = useState<'receivable' | 'payable'>(
-    'receivable',
+    directionFilter || 'receivable',
   );
   const [counterparty, setCounterparty] = useState('');
   const [accountId, setAccountId] = useState('');
@@ -181,7 +195,15 @@ export function CfmObligations({
   }
   return (
     <>
-      <Panel title={t('Accounts receivable and payable')}>
+      <Panel
+        title={
+          directionFilter === 'receivable'
+            ? t('Accounts receivable')
+            : directionFilter === 'payable'
+              ? t('Accounts payable')
+              : t('Accounts receivable and payable')
+        }
+      >
         <p>
           <Trans>
             Track each amount owed separately. Settlements clear the obligation
@@ -372,19 +394,21 @@ export function CfmObligations({
             style={{ border: 0, padding: 0, margin: 0 }}
           >
             <div style={gridStyle}>
-              <Choice
-                label={t('Direction')}
-                value={direction}
-                onChange={value => {
-                  if (value === 'receivable' || value === 'payable') {
-                    setDirection(value);
-                  }
-                }}
-                options={[
-                  ['receivable', t('Owed to me (AR)')],
-                  ['payable', t('Owed by me (AP)')],
-                ]}
-              />
+              {!directionFilter && (
+                <Choice
+                  label={t('Direction')}
+                  value={direction}
+                  onChange={value => {
+                    if (value === 'receivable' || value === 'payable') {
+                      setDirection(value);
+                    }
+                  }}
+                  options={[
+                    ['receivable', t('Owed to me (AR)')],
+                    ['payable', t('Owed by me (AP)')],
+                  ]}
+                />
+              )}
               <Field label={t('Counterparty')}>
                 <input
                   style={fieldStyle}

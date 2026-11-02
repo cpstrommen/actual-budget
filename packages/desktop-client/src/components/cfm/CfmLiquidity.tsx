@@ -166,9 +166,9 @@ export function CfmLiquidity({ state, asOf, busy, onError, project }: Props) {
         </form>
         <p>
           <Trans>
-            Choose cash eligibility and restrictions in the Overview tab.
-            Undated obligations remain visible and do not receive invented due
-            dates.
+            Choose cash eligibility and restrictions in Balances → Accounts and
+            balances. Undated obligations remain visible and do not receive
+            invented due dates.
           </Trans>
         </p>
       </Panel>

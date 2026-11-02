@@ -46,7 +46,7 @@ git rev-parse HEAD
 
 Check out your intended CFM revision before installing/building, and record the resulting commit with your deployment configuration. `yarn build:server` builds the browser interface and sync server. See [Build from Source](../install/build-from-source.md) for platform prerequisites.
 
-Choose one of the deployment options below. The browser interface served by that deployment should identify itself as **Actual CFM** and contain **Cash flow management** in the sidebar.
+Choose one of the deployment options below. The browser interface served by that deployment should identify itself as **Actual CFM** and contain **Summary**, **Reports**, **Balances**, and **Planning** in the left menu.
 
 ### Docker deployment
 
@@ -138,11 +138,11 @@ Compare the imported copy with the references captured from upstream:
 
 A matching current net worth alone is not enough. Do not use **Set balance** or add replacement opening transactions to conceal an import difference. Keep the source unchanged and investigate any missing records first.
 
-Before adding CFM-specific postings, choose **Settings → Export → Export for Actual Budget**. Save both files and review the receipt. Follow the [return guide](return-to-actual-budget.md) to test the compatible ZIP in a separate Actual Budget 26.10.0 installation. This checks that your own budget can leave CFM, in addition to the repository's compatibility fixtures.
+Before adding CFM-specific postings, choose **Settings → General → Data → Export → Export for Actual Budget**. Save both files and review the receipt. Follow the [return guide](return-to-actual-budget.md) to test the compatible ZIP in a separate Actual Budget 26.10.0 installation. This checks that your own budget can leave CFM, in addition to the repository's compatibility fixtures.
 
 ## 6. Set up CFM and reconnect banks
 
-Start in **Cash flow management**. Follow [Using Actual CFM](../actual-cfm.md) for the full workflows:
+Start in **Summary** and **Balances**. Follow [Using Actual CFM](../actual-cfm.md) for the full workflows:
 
 - Classify existing accounts and choose liquid cash accounts. Classification is separate from monthly-budget participation; give changes the intended effective dates.
 - Create annual plans against existing categories. Monthly allocations are changed only when you explicitly apply the funding preview.
@@ -154,7 +154,7 @@ For [bank synchronization](../advanced/bank-sync.md), configure provider credent
 
 Run one manual refresh and inspect its result, including possible duplicates when provider identifiers have changed. Compare balances and reconciliation before enabling further automatic refreshes. Source server credentials and provider authorization do not travel inside a budget ZIP.
 
-Configure scheduled work in **Cash flow management → Automation**. Select one scheduler identity and the budget timezone, then enable the desired bank, valuation, or report jobs. Application mode requires an open, unlocked CFM client. Unattended work needs the separately configured [headless worker](../actual-cfm.md#automation), with the new server address and the imported budget's new sync ID. Update API integrations to use this fork's API build and the new budget identity.
+Configure scheduled work in **Settings → Automation**. Select one scheduler identity and the budget timezone, then enable the desired bank, valuation, or report jobs. Application mode requires an open, unlocked CFM client. Unattended work needs the separately configured [headless worker](../actual-cfm.md#automation), with the new server address and the imported budget's new sync ID. Update API integrations to use this fork's API build and the new budget identity.
 
 ## 7. Complete the cutover and keep rollback available
 

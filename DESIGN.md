@@ -30,7 +30,7 @@ The default palettes use neutral greys inspired by Strømmen's site: `#1f1f1f`, 
 
 ## Typography and Layout
 
-Use Inter Variable with the existing system fallback stack. Render standalone financial amounts with `FinancialText` or the tabular numeral styles. Align amounts by column and keep signs and units explicit.
+Use the locally bundled Geologica variable font, matching Strømmen's site, with the existing system fallback stack. Its source and SIL Open Font License live in `assets/fonts/geologica/`. Offline report packages embed the font and license; run `node scripts/generate-font-assets.mjs` after changing the source. Render standalone financial amounts with `FinancialText` or the tabular numeral styles. Align amounts by column and keep signs and units explicit.
 
 Use compact tables for financial records and clear summaries for annual performance, upcoming cash needs, and valuation dates. Distinguish posted activity, observations, and forecasts. Reuse existing shared components and responsive sizes; mobile controls need adequate touch targets.
 

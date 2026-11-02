@@ -8,5 +8,5 @@ export function StartPageRedirect() {
   const { isNarrowWidth } = useResponsive();
   const { startPath } = useSidebarMenu();
 
-  return <Navigate to={isNarrowWidth ? '/cfm' : startPath} replace />;
+  return <Navigate to={isNarrowWidth ? '/summary' : startPath} replace />;
 }

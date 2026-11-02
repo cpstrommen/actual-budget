@@ -14,6 +14,7 @@ import type { ScheduleEntity } from '@actual-app/core/types/models';
 
 import { Search } from '#components/common/Search';
 import { MobilePageHeader, Page } from '#components/Page';
+import { SettingsBackButton } from '#components/settings/SettingsBackButton';
 import { useAccounts } from '#hooks/useAccounts';
 import { useDateFormat } from '#hooks/useDateFormat';
 import { useFormat } from '#hooks/useFormat';
@@ -120,6 +121,7 @@ export function MobileSchedulesPage() {
     <Page
       header={
         <MobilePageHeader
+          leftContent={<SettingsBackButton />}
           title={
             <Text style={{ ...styles.underlinedText, fontSize: 16 }}>
               <Trans>Schedules</Trans>

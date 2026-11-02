@@ -326,6 +326,7 @@ const sidebars = {
     'development/index',
     'development/development-setup',
     'development/testing',
+    'development/ui-preview',
     'development/troubleshooting',
     'development/windows',
     {

@@ -10,7 +10,7 @@ For the other direction, see [Migrating from Actual Budget to Actual CFM](from-a
 
 1. Finish transactions and synchronization. Disable scheduled work for the final export.
 2. Keep a native CFM backup and a separate copy of the existing data directory.
-3. Choose **Settings → Export → Export for Actual Budget**, or the same action in **Cash flow management → Financial position**. Save both ZIP files. Both are unencrypted, including when the source uses encryption.
+3. Choose **Settings → General → Data → Export → Export for Actual Budget**. Save both ZIP files. Both are unencrypted, including when the source uses encryption.
 4. Inspect `receipt.json` inside the recovery ZIP. Check the target, transaction counts, historical balance checkpoints, and warnings about existing unresolved links. Unsupported schemas and failed financial comparisons stop export.
 5. In a separate installation of the pinned upstream version, close the current budget, select its Actual import format, and import the upstream ZIP as a **new budget**. Keep CFM's original directory and sync group separate.
 6. Compare account names, dated balances, counts, splits, transfers, notes, and reconciliation flags against the receipt and source. Configure upstream sync and bank connections separately after checking history.
@@ -26,7 +26,7 @@ The recovery ZIP retains CFM records in JSON/CSV, available edit/deletion messag
 
 ## Automatic recovery copies
 
-After financial changes, the running worker refreshes validated `cfm-upstream.zip`, `cfm-recovery.zip`, and `cfm-portability-receipt.json` in the budget directory after a short debounce. Automatic native backups include the most recent successful copies when present. **Financial position** shows their timestamp and export failures. A suspended or closed app cannot refresh them. Copies may lag recent edits, particularly if the app closes immediately after an edit; request a final fresh export before leaving CFM.
+After financial changes, the running worker refreshes validated `cfm-upstream.zip`, `cfm-recovery.zip`, and `cfm-portability-receipt.json` in the budget directory after a short debounce. Automatic native backups include the most recent successful copies when present. **Settings → General → Data → Export** shows their timestamp and export failures. A suspended or closed app cannot refresh them. Copies may lag recent edits, particularly if the app closes immediately after an edit; request a final fresh export before leaving CFM.
 
 ## Offline recovery after maintenance ends
 

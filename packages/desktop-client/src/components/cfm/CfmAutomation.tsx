@@ -288,8 +288,8 @@ export function CfmAutomation({ state, save, busy, onError, run }: Props) {
         <p>
           <Trans>
             Retries use backoff and stable occurrence identifiers. Opening
-            another client does not make it a second scheduler. Use Refresh to
-            load the latest job status.
+            another client does not make it a second scheduler. Reopen these
+            settings to load the latest job status.
           </Trans>
         </p>
       </Panel>

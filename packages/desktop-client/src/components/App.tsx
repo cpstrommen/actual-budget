@@ -20,6 +20,7 @@ import { closeBudget, loadBudget } from '#budgetfiles/budgetfilesSlice';
 import { handleGlobalEvents } from '#global-events';
 import { useIsTestEnv } from '#hooks/useIsTestEnv';
 import { useMetadataPref } from '#hooks/useMetadataPref';
+import { useNavigate } from '#hooks/useNavigate';
 import { useOnVisible } from '#hooks/useOnVisible';
 import { SpreadsheetProvider } from '#hooks/useSpreadsheet';
 import { setI18NextLanguage } from '#i18n';
@@ -46,7 +47,12 @@ import { Modals } from './Modals';
 import { SidebarProvider } from './sidebar/SidebarProvider';
 import { UpdateNotification } from './UpdateNotification';
 
+const isCfmPreview =
+  import.meta.env.DEV && import.meta.env.REACT_APP_CFM_PREVIEW === 'true';
+
 function AppInner() {
+  const navigate = useNavigate();
+  const [previewReady, setPreviewReady] = useState(!isCfmPreview);
   const [budgetId] = useMetadataPref('id');
   const [cloudFileId] = useMetadataPref('cloudFileId');
   const { t } = useTranslation();
@@ -96,6 +102,19 @@ function AppInner() {
       );
       await dispatch(loadGlobalPrefs());
 
+      if (isCfmPreview) {
+        dispatch(setAppState({ loadingText: t('Loading preview sample...') }));
+        const { initializeCfmPreview } = await import('../preview/initialize');
+        await initializeCfmPreview(dispatch);
+        setPreviewReady(true);
+        void navigate('/summary', { replace: true });
+        window.parent.postMessage(
+          { type: 'cfm-preview-ready' },
+          window.location.origin,
+        );
+        return;
+      }
+
       // Open the last opened budget, if any
       dispatch(
         setAppState({
@@ -131,8 +150,19 @@ function AppInner() {
       dispatch(setAppState({ loadingText: null }));
     }
 
-    initAll().catch(showErrorBoundary);
-  }, [cloudFileId, dispatch, showErrorBoundary, t]);
+    initAll().catch(error => {
+      if (isCfmPreview) {
+        window.parent.postMessage(
+          {
+            type: 'cfm-preview-error',
+            message: error instanceof Error ? error.message : String(error),
+          },
+          window.location.origin,
+        );
+      }
+      showErrorBoundary(error);
+    });
+  }, [cloudFileId, dispatch, navigate, showErrorBoundary, t]);
 
   useEffect(() => {
     if (userData?.tokenExpired) {
@@ -156,6 +186,7 @@ function AppInner() {
     }
   }, [dispatch, t, userData?.tokenExpired]);
 
+  if (!previewReady) return null;
   return budgetId ? <FinancesApp /> : <ManagementApp />;
 }
 

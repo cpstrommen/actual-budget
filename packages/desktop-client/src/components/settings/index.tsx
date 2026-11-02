@@ -16,6 +16,7 @@ import { isElectron } from '@actual-app/core/shared/environment';
 
 import { getLatestAppVersion } from '#app/appSlice';
 import { closeBudget } from '#budgetfiles/budgetfilesSlice';
+import { CfmWorkspace } from '#components/cfm/CfmWorkspace';
 import { Link } from '#components/common/Link';
 import { Checkbox, FormField, FormLabel } from '#components/forms';
 import { MOBILE_NAV_HEIGHT } from '#components/mobile/MobileNavTabs';
@@ -293,6 +294,15 @@ export function GeneralSettings() {
         {isElectron() && <Backups />}
         <ExportBudget />
       </SettingsGroup>
+    </SettingsSections>
+  );
+}
+
+export function AutomationSettings() {
+  const { t } = useTranslation();
+  return (
+    <SettingsSections title={t('Automation')}>
+      <CfmWorkspace section="automation" />
     </SettingsSections>
   );
 }

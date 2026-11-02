@@ -51,6 +51,10 @@ export async function packageRecovery(destination) {
       path.join(root, 'LICENSE.txt'),
       path.join(destination, 'LICENSE.txt'),
     );
+    await copy(
+      path.join(root, 'assets/fonts/geologica/OFL.txt'),
+      path.join(destination, 'licenses/Geologica-OFL.txt'),
+    );
     const require = createRequire(path.join(root, 'packages/api/package.json'));
     const copied = new Set();
     async function dependency(name, fromRequire) {

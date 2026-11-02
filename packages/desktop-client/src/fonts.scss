@@ -1,3 +1,8 @@
 @use '@fontsource/redacted-script';
-@use '@fontsource-variable/inter/wght.css' as *;
-@use '@fontsource-variable/inter/wght-italic.css' as *;
+@font-face {
+  font-family: 'Geologica';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../../../assets/fonts/geologica/Geologica.ttf') format('truetype');
+}

@@ -31,7 +31,7 @@ const theme = create({
 
   // Fonts
   fontBase:
-    '"Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
+    'Geologica, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   fontCode: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
 
   // Text colors

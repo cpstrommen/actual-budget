@@ -33,7 +33,12 @@ const config: StorybookConfig = {
   core: {
     disableTelemetry: true,
   },
-  staticDirs: ['./public'],
+  staticDirs: [
+    './public',
+    { from: '../../../assets/fonts/geologica', to: '/fonts/geologica' },
+  ],
+  managerHead: head =>
+    `${head}<link rel="stylesheet" href="./fonts/geologica/font.css" />`,
   async viteFinal(config) {
     const { mergeConfig } = await import('vite');
 

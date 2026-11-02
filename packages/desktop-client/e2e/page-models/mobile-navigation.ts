@@ -13,13 +13,11 @@ import { MobileTransactionEntryPage } from './mobile-transaction-entry-page';
 import { SettingsPage } from './settings-page';
 
 const NAVBAR_ROWS = 2;
-const NAV_LINKS_HIDDEN_BY_DEFAULT = ['Reports', 'Schedules', 'Settings'];
+const NAV_LINKS_HIDDEN_BY_DEFAULT = ['Planning', 'Accounts', 'Settings'];
 const ROUTES_BY_PAGE = {
-  Budget: '/budget',
+  Planning: '/planning',
   Accounts: '/accounts',
-  Transaction: '/transactions/new',
   Reports: '/reports',
-  Schedules: '/schedules',
   Settings: '/settings',
 };
 
@@ -134,10 +132,17 @@ export class MobileNavigation {
   }
 
   async goToBudgetPage() {
-    return await this.navigateToPage(
-      'Budget',
-      () => new MobileBudgetPage(this.page),
-    );
+    if (!this.page.url().endsWith('/budget')) {
+      await this.navigateToPage('Planning', () => ({
+        waitFor: () => this.page.locator('[data-cfm-workspace]').waitFor(),
+      }));
+      await this.page
+        .getByLabel('Section', { exact: true })
+        .selectOption('/budget');
+    }
+    const budgetPage = new MobileBudgetPage(this.page);
+    await budgetPage.waitFor();
+    return budgetPage;
   }
 
   async goToAccountsPage() {
@@ -155,10 +160,19 @@ export class MobileNavigation {
   }
 
   async goToTransactionEntryPage() {
-    return await this.navigateToPage(
-      'Transaction',
-      () => new MobileTransactionEntryPage(this.page),
-    );
+    await this.goToAccountsPage();
+    await this.page
+      .getByRole('button', {
+        name: 'View All accounts transactions',
+        exact: true,
+      })
+      .click();
+    await this.page
+      .getByRole('button', { name: 'Add transaction', exact: true })
+      .click();
+    const transactionPage = new MobileTransactionEntryPage(this.page);
+    await transactionPage.waitFor();
+    return transactionPage;
   }
 
   async goToReportsPage() {
@@ -178,10 +192,11 @@ export class MobileNavigation {
   }
 
   async goToSchedulesPage() {
-    return this.navigateToPage(
-      'Schedules',
-      () => new MobileSchedulesPage(this.page),
-    );
+    const settingsPage = await this.goToSettingsPage();
+    await settingsPage.goToSection('Schedules');
+    const schedulesPage = new MobileSchedulesPage(this.page);
+    await schedulesPage.waitFor();
+    return schedulesPage;
   }
 
   async goToRulesPage() {

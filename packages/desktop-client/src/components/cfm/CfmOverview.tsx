@@ -30,6 +30,7 @@ import {
 import type { SaveRecord } from './ui';
 
 type Props = {
+  mode: 'summary' | 'accounts';
   state: CfmState;
   asOf: string;
   save: SaveRecord;
@@ -47,6 +48,7 @@ type Props = {
 };
 
 export function CfmOverview({
+  mode,
   state,
   asOf,
   save,
@@ -165,307 +167,320 @@ export function CfmOverview({
   }
   return (
     <>
-      <div style={{ ...gridStyle, marginBottom: 18 }}>
-        <Metric label={t('Total assets')} amount={sheet.totalAssets} />
-        <Metric
-          label={t('Total liabilities')}
-          amount={sheet.totalLiabilities}
-        />
-        <Metric label={t('Net equity')} amount={sheet.netEquity} />
-        <Metric label={t('Eligible liquidity')} amount={sheet.liquidity} />
-      </div>
-      <Panel title={t('Balance sheet')}>
-        <p>
-          <Trans>
-            Assets, liabilities, and residual net equity at the selected date.
-            Investments are distinct from available cash.
-          </Trans>
-        </p>
-        {!!sheet.warnings.length && (
-          <details>
-            <summary>
-              {t('Review {{count}} account notices', {
-                count: sheet.warnings.length,
-              })}
-            </summary>
-            {sheet.warnings.map(warning => (
-              <p key={warning} role="note">
-                {t(warning)}
-              </p>
-            ))}
-          </details>
-        )}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,320px),1fr))',
-            gap: 24,
-          }}
-        >
-          {([false, true] as const).map(liabilities => (
-            <div key={String(liabilities)}>
-              <h3>
-                {liabilities ? t('Liabilities and net equity') : t('Assets')}
-              </h3>
-              <DataTable
-                headers={[
-                  t('Account'),
-                  t('Classification'),
-                  t('Signed balance'),
-                ]}
-              >
-                {(liabilities
-                  ? [
-                      ['current-liabilities', t('Current liabilities')],
-                      ['long-term-liabilities', t('Long-term liabilities')],
-                    ]
-                  : [
-                      ['liquidity', t('Liquidity')],
-                      ['equities', t('Equities / investments')],
-                      ['other-assets', t('Other assets')],
-                    ]
-                ).map(([group, label]) => (
-                  <Fragment key={group}>
-                    <tr>
-                      <th
-                        colSpan={3}
-                        scope="colgroup"
-                        style={{ textAlign: 'left', padding: 8 }}
-                      >
-                        {label}
-                      </th>
-                    </tr>
-                    {sheet.rows
-                      .filter(row => row.group === group)
-                      .map(row => (
-                        <tr key={row.accountId}>
-                          <Cell>{row.name}</Cell>
-                          <Cell>
-                            {row.kind === 'unclassified'
-                              ? t('Unclassified')
-                              : names.get(row.kind)}
-                          </Cell>
-                          <Cell right>
-                            <Money amount={row.balance} />
-                            {row.warnings.map(warning => (
-                              <div key={warning}>{t(warning)}</div>
-                            ))}
-                          </Cell>
-                        </tr>
-                      ))}
-                  </Fragment>
-                ))}
-                <tr>
-                  <Cell>
-                    {liabilities ? t('Total liabilities') : t('Total assets')}
-                  </Cell>
-                  <Cell />
-                  <Cell right>
-                    <Money
-                      amount={
-                        liabilities
-                          ? -sheet.totalLiabilities
-                          : sheet.totalAssets
-                      }
-                    />
-                  </Cell>
-                </tr>
-                {liabilities && (
-                  <tr>
-                    <Cell>
-                      <Trans>Net equity</Trans>
-                    </Cell>
-                    <Cell />
-                    <Cell right>
-                      <Money amount={sheet.netEquity} />
-                    </Cell>
-                  </tr>
-                )}
-              </DataTable>
-            </div>
-          ))}
-        </div>
-      </Panel>
-      <Panel title={t('Account classification')}>
-        <p>
-          <Trans>
-            Classification is independent of monthly budget participation. A new
-            effective date preserves earlier classifications.
-          </Trans>
-        </p>
-        <form
-          onSubmit={event => {
-            event.preventDefault();
-            void classify();
-          }}
-        >
-          <fieldset
-            disabled={busy}
-            style={{ border: 0, padding: 0, margin: 0 }}
-          >
-            <div style={gridStyle}>
-              <Choice
-                label={t('Account')}
-                value={accountId}
-                onChange={setAccountId}
-                options={options}
-                required
-              />
-              <Choice
-                label={t('Classification')}
-                value={kind}
-                onChange={value => {
-                  const selected = kinds.find(([key]) => key === value);
-                  if (selected) setKind(selected[0]);
-                }}
-                options={kinds}
-              />
-              <Field label={t('Effective date')}>
-                <input
-                  style={fieldStyle}
-                  type="date"
-                  value={effectiveDate}
-                  onChange={event => setEffectiveDate(event.target.value)}
-                  required
-                />
-              </Field>
-              <Choice
-                label={t('Payment account')}
-                value={paymentAccountId}
-                onChange={setPaymentAccountId}
-                options={options}
-              />
-              <Field
-                label={t('Card payment day')}
-                hint={t('Optional day of month, 1–31')}
-              >
-                <input
-                  style={fieldStyle}
-                  type="number"
-                  min={1}
-                  max={31}
-                  value={paymentDay}
-                  onChange={event => setPaymentDay(event.target.value)}
-                />
-              </Field>
-              <Field label={t('Card statement day')}>
-                <input
-                  style={fieldStyle}
-                  type="number"
-                  min={1}
-                  max={31}
-                  value={statementDay}
-                  onChange={event => setStatementDay(event.target.value)}
-                />
-              </Field>
-            </div>
-            <p style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={isLiquid}
-                  onChange={event => setIsLiquid(event.target.checked)}
-                />{' '}
-                <Trans>Available liquidity</Trans>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={restricted}
-                  onChange={event => setRestricted(event.target.checked)}
-                />{' '}
-                <Trans>Restricted funds</Trans>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={longTerm}
-                  onChange={event => setLongTerm(event.target.checked)}
-                />{' '}
-                <Trans>Long-term liability</Trans>
-              </label>
-            </p>
-            <Button type="submit" variant="primary" isDisabled={!accountId}>
-              <Trans>Save classification</Trans>
-            </Button>
-          </fieldset>
-        </form>
-      </Panel>
-      <Panel title={t('Set balance')}>
-        <p>
-          <Trans>Ledger balance at effective date:</Trans>{' '}
-          <Money amount={previewBalance} />
-          {proposedAdjustment !== undefined && (
-            <>
-              {' '}
-              · <Trans>Proposed adjustment:</Trans>{' '}
-              <Money amount={proposedAdjustment} />
-            </>
-          )}
-        </p>
-        <p>
-          <Trans>
-            Enter a signed target balance for a manual off-budget account. A
-            dated adjustment records the difference without rewriting history or
-            reconciling unrelated transactions.
-          </Trans>
-        </p>
-        <form
-          onSubmit={event => {
-            event.preventDefault();
-            void adjust();
-          }}
-        >
-          <fieldset
-            disabled={busy}
-            style={{ border: 0, padding: 0, margin: 0 }}
-          >
-            <div style={gridStyle}>
-              <Choice
-                label={t('Manual account')}
-                value={balanceAccountId}
-                onChange={setBalanceAccountId}
-                options={manualAccounts}
-                required
-              />
-              <Field label={t('Target balance')}>
-                <input
-                  style={fieldStyle}
-                  inputMode="decimal"
-                  value={target}
-                  onChange={event => setTarget(event.target.value)}
-                  required
-                />
-              </Field>
-              <Field label={t('Effective date')}>
-                <input
-                  style={fieldStyle}
-                  type="date"
-                  value={balanceDate}
-                  onChange={event => setBalanceDate(event.target.value)}
-                  required
-                />
-              </Field>
-              <Field label={t('Reason')}>
-                <input
-                  style={fieldStyle}
-                  value={reason}
-                  onChange={event => setReason(event.target.value)}
-                />
-              </Field>
-            </div>
+      {mode === 'summary' && (
+        <>
+          <div style={{ ...gridStyle, marginBottom: 18 }}>
+            <Metric label={t('Total assets')} amount={sheet.totalAssets} />
+            <Metric
+              label={t('Total liabilities')}
+              amount={sheet.totalLiabilities}
+            />
+            <Metric label={t('Net equity')} amount={sheet.netEquity} />
+            <Metric label={t('Eligible liquidity')} amount={sheet.liquidity} />
+          </div>
+          <Panel title={t('Balance sheet')}>
             <p>
-              <Button
-                type="submit"
-                variant="primary"
-                isDisabled={!balanceAccountId || !target}
-              >
-                <Trans>Record balance adjustment</Trans>
-              </Button>
+              <Trans>
+                Assets, liabilities, and residual net equity at the selected
+                date. Investments are distinct from available cash.
+              </Trans>
             </p>
-          </fieldset>
-        </form>
-      </Panel>
+            {!!sheet.warnings.length && (
+              <details>
+                <summary>
+                  {t('Review {{count}} account notices', {
+                    count: sheet.warnings.length,
+                  })}
+                </summary>
+                {sheet.warnings.map(warning => (
+                  <p key={warning} role="note">
+                    {t(warning)}
+                  </p>
+                ))}
+              </details>
+            )}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns:
+                  'repeat(auto-fit,minmax(min(100%,320px),1fr))',
+                gap: 24,
+              }}
+            >
+              {([false, true] as const).map(liabilities => (
+                <div key={String(liabilities)}>
+                  <h3>
+                    {liabilities
+                      ? t('Liabilities and net equity')
+                      : t('Assets')}
+                  </h3>
+                  <DataTable
+                    headers={[
+                      t('Account'),
+                      t('Classification'),
+                      t('Signed balance'),
+                    ]}
+                  >
+                    {(liabilities
+                      ? [
+                          ['current-liabilities', t('Current liabilities')],
+                          ['long-term-liabilities', t('Long-term liabilities')],
+                        ]
+                      : [
+                          ['liquidity', t('Liquidity')],
+                          ['equities', t('Equities / investments')],
+                          ['other-assets', t('Other assets')],
+                        ]
+                    ).map(([group, label]) => (
+                      <Fragment key={group}>
+                        <tr>
+                          <th
+                            colSpan={3}
+                            scope="colgroup"
+                            style={{ textAlign: 'left', padding: 8 }}
+                          >
+                            {label}
+                          </th>
+                        </tr>
+                        {sheet.rows
+                          .filter(row => row.group === group)
+                          .map(row => (
+                            <tr key={row.accountId}>
+                              <Cell>{row.name}</Cell>
+                              <Cell>
+                                {row.kind === 'unclassified'
+                                  ? t('Unclassified')
+                                  : names.get(row.kind)}
+                              </Cell>
+                              <Cell right>
+                                <Money amount={row.balance} />
+                                {row.warnings.map(warning => (
+                                  <div key={warning}>{t(warning)}</div>
+                                ))}
+                              </Cell>
+                            </tr>
+                          ))}
+                      </Fragment>
+                    ))}
+                    <tr>
+                      <Cell>
+                        {liabilities
+                          ? t('Total liabilities')
+                          : t('Total assets')}
+                      </Cell>
+                      <Cell />
+                      <Cell right>
+                        <Money
+                          amount={
+                            liabilities
+                              ? -sheet.totalLiabilities
+                              : sheet.totalAssets
+                          }
+                        />
+                      </Cell>
+                    </tr>
+                    {liabilities && (
+                      <tr>
+                        <Cell>
+                          <Trans>Net equity</Trans>
+                        </Cell>
+                        <Cell />
+                        <Cell right>
+                          <Money amount={sheet.netEquity} />
+                        </Cell>
+                      </tr>
+                    )}
+                  </DataTable>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </>
+      )}
+      {mode === 'accounts' && (
+        <>
+          <Panel title={t('Account classification')}>
+            <p>
+              <Trans>
+                Classification is independent of monthly budget participation. A
+                new effective date preserves earlier classifications.
+              </Trans>
+            </p>
+            <form
+              onSubmit={event => {
+                event.preventDefault();
+                void classify();
+              }}
+            >
+              <fieldset
+                disabled={busy}
+                style={{ border: 0, padding: 0, margin: 0 }}
+              >
+                <div style={gridStyle}>
+                  <Choice
+                    label={t('Account')}
+                    value={accountId}
+                    onChange={setAccountId}
+                    options={options}
+                    required
+                  />
+                  <Choice
+                    label={t('Classification')}
+                    value={kind}
+                    onChange={value => {
+                      const selected = kinds.find(([key]) => key === value);
+                      if (selected) setKind(selected[0]);
+                    }}
+                    options={kinds}
+                  />
+                  <Field label={t('Effective date')}>
+                    <input
+                      style={fieldStyle}
+                      type="date"
+                      value={effectiveDate}
+                      onChange={event => setEffectiveDate(event.target.value)}
+                      required
+                    />
+                  </Field>
+                  <Choice
+                    label={t('Payment account')}
+                    value={paymentAccountId}
+                    onChange={setPaymentAccountId}
+                    options={options}
+                  />
+                  <Field
+                    label={t('Card payment day')}
+                    hint={t('Optional day of month, 1–31')}
+                  >
+                    <input
+                      style={fieldStyle}
+                      type="number"
+                      min={1}
+                      max={31}
+                      value={paymentDay}
+                      onChange={event => setPaymentDay(event.target.value)}
+                    />
+                  </Field>
+                  <Field label={t('Card statement day')}>
+                    <input
+                      style={fieldStyle}
+                      type="number"
+                      min={1}
+                      max={31}
+                      value={statementDay}
+                      onChange={event => setStatementDay(event.target.value)}
+                    />
+                  </Field>
+                </div>
+                <p style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={isLiquid}
+                      onChange={event => setIsLiquid(event.target.checked)}
+                    />{' '}
+                    <Trans>Available liquidity</Trans>
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={restricted}
+                      onChange={event => setRestricted(event.target.checked)}
+                    />{' '}
+                    <Trans>Restricted funds</Trans>
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={longTerm}
+                      onChange={event => setLongTerm(event.target.checked)}
+                    />{' '}
+                    <Trans>Long-term liability</Trans>
+                  </label>
+                </p>
+                <Button type="submit" variant="primary" isDisabled={!accountId}>
+                  <Trans>Save classification</Trans>
+                </Button>
+              </fieldset>
+            </form>
+          </Panel>
+          <Panel title={t('Set balance')}>
+            <p>
+              <Trans>Ledger balance at effective date:</Trans>{' '}
+              <Money amount={previewBalance} />
+              {proposedAdjustment !== undefined && (
+                <>
+                  {' '}
+                  · <Trans>Proposed adjustment:</Trans>{' '}
+                  <Money amount={proposedAdjustment} />
+                </>
+              )}
+            </p>
+            <p>
+              <Trans>
+                Enter a signed target balance for a manual off-budget account. A
+                dated adjustment records the difference without rewriting
+                history or reconciling unrelated transactions.
+              </Trans>
+            </p>
+            <form
+              onSubmit={event => {
+                event.preventDefault();
+                void adjust();
+              }}
+            >
+              <fieldset
+                disabled={busy}
+                style={{ border: 0, padding: 0, margin: 0 }}
+              >
+                <div style={gridStyle}>
+                  <Choice
+                    label={t('Manual account')}
+                    value={balanceAccountId}
+                    onChange={setBalanceAccountId}
+                    options={manualAccounts}
+                    required
+                  />
+                  <Field label={t('Target balance')}>
+                    <input
+                      style={fieldStyle}
+                      inputMode="decimal"
+                      value={target}
+                      onChange={event => setTarget(event.target.value)}
+                      required
+                    />
+                  </Field>
+                  <Field label={t('Effective date')}>
+                    <input
+                      style={fieldStyle}
+                      type="date"
+                      value={balanceDate}
+                      onChange={event => setBalanceDate(event.target.value)}
+                      required
+                    />
+                  </Field>
+                  <Field label={t('Reason')}>
+                    <input
+                      style={fieldStyle}
+                      value={reason}
+                      onChange={event => setReason(event.target.value)}
+                    />
+                  </Field>
+                </div>
+                <p>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    isDisabled={!balanceAccountId || !target}
+                  >
+                    <Trans>Record balance adjustment</Trans>
+                  </Button>
+                </p>
+              </fieldset>
+            </form>
+          </Panel>
+        </>
+      )}
     </>
   );
 }

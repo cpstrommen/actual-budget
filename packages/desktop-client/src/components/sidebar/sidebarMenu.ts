@@ -1,7 +1,8 @@
 export const SIDEBAR_MENU_ITEM_IDS = [
   'cfm',
-  'budget',
   'reports',
+  'balances',
+  'budget',
   'schedules',
   'payees',
   'tags',
@@ -33,11 +34,11 @@ export function isSettingsSection(
 }
 
 export function isSidebarMenuItemLocked(id: SidebarMenuItemId): boolean {
-  return !isSettingsSection(id);
+  return !isSettingsSection(id) || id === 'schedules';
 }
 
 export function isSettingsSectionOnMobile(id: SettingsSectionId): boolean {
-  return id !== 'schedules';
+  return isSettingsSection(id);
 }
 
 export function isInMobileSettingsNav(id: SettingsSectionId): boolean {
@@ -45,7 +46,7 @@ export function isInMobileSettingsNav(id: SettingsSectionId): boolean {
 }
 
 function isHiddenByDefault(id: SidebarMenuItemId): boolean {
-  return isSettingsSection(id) && id !== 'schedules';
+  return isSettingsSection(id);
 }
 
 function isKnownItemId(id: unknown): id is SidebarMenuItemId {
@@ -63,7 +64,26 @@ export function getSidebarMenuItemPath(
   id: SidebarMenuItemId,
   isInSidebar: boolean,
 ): string {
+  if (id === 'cfm') return '/summary';
+  if (id === 'balances') return '/balances';
+  if (id === 'budget') return '/planning';
   return isSettingsSection(id) && !isInSidebar ? `/settings/${id}` : `/${id}`;
+}
+
+export function getSidebarGroupForPath(
+  path: string,
+): SidebarMenuItemId | undefined {
+  if (path === '/summary' || path.startsWith('/summary/')) return 'cfm';
+  if (path === '/reports' || path.startsWith('/reports/')) return 'reports';
+  if (path === '/balances' || path.startsWith('/balances/')) return 'balances';
+  if (
+    path === '/planning' ||
+    path.startsWith('/planning/') ||
+    path === '/budget'
+  ) {
+    return 'budget';
+  }
+  return undefined;
 }
 
 export function parseSidebarMenuItems(
@@ -86,9 +106,10 @@ export function parseSidebarMenuItems(
             saved.push({
               id: entry.id,
               hidden:
-                'hidden' in entry &&
-                entry.hidden === true &&
-                !isSidebarMenuItemLocked(entry.id),
+                entry.id === 'schedules' ||
+                ('hidden' in entry &&
+                  entry.hidden === true &&
+                  !isSidebarMenuItemLocked(entry.id)),
             });
           }
         }
@@ -98,6 +119,7 @@ export function parseSidebarMenuItems(
     }
   }
 
+  const isLegacyMenu = !saved.some(item => item.id === 'balances');
   for (const [defaultIdx, item] of getDefaultSidebarMenuItems().entries()) {
     if (saved.some(savedItem => savedItem.id === item.id)) {
       continue;
@@ -112,6 +134,12 @@ export function parseSidebarMenuItems(
     }
   }
 
+  if (isLegacyMenu) {
+    const primary = getDefaultSidebarMenuItems().filter(
+      item => !isSettingsSection(item.id),
+    );
+    return [...primary, ...saved.filter(item => isSettingsSection(item.id))];
+  }
   return saved;
 }
 

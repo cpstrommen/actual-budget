@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import type { ComponentProps, ComponentType, CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import { animated, config, useSpring } from 'react-spring';
 
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -89,22 +89,10 @@ export function MobileNavTabs() {
 
   const navTabs = [
     {
-      name: t('CFM'),
-      path: '/cfm',
+      name: t('Summary'),
+      path: '/summary',
       style: navTabStyle,
       Icon: SvgWallet,
-    },
-    {
-      name: t('Transaction'),
-      path: '/transactions/new',
-      style: navTabStyle,
-      Icon: SvgAdd,
-    },
-    {
-      name: t('Accounts'),
-      path: '/accounts',
-      style: navTabStyle,
-      Icon: SvgPiggyBank,
     },
     {
       name: t('Reports'),
@@ -113,10 +101,22 @@ export function MobileNavTabs() {
       Icon: SvgReports,
     },
     {
-      name: t('Schedules'),
-      path: '/schedules',
+      name: t('Balances'),
+      path: '/balances',
+      style: navTabStyle,
+      Icon: SvgPiggyBank,
+    },
+    {
+      name: t('Planning'),
+      path: '/planning',
       style: navTabStyle,
       Icon: SvgCalendar3,
+    },
+    {
+      name: t('Accounts'),
+      path: '/accounts',
+      style: navTabStyle,
+      Icon: SvgAdd,
     },
     {
       name: t('Settings'),
@@ -240,13 +240,19 @@ type NavTabProps = {
 };
 
 function NavTab({ Icon: TabIcon, name, path, style, onClick }: NavTabProps) {
+  const location = useLocation();
+  const isMonthlyBudget =
+    path === '/planning' && location.pathname === '/budget';
   return (
     <NavLink
       to={path}
       style={({ isActive }) => ({
         ...styles.noTapHighlight,
         alignItems: 'center',
-        color: isActive ? theme.mobileNavItemSelected : theme.mobileNavItem,
+        color:
+          isActive || isMonthlyBudget
+            ? theme.mobileNavItemSelected
+            : theme.mobileNavItem,
         display: 'flex',
         flexDirection: 'column',
         textDecoration: 'none',
