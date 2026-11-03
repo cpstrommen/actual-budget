@@ -6,6 +6,7 @@ import type { Plugin } from 'vite';
 export function cfmPreview(
   sampleFile: string,
   headers: Record<string, string>,
+  checkoutId: string,
 ): Plugin {
   return {
     name: 'actual-cfm-ui-preview',
@@ -23,7 +24,17 @@ export function cfmPreview(
           }
         }
         try {
-          if (pathname === '/__cfm-preview') {
+          if (pathname === '/__cfm-preview/health') {
+            response.setHeader('Content-Type', 'application/json');
+            response.setHeader('Cache-Control', 'no-store');
+            response.end(
+              JSON.stringify({
+                name: 'actual-cfm-ui-preview',
+                protocol: 1,
+                checkoutId,
+              }),
+            );
+          } else if (pathname === '/__cfm-preview') {
             const source = await readFile(
               path.join(server.config.root, 'preview/index.html'),
               'utf8',

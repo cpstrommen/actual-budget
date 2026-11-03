@@ -107,7 +107,13 @@ function AppInner() {
         const { initializeCfmPreview } = await import('../preview/initialize');
         await initializeCfmPreview(dispatch);
         setPreviewReady(true);
-        void navigate('/summary', { replace: true });
+        const target = new URL(window.location.href);
+        if (target.pathname === '/') target.pathname = '/summary';
+        // Consume reset once, and retain the page being reviewed on rebuild.
+        target.searchParams.delete('resetSample');
+        void navigate(target.pathname + target.search + target.hash, {
+          replace: true,
+        });
         window.parent.postMessage(
           { type: 'cfm-preview-ready' },
           window.location.origin,

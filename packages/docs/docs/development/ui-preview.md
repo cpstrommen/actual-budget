@@ -11,9 +11,9 @@ yarn install --immutable
 yarn preview:ui
 ```
 
-Open **http://127.0.0.1:3002/__cfm-preview** if the browser does not open automatically. The command prepares the sample using this checkout's API, builds the plugin assets, and starts the browser development server. Initial preparation takes longer than subsequent UI edits. Keep the terminal running; **Ctrl+C** stops it.
+Open **http://127.0.0.1:3002/__cfm-preview** if the browser does not open automatically. The command prepares the sample using this checkout's API, builds the plugin assets, and starts the browser development server. Initial preparation takes longer than subsequent UI edits. Keep the original terminal running; **Ctrl+C** stops the preview and its backend watcher. Use **Ctrl+C**, rather than **Ctrl+Z**, to stop build or preview commands: Ctrl+Z leaves suspended jobs behind.
 
-The dedicated port has its own browser storage, separate from deployments on other origins. The server binds to loopback and refuses to silently switch ports if the selected port is occupied. Use this development checkout separately from deployed build artifacts.
+The dedicated port has its own browser storage, separate from deployments on other origins. The server binds to loopback. Running the command again reuses a healthy preview from this checkout without rebuilding or resetting its sample. A port occupied by another application is reported before preparation starts; the command does not silently switch ports. Use this development checkout separately from deployed build artifacts.
 
 For a different dedicated port or to suppress automatic browser launch:
 
@@ -25,7 +25,7 @@ Use the printed URL consistently: `localhost` and `127.0.0.1` have separate brow
 
 ## Review a change
 
-- Edit application components, shared styles, or theme sources. Vite updates the interface live; core worker changes can trigger a reload.
+- Edit application components, shared styles, or theme sources. Vite updates the interface live; core worker changes reload the app once a successful backend build finishes. Frontend formatting edits use normal Vite updates. Failed backend builds show an error in the preview status while keeping the server running; fixing the source triggers a rebuild.
 - Choose **Light**, **Dark**, or **Midnight** in the preview toolbar.
 - Choose **Full width**, **Tablet**, or **Phone**. The app runs in an iframe with the selected viewport width, so its responsive layout uses that width. The toolbar stays outside the app. A narrow outer browser window limits the available preview width.
 - Visit Summary, Reports, Balances, Planning, Settings, account registers, and forms. Open an archived report and use its print/export actions to inspect report formatting.
@@ -39,7 +39,7 @@ The fixture comes from `scripts/create-cfm-example.mjs`, also used by the recove
 
 Preview mode selects **no server** and restricts browser connections to the preview origin and local development websocket. Use synthetic data here. It is a formatting environment, not a migration tool or a place to connect a production budget.
 
-The sample ZIP is generated in an OS temporary directory and removed when the runner exits. Sample edits are stored only in this preview origin's browser storage. Removing site data removes those local edits.
+The sample ZIP and backend build output use a private OS temporary directory, isolated from other builds. They are removed when the runner exits. Prebundled frontend dependencies are cached outside the checkout for reuse on the same preview port. Sample edits are stored only in this preview origin's browser storage. Removing site data removes those local edits.
 
 The preview shell, sample endpoint, and automatic sample loading are enabled only by the local development runner. Normal browser/server builds do not enable them. Reviewing a change does not publish or deploy it; build and deploy your chosen revision separately after review.
 
@@ -47,7 +47,7 @@ The application's SQLite/SharedArrayBuffer runtime uses COOP/COEP response heade
 
 ## Verification
 
-The preview browser check exercises sample import, themes, a real phone viewport, persistence, reset, preservation of other local files, and absence of a sync-server association:
+The preview browser checks exercise sample import, themes, a real phone viewport, repeated reloads, multiple tabs, reset, preservation of other local files, and absence of a sync-server association. They also trigger a backend rebuild by changing a source file timestamp, without changing its contents, to verify that only the application iframe reloads and the current page is retained:
 
 ```sh
 yarn test:preview
@@ -59,4 +59,16 @@ It starts a separate preview on port 3012 and needs Playwright's Chromium browse
 E2E_PREVIEW_URL=http://127.0.0.1:3002 yarn test:preview
 ```
 
+The launcher regression checks cover occupied ports, duplicate launches, interrupted preparation, and cleanup of child processes:
+
+```sh
+node --test scripts/preview-ui.test.mjs
+```
+
 These checks do not update visual regression baselines. Use the repository's Docker VRT workflow for release snapshots.
+
+## If startup stalls
+
+Use the Node version in `.nvmrc`. A separate `yarn build:api` is not needed; the preview prepares its API and sample automatically.
+
+Keep source files and installed dependencies downloaded when the checkout is in iCloud Drive or another cloud-backed folder. Files that are offloaded or unexpectedly empty can stall reads or break a fresh build. For frequent development, a checkout outside synchronized Documents/Desktop folders avoids that file-provider dependency.

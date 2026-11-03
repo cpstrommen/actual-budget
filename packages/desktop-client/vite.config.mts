@@ -1,6 +1,4 @@
-import { spawn } from 'node:child_process';
-import type { ChildProcess } from 'node:child_process';
-import { createReadStream, readFileSync } from 'node:fs';
+import { createReadStream } from 'node:fs';
 import { cp, mkdir, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -31,22 +29,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // default exclude (node_modules) still applies alongside this include.
 const reactCompilerInclude =
   /[\\/]packages[\\/][^\\/]+[\\/]src[\\/].*\.[jt]sx?(?:$|\?)/;
-
-const addWatchers = (): Plugin => ({
-  name: 'add-watchers',
-  configureServer(server) {
-    server.watcher
-      .add([
-        path.resolve('../loot-core/lib-dist/electron/*.js'),
-        path.resolve('../loot-core/lib-dist/browser/*.js'),
-      ])
-      .on('all', function () {
-        for (const wsc of server.ws.clients) {
-          wsc.send(JSON.stringify({ type: 'static-changed' }));
-        }
-      });
-  },
-});
 
 const injectPlugin = (options?: Parameters<typeof inject>[0]): Plugin => {
   // Rollup plugins are currently slightly API-incompatible with Rolldown plugins, but not in a way that prevents them from working here.
@@ -99,23 +81,6 @@ const pluginsServiceDistDir = path.resolve(
   '../plugins-service/dist',
 );
 const serviceWorkerDir = path.resolve(__dirname, 'service-worker');
-
-const repoRoot = path.resolve(__dirname, '../..');
-
-// The repo pins the Yarn release it expects via `.yarnrc.yml`, so resolve that
-// path and launch it through Node directly. Spawning `yarn` by name does not
-// work on Windows, where it resolves to a `.cmd` shim that `spawn` cannot
-// execute without a shell.
-function resolveYarnCli(): string {
-  const yarnRc = readFileSync(path.resolve(repoRoot, '.yarnrc.yml'), 'utf8');
-  const yarnPath = /^yarnPath:\s*(.+?)\s*$/m.exec(yarnRc)?.[1];
-
-  if (!yarnPath) {
-    throw new Error('Could not resolve "yarnPath" from .yarnrc.yml');
-  }
-
-  return path.resolve(repoRoot, yarnPath);
-}
 
 const WORKER_FILENAME_RE = /^kcab\.worker\.(.+)\.js$/;
 
@@ -180,64 +145,104 @@ async function stagePublicData(): Promise<void> {
   );
 }
 
-const lootCoreBackend = (): Plugin => ({
-  name: 'loot-core-backend',
-  configureServer(server) {
-    const child: ChildProcess = spawn(
-      process.execPath,
-      [
-        resolveYarnCli(),
-        'vite',
-        'build',
-        '--config',
-        lootCoreConfig,
-        '--mode',
-        'development',
-        '--watch',
-      ],
-      { cwd: lootCoreRoot, stdio: 'inherit' },
-    );
-    child.on('error', err => {
-      server.config.logger.error(
-        `loot-core backend failed to spawn: ${err.message}`,
-      );
-    });
-    const cleanup = () => {
-      if (!child.killed) child.kill('SIGTERM');
-    };
-    server.httpServer?.once('close', cleanup);
-    process.once('SIGINT', cleanup);
-    process.once('SIGTERM', cleanup);
-    process.once('exit', cleanup);
+const lootCoreBackend = (workerOutDir: string, preview: boolean): Plugin => {
+  let closeWatcher: (() => Promise<void>) | undefined;
+  return {
+    name: 'loot-core-backend',
+    async configureServer(server) {
+      // Keep the watcher in this process: stopping Vite also stops the backend.
+      // A preview uses its own output directory so other builds cannot replace
+      // the worker underneath an open browser.
+      const watcher = await build({
+        configFile: lootCoreConfig,
+        mode: 'development',
+        root: lootCoreRoot,
+        build: { outDir: workerOutDir, watch: {} },
+      });
+      if (!('on' in watcher)) {
+        throw new Error('Backend watch build did not start');
+      }
+      let firstBuild = true;
+      let failed = false;
+      let closePromise: Promise<void> | undefined;
+      const cleanup = () => (closePromise ??= watcher.close());
+      closeWatcher = cleanup;
+      server.httpServer?.once('close', () => void cleanup());
+      await new Promise<void>((resolve, reject) => {
+        watcher.on('event', event => {
+          if (event.code === 'START') failed = false;
+          if (event.code === 'ERROR') {
+            failed = true;
+            if (firstBuild) {
+              void cleanup().then(
+                () => reject(event.error),
+                () => reject(event.error),
+              );
+            } else {
+              server.ws.send(
+                preview
+                  ? {
+                      type: 'custom',
+                      event: 'cfm-backend-error',
+                      data: { message: event.error.message },
+                    }
+                  : {
+                      type: 'error',
+                      err: {
+                        message: 'Backend build failed: ' + event.error.message,
+                        stack: event.error.stack || '',
+                      },
+                    },
+              );
+            }
+          }
+          if (event.code === 'END' && !failed) {
+            if (firstBuild) {
+              firstBuild = false;
+              resolve();
+            } else {
+              // Reload once, only after all worker files have been written.
+              server.ws.send(
+                preview
+                  ? { type: 'custom', event: 'cfm-backend-updated', data: {} }
+                  : { type: 'full-reload', path: '*' },
+              );
+            }
+          }
+        });
+      });
 
-    server.middlewares.use('/kcab', (req, res, next) => {
-      const url = new URL(req.url ?? '/', 'http://localhost');
-      const filePath = path.join(lootCoreOutDir, url.pathname);
-      if (!filePath.startsWith(lootCoreOutDir + path.sep)) return next();
-      const stream = createReadStream(filePath);
-      stream
-        .on('open', () => {
-          res.setHeader(
-            'Content-Type',
-            CONTENT_TYPES[path.extname(filePath)] ?? 'application/octet-stream',
-          );
-          stream.pipe(res);
-        })
-        .on('error', () => next());
-    });
-  },
-  async closeBundle() {
-    await mkdir(buildStatsDir, { recursive: true });
-    try {
-      await rename(
-        path.resolve(__dirname, 'build/kcab/stats.json'),
-        path.resolve(buildStatsDir, 'loot-core-stats.json'),
-      );
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
-    }
-  },
-});
+      server.middlewares.use('/kcab', (req, res, next) => {
+        const url = new URL(req.url ?? '/', 'http://localhost');
+        const filePath = path.join(workerOutDir, url.pathname);
+        if (!filePath.startsWith(workerOutDir + path.sep)) return next();
+        const stream = createReadStream(filePath);
+        stream
+          .on('open', () => {
+            res.setHeader(
+              'Content-Type',
+              CONTENT_TYPES[path.extname(filePath)] ??
+                'application/octet-stream',
+            );
+            stream.pipe(res);
+          })
+          .on('error', () => next());
+      });
+    },
+    async closeBundle() {
+      await closeWatcher?.();
+      await mkdir(buildStatsDir, { recursive: true });
+      try {
+        await rename(
+          path.resolve(__dirname, 'build/kcab/stats.json'),
+          path.resolve(buildStatsDir, 'loot-core-stats.json'),
+        );
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      }
+    },
+  };
+};
 
 const pluginsServiceAssets = (): Plugin => ({
   name: 'plugins-service-assets',
@@ -265,9 +270,17 @@ export default defineConfig(async ({ mode, command }) => {
   const isVitest = process.env.VITEST === 'true';
   const isCfmPreview =
     command === 'serve' && env.REACT_APP_CFM_PREVIEW === 'true';
-  if (isCfmPreview && !env.CFM_PREVIEW_SAMPLE) {
+  if (
+    isCfmPreview &&
+    (!env.CFM_PREVIEW_SAMPLE ||
+      !env.CFM_PREVIEW_WORKDIR ||
+      !env.CFM_PREVIEW_CACHE_DIR)
+  ) {
     throw new Error('Run yarn preview:ui to prepare the CFM preview sample.');
   }
+  const workerOutDir = isCfmPreview
+    ? path.join(env.CFM_PREVIEW_WORKDIR, 'backend')
+    : lootCoreOutDir;
   const devHeaders = {
     'Cross-Origin-Opener-Policy': 'same-origin',
     'Cross-Origin-Embedder-Policy': 'require-corp',
@@ -325,6 +338,8 @@ export default defineConfig(async ({ mode, command }) => {
 
   return {
     base: '/',
+    // Keep prebundled dependencies out of cloud-backed node_modules folders.
+    cacheDir: isCfmPreview ? env.CFM_PREVIEW_CACHE_DIR : undefined,
     define: {
       'import.meta.env.REACT_APP_CFM_PREVIEW': JSON.stringify(
         isCfmPreview ? 'true' : 'false',
@@ -376,6 +391,12 @@ export default defineConfig(async ({ mode, command }) => {
         : browserOpen,
       watch: {
         disableGlobbing: false,
+        // Generated outputs are handled by the backend build-completion hook.
+        ignored: [
+          publicDir + '/**',
+          lootCoreRoot + '/lib-dist/**',
+          lootCoreRoot + '/@types/**',
+        ],
       },
     },
     resolve: {
@@ -385,7 +406,13 @@ export default defineConfig(async ({ mode, command }) => {
       tsconfigPaths: true,
     },
     plugins: [
-      isCfmPreview ? cfmPreview(env.CFM_PREVIEW_SAMPLE, devHeaders) : undefined,
+      isCfmPreview
+        ? cfmPreview(
+            env.CFM_PREVIEW_SAMPLE,
+            devHeaders,
+            env.CFM_PREVIEW_CHECKOUT_ID,
+          )
+        : undefined,
       // electron (desktop) builds do not support PWA
       mode === 'desktop'
         ? undefined
@@ -434,8 +461,9 @@ export default defineConfig(async ({ mode, command }) => {
             },
           }),
       injectShims(),
-      addWatchers(),
-      mode === 'desktop' || isVitest ? undefined : lootCoreBackend(),
+      mode === 'desktop' || isVitest
+        ? undefined
+        : lootCoreBackend(workerOutDir, isCfmPreview),
       mode === 'desktop' ? undefined : pluginsServiceAssets(),
       react(),
       babel({

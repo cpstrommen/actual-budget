@@ -8,7 +8,10 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
-  const outDir = path.resolve(__dirname, 'lib-dist/browser');
+  const outDir =
+    isDev && process.env.CFM_PREVIEW_WORKDIR
+      ? path.join(process.env.CFM_PREVIEW_WORKDIR, 'backend')
+      : path.resolve(__dirname, 'lib-dist/browser');
 
   return {
     mode,

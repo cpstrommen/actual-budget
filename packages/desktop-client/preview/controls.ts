@@ -100,3 +100,19 @@ window.addEventListener('message', event => {
     translateControls();
   }
 });
+
+// Reload the application iframe once after a complete backend build. Sending
+// Vite's global full-reload would reload both the shell and its child at once.
+import.meta.hot?.on('cfm-backend-updated', () => {
+  reset.disabled = true;
+  phase = 'loading';
+  translateControls();
+  frame.contentWindow?.location.reload();
+});
+
+import.meta.hot?.on('cfm-backend-error', (data: { message: string }) => {
+  reset.disabled = true;
+  phase = 'error';
+  failure = data.message;
+  translateControls();
+});
