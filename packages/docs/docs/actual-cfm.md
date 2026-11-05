@@ -46,6 +46,16 @@ In **Balances → Assets**, choose a manual tracking account whose acquisition b
 
 The table distinguishes modeled and observed values. **Record value and ledger adjustment** realizes a dated non-cash observation. The balance sheet uses the ledger; the asset preview may show unposted modeled values. It never adds both. Optional automatic realization preserves the original simple/compound basis. Disposal ends the model; record actual proceeds separately and realize the disposed value in the ledger.
 
+### Property valuation sources
+
+For a house or another asset, select **Average of valuation sources** when saving its asset policy. Under **Property and asset valuation sources**, choose the asset and add named sources such as a tax assessment, Zillow estimate, Redfin estimate, or appraisal. Source names are entirely configurable. Give each source an optional complete `https://` or `http://` valuation URL; **Open [source]** opens it so you can check and copy the current value manually. CFM does not fetch these pages.
+
+Enter an estimate and **Source update date**, then choose **Save source**. The core averages the latest reading from each active source as of that date, with equal weighting, and records a dated non-cash adjustment in the asset account. For example, $280,000, $330,000, and $320,000 produce a $310,000 house valuation. The linked mortgage remains a separate liability. Values use the asset's currency and round half a minor unit upward. Sources with no estimate are omitted; an explicit zero counts. Leaving the estimate blank changes only source details and retains any existing estimate.
+
+The panel shows the average at the workspace's selected date, each source's latest estimate/date, clickable current URLs, and dated history with the originally recorded labels and URLs. Update a source to append a new reading. **Retire source** excludes it from the chosen update date onward, preserving earlier dates. If no active estimates remain, CFM retains the last recorded balance rather than inventing a zero valuation. Undo reverses a source change and its ledger adjustment together. Source updates must be on or after later recorded valuations so existing balance history is preserved.
+
+Report packages retain the source inputs behind a recorded average. Compatible exports preserve the resulting ordinary transactions and dated balances; the recovery archive also includes the source histories and URLs. Automated retrieval is a WIP feature in the roadmap. Scheduled valuation jobs currently skip these manually maintained sources.
+
 ## Receivables, payables, and credits
 
 Create manual control accounts in **Balances → Accounts and balances**, then individual obligations by counterparty under **Balances → Accounts receivable** or **Accounts payable**. Linking a source transaction/split allocates its value using ordinary split/transfer entries. For a new unpaid payable, choose an expense recognition account/category or an off-budget asset account. Non-cash zero-total splits recognize expenses; paired asset/liability entries recognize financed assets. Cash moves on payment.

@@ -6,10 +6,12 @@ import { valueAsset } from '@actual-app/core/shared/cfm';
 import type {
   CfmAsset,
   CfmAssetPolicy,
+  CfmAssetSourceUpdate,
   CfmRecord,
   CfmState,
 } from '@actual-app/core/types/models/cfm';
 
+import { CfmAssetSources } from './CfmAssetSources';
 import { isAsset } from './records';
 import {
   Action,
@@ -34,6 +36,7 @@ type Props = {
   save: SaveRecord;
   busy: boolean;
   onError: (error: unknown) => void;
+  updateSource: (input: CfmAssetSourceUpdate) => Promise<boolean>;
   valueAssetAccount: (input: {
     assetId: string;
     date: string;
@@ -49,6 +52,7 @@ export function CfmAssets({
   busy,
   onError,
   valueAssetAccount,
+  updateSource,
 }: Props) {
   const { t } = useTranslation();
   const [restatementReason, setRestatementReason] = useState('');
@@ -157,6 +161,7 @@ export function CfmAssets({
                 editing.data.policy,
               ],
               observations: editing.data.observations ?? [],
+              valuationSources: editing.data.valuationSources,
             }
           : {}),
         ...(disposal ? { disposalDate: disposal } : {}),
@@ -230,7 +235,11 @@ export function CfmAssets({
                   <Money amount={valuation.value} />
                 </Cell>
                 <Cell>{t(valuation.source)}</Cell>
-                <Cell>{t(valuation.method)}</Cell>
+                <Cell>
+                  {valuation.method === 'source-average'
+                    ? t('Average of valuation sources')
+                    : t(valuation.method)}
+                </Cell>
                 <Cell>{valuation.effectiveDate}</Cell>
                 <Cell>
                   <Action onPress={() => edit(record)}>
@@ -242,6 +251,13 @@ export function CfmAssets({
           })}
         </DataTable>
       </Panel>
+      <CfmAssetSources
+        assets={assets}
+        asOf={asOf}
+        busy={busy}
+        onError={onError}
+        update={updateSource}
+      />
       <Panel title={editing ? t('Revise asset policy') : t('Add asset policy')}>
         <p>
           <Trans>
@@ -307,13 +323,15 @@ export function CfmAssets({
                     value === 'manual' ||
                     value === 'straight-line' ||
                     value === 'fixed-rate' ||
-                    value === 'schedule'
+                    value === 'schedule' ||
+                    value === 'source-average'
                   ) {
                     setMethod(value);
                   }
                 }}
                 options={[
                   ['manual', t('Manual observations')],
+                  ['source-average', t('Average of valuation sources')],
                   [
                     'straight-line',
                     t('Straight-line depreciation / amortization'),
@@ -331,24 +349,28 @@ export function CfmAssets({
                   required
                 />
               </Field>
-              <Field label={t('Policy starting value')}>
-                <input
-                  style={fieldStyle}
-                  inputMode="decimal"
-                  value={baseValue}
-                  onChange={event => setBaseValue(event.target.value)}
-                  placeholder={acquisitionValue}
-                />
-              </Field>
-              <Field label={t('Residual value')}>
-                <input
-                  style={fieldStyle}
-                  inputMode="decimal"
-                  value={residual}
-                  onChange={event => setResidual(event.target.value)}
-                  required
-                />
-              </Field>
+              {method !== 'source-average' && (
+                <>
+                  <Field label={t('Policy starting value')}>
+                    <input
+                      style={fieldStyle}
+                      inputMode="decimal"
+                      value={baseValue}
+                      onChange={event => setBaseValue(event.target.value)}
+                      placeholder={acquisitionValue}
+                    />
+                  </Field>
+                  <Field label={t('Residual value')}>
+                    <input
+                      style={fieldStyle}
+                      inputMode="decimal"
+                      value={residual}
+                      onChange={event => setResidual(event.target.value)}
+                      required
+                    />
+                  </Field>
+                </>
+              )}
               {method === 'straight-line' && (
                 <Field label={t('Useful life in months')}>
                   <input
@@ -388,26 +410,28 @@ export function CfmAssets({
                   </label>
                 </>
               )}
-              <Choice
-                label={t('Valuation posting frequency')}
-                value={frequency}
-                onChange={value => {
-                  if (
-                    value === 'daily' ||
-                    value === 'monthly' ||
-                    value === 'quarterly' ||
-                    value === 'annually'
-                  ) {
-                    setFrequency(value);
-                  }
-                }}
-                options={[
-                  ['daily', t('Daily')],
-                  ['monthly', t('Monthly')],
-                  ['quarterly', t('Quarterly')],
-                  ['annually', t('Annually')],
-                ]}
-              />
+              {method !== 'source-average' && (
+                <Choice
+                  label={t('Valuation posting frequency')}
+                  value={frequency}
+                  onChange={value => {
+                    if (
+                      value === 'daily' ||
+                      value === 'monthly' ||
+                      value === 'quarterly' ||
+                      value === 'annually'
+                    ) {
+                      setFrequency(value);
+                    }
+                  }}
+                  options={[
+                    ['daily', t('Daily')],
+                    ['monthly', t('Monthly')],
+                    ['quarterly', t('Quarterly')],
+                    ['annually', t('Annually')],
+                  ]}
+                />
+              )}
               <Field
                 label={t('Disposal date')}
                 hint={t(
@@ -483,10 +507,22 @@ export function CfmAssets({
                 onChange={setObservationAsset}
                 options={[
                   ['', t('Select asset')],
-                  ...assets.map(
-                    record =>
-                      [record.id, record.data.name] satisfies [string, string],
-                  ),
+                  ...assets
+                    .filter(
+                      record =>
+                        record.data.policy.method !== 'source-average' ||
+                        Boolean(
+                          record.data.disposalDate &&
+                          record.data.disposalDate <= observationDate,
+                        ),
+                    )
+                    .map(
+                      record =>
+                        [record.id, record.data.name] satisfies [
+                          string,
+                          string,
+                        ],
+                    ),
                 ]}
                 required
               />

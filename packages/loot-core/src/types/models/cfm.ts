@@ -73,7 +73,12 @@ export type CfmAnnualPlan = {
 
 export type CfmAssetPolicy = {
   effectiveDate: string;
-  method: 'manual' | 'straight-line' | 'fixed-rate' | 'schedule';
+  method:
+    | 'manual'
+    | 'straight-line'
+    | 'fixed-rate'
+    | 'schedule'
+    | 'source-average';
   baseValue?: number;
   residualValue?: number;
   usefulLifeMonths?: number;
@@ -83,6 +88,51 @@ export type CfmAssetPolicy = {
   schedule?: CfmDatedAmount[];
 };
 
+export type CfmAssetSourceReading = {
+  id: string;
+  date: string;
+  value: number;
+  recordedAt: string;
+  name: string;
+  url?: string;
+};
+
+export type CfmAssetValuationSource = {
+  id: string;
+  name: string;
+  url?: string;
+  startDate: string;
+  retiredDate?: string;
+  readings: CfmAssetSourceReading[];
+};
+
+export type CfmAssetSourceInput = CfmAssetSourceReading & { sourceId: string };
+
+export type CfmAssetSourceUpdate = {
+  assetId: string;
+  sourceId: string;
+  name: string;
+  url?: string;
+  date: string;
+  value?: number;
+  retire?: boolean;
+  requestId: string;
+  expectedUpdatedAt: string;
+};
+
+export type CfmAssetSourceUpdateResult = {
+  asset: CfmRecord<CfmAsset>;
+  sourceId: string;
+  value: number | null;
+  sourceCount: number;
+  transactionId: string | null;
+};
+
+export type CfmAssetSourceAverage = {
+  value: number | null;
+  inputs: CfmAssetSourceInput[];
+};
+
 export type CfmAssetObservation = {
   id: string;
   date: string;
@@ -90,6 +140,7 @@ export type CfmAssetObservation = {
   recordedAt: string;
   source: string;
   modeled?: boolean;
+  sourceInputs?: CfmAssetSourceInput[];
   transactionId?: string;
   notes?: string;
 };
@@ -104,6 +155,7 @@ export type CfmAsset = {
   policyHistory?: CfmAssetPolicy[];
   policyRestatementReason?: string;
   observations?: CfmAssetObservation[];
+  valuationSources?: CfmAssetValuationSource[];
   disposalDate?: string;
   linkedDebtAccountId?: string;
 };
@@ -231,6 +283,7 @@ export type CfmValuation = {
   source: 'acquisition' | 'observed' | 'modeled' | 'disposed';
   method: CfmAssetPolicy['method'];
   observationId?: string;
+  sourceInputs?: CfmAssetSourceInput[];
 };
 
 export type CfmObligationStatus = {

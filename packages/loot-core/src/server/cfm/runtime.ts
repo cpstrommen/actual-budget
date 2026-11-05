@@ -79,7 +79,10 @@ export async function runAutomation({
 
     if (config.postAssetValuations) {
       for (const asset of getCfmRecords(state.records, 'asset')) {
-        if (asset.data.policy.method !== 'manual') {
+        if (
+          asset.data.policy.method !== 'manual' &&
+          asset.data.policy.method !== 'source-average'
+        ) {
           jobs.push({
             id: `asset:${asset.id}`,
             kind: 'asset-valuation',

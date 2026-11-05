@@ -58,7 +58,8 @@ global.resetRandomId = () => {
   _id = 1;
 };
 
-vi.mock('uuid', () => ({
+vi.mock(import('uuid'), async importOriginal => ({
+  ...(await importOriginal()),
   v4: () => {
     return 'id' + _id++;
   },

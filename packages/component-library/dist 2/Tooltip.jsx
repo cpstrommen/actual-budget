@@ -1,0 +1,43 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Tooltip as AriaTooltip, TooltipTrigger } from 'react-aria-components';
+import { styles } from './styles';
+import { View } from './View';
+export const Tooltip = ({ children, content, triggerProps = {}, disablePointerEvents = false, ...props }) => {
+    const triggerRef = useRef(null);
+    const [isHovered, setIsHover] = useState(false);
+    const hoverTimeoutRef = useRef(null);
+    const closeTimeoutRef = useRef(null);
+    const handlePointerEnter = useCallback(() => {
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+        }
+        const timeout = setTimeout(() => {
+            setIsHover(true);
+        }, triggerProps.delay ?? 300);
+        hoverTimeoutRef.current = timeout;
+    }, [triggerProps.delay]);
+    const handlePointerLeave = useCallback(() => {
+        if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+        }
+        closeTimeoutRef.current = setTimeout(() => {
+            setIsHover(false);
+        }, triggerProps.closeDelay ?? 0);
+    }, [triggerProps.closeDelay]);
+    // Force closing the tooltip whenever the disablement state changes
+    useEffect(() => {
+        setIsHover(false);
+    }, [triggerProps.isDisabled]);
+    return (<View style={{ minHeight: 'auto', flexShrink: 0, maxWidth: '100%' }} ref={triggerRef} onMouseEnter={handlePointerEnter} onMouseLeave={handlePointerLeave}>
+      <TooltipTrigger isOpen={isHovered && !triggerProps.isDisabled} {...triggerProps}>
+        {children}
+
+        <AriaTooltip triggerRef={triggerRef} style={{
+            ...styles.tooltip,
+            ...(disablePointerEvents && { pointerEvents: 'none' }),
+        }} {...props}>
+          {content}
+        </AriaTooltip>
+      </TooltipTrigger>
+    </View>);
+};

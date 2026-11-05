@@ -11,8 +11,10 @@ import { clearUndo, undo, withUndo } from '#server/undo';
 import { safeUnzip } from '#server/util/zip';
 import {
   getAccountBalances,
+  getAssetSourceAverage,
   getCfmRecords,
   getObligationStatus,
+  valueAsset,
 } from '#shared/cfm';
 import type { CfmRecord } from '#types/models/cfm';
 
@@ -22,6 +24,7 @@ import {
   postAdjustment,
   saveRecord,
   settleObligation,
+  updateAssetSource,
   valueAssetAccount,
 } from './app';
 import { convertCfmDatabase, exportForActualBudget } from './portability';
@@ -653,4 +656,286 @@ test('allocating an imported transaction with an apostrophe in its identifier pr
   expect(
     getAccountBalances((await getState()).transactions, '2026-01-01'),
   ).toMatchObject({ card: -20000, ar: 10000 });
+});
+
+async function propertyWithSources() {
+  const { accountId } = await createAccount({
+    name: 'Home',
+    kind: 'asset',
+    initialBalance: 30000000,
+    date: '2026-01-01',
+    currency: 'USD',
+    requestId: 'home-account',
+  });
+  const asset = await saveRecord({
+    record: envelope('home', 'asset', {
+      accountId,
+      name: 'Home',
+      currency: 'USD',
+      acquisitionDate: '2026-01-01',
+      acquisitionValue: 30000000,
+      policy: { method: 'source-average', effectiveDate: '2026-01-01' },
+    }),
+  });
+  return { accountId, asset };
+}
+async function sourceUpdate(
+  sourceId: string,
+  value: number | undefined,
+  date = '2026-01-01',
+  extra = {},
+) {
+  const current = (await getState()).records.find(item => item.id === 'home')!;
+  return {
+    assetId: 'home',
+    sourceId,
+    name: sourceId,
+    url: `https://${sourceId}.example/home`,
+    date,
+    ...(value === undefined ? {} : { value }),
+    requestId: `${sourceId}-${date}`,
+    expectedUpdatedAt: current.updatedAt,
+    ...extra,
+  };
+}
+
+test('manual property sources post exact averages, retain history, retry safely and undo atomically', async () => {
+  const { accountId } = await propertyWithSources();
+  await updateAssetSource(await sourceUpdate('tax', 30000000));
+  const zillow = await sourceUpdate('zillow', 36000000);
+  await withUndo(() => updateAssetSource(zillow));
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-01-01')[
+      accountId
+    ],
+  ).toBe(33000000);
+  const count = (await getState()).transactions.length;
+  await updateAssetSource(zillow);
+  expect((await getState()).transactions).toHaveLength(count);
+  await undo();
+  let home = getCfmRecords((await getState()).records, 'asset')[0]!;
+  expect(home.data.valuationSources).toHaveLength(1);
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-01-01')[
+      accountId
+    ],
+  ).toBe(30000000);
+  await updateAssetSource(
+    await sourceUpdate('zillow', 36000000, '2026-01-01', {
+      requestId: 'zillow-again',
+    }),
+  );
+  await updateAssetSource(await sourceUpdate('redfin', 33000000));
+  await updateAssetSource(await sourceUpdate('tax', 33000000, '2026-06-01'));
+  home = getCfmRecords((await getState()).records, 'asset')[0]!;
+  expect(
+    home.data.valuationSources?.find(source => source.id === 'tax')?.readings,
+  ).toHaveLength(2);
+  expect(getAssetSourceAverage(home.data, '2026-01-01').value).toBe(33000000);
+  expect(valueAsset(home.data, '2026-01-01').value).toBe(33000000);
+  expect(valueAsset(home.data, '2026-06-01')).toMatchObject({
+    value: 34000000,
+    method: 'source-average',
+    sourceInputs: expect.arrayContaining([
+      expect.objectContaining({ name: 'tax', value: 33000000 }),
+    ]),
+  });
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-01-01')[
+      accountId
+    ],
+  ).toBe(33000000);
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-06-01')[
+      accountId
+    ],
+  ).toBe(34000000);
+  await expect(
+    updateAssetSource(await sourceUpdate('tax', 31000000, '2026-02-01')),
+  ).rejects.toThrow('later balance history');
+  await expect(
+    updateAssetSource({ ...zillow, requestId: 'stale' }),
+  ).rejects.toThrow('changed');
+  await expect(
+    saveRecord({
+      record: { ...home, data: { ...home.data, valuationSources: [] } },
+    }),
+  ).rejects.toThrow('valuation source operation');
+  await expect(
+    valueAssetAccount({
+      assetId: 'home',
+      date: '2026-06-01',
+      value: 1,
+      requestId: 'override',
+    }),
+  ).rejects.toThrow('valuation sources');
+});
+
+test('source links and retirement preserve their dated inputs without invented zero balances', async () => {
+  const { accountId } = await propertyWithSources();
+  await updateAssetSource(await sourceUpdate('tax', 30000000));
+  await updateAssetSource(await sourceUpdate('zillow', 36000000));
+  const before = (await getState()).transactions.length;
+  await updateAssetSource(
+    await sourceUpdate('tax', undefined, '2026-02-01', {
+      name: 'County assessor',
+      url: 'https://county.example/new',
+      requestId: 'change-url',
+    }),
+  );
+  expect((await getState()).transactions).toHaveLength(before);
+  let home = getCfmRecords((await getState()).records, 'asset')[0]!;
+  expect(
+    home.data.valuationSources?.find(source => source.id === 'tax')
+      ?.readings[0],
+  ).toMatchObject({ name: 'tax', url: 'https://tax.example/home' });
+  await updateAssetSource(
+    await sourceUpdate('tax', undefined, '2026-03-01', {
+      retire: true,
+      requestId: 'retire-tax',
+    }),
+  );
+  home = getCfmRecords((await getState()).records, 'asset')[0]!;
+  expect(getAssetSourceAverage(home.data, '2026-02-28').value).toBe(33000000);
+  expect(getAssetSourceAverage(home.data, '2026-03-01').value).toBe(36000000);
+  await updateAssetSource(
+    await sourceUpdate('zillow', undefined, '2026-04-01', {
+      retire: true,
+      requestId: 'retire-last',
+    }),
+  );
+  home = getCfmRecords((await getState()).records, 'asset')[0]!;
+  expect(getAssetSourceAverage(home.data, '2026-04-01').value).toBeNull();
+  expect(
+    getAccountBalances((await getState()).transactions, '2026-04-01')[
+      accountId
+    ],
+  ).toBe(36000000);
+  expect(
+    home.data.valuationSources?.flatMap(source => source.readings),
+  ).toHaveLength(2);
+});
+
+test('source averages and dated balance logs survive compatible export, archive, and native recovery', async () => {
+  const { accountId } = await propertyWithSources();
+  await updateAssetSource(await sourceUpdate('tax', 30000000));
+  await updateAssetSource(await sourceUpdate('zillow', 36000000, '2026-06-01'));
+  const exported = await exportForActualBudget();
+  expect(
+    exported.receipt.accounts.find(item => item.accountId === accountId)
+      ?.checkpoints,
+  ).toEqual([
+    { date: '20260101', balance: 30000000 },
+    { date: '20260601', balance: 33000000 },
+  ]);
+  const archive = safeUnzip(exported.archive);
+  const audit = new TextDecoder().decode(archive['cfm-records-and-audit.json']);
+  expect(audit).toContain('https://tax.example/home');
+  expect(audit).toContain('source-average');
+  expect(new TextDecoder().decode(archive['cfm-records.csv'])).toContain(
+    'valuationSources',
+  );
+  const restored = await sqlite.openDatabase(
+    Buffer.from(safeUnzip(archive['full-cfm-backup.zip']!)['db.sqlite']!),
+  );
+  try {
+    expect((await convertCfmDatabase(restored)).checkpoints).toEqual(
+      exported.receipt.accounts,
+    );
+  } finally {
+    sqlite.closeDatabase(restored);
+  }
+  const upstream = await sqlite.openDatabase(
+    Buffer.from(safeUnzip(exported.data)['db.sqlite']!),
+  );
+  try {
+    expect(
+      sqlite.runQuery(
+        upstream,
+        "SELECT * FROM notes WHERE id LIKE 'cfm:v1:%'",
+        [],
+        true,
+      ),
+    ).toHaveLength(0);
+    expect(
+      sqlite.runQuery(
+        upstream,
+        'SELECT * FROM transactions WHERE tombstone=0',
+        [],
+        true,
+      ).length,
+    ).toBeGreaterThan(1);
+  } finally {
+    sqlite.closeDatabase(upstream);
+  }
+});
+
+test('asset reports archive the source estimates and original links behind their average', async () => {
+  await propertyWithSources();
+  await updateAssetSource(await sourceUpdate('tax', 30000000));
+  await updateAssetSource(await sourceUpdate('zillow', 36000000));
+  await saveRecord({
+    record: envelope('source-report', 'report-template', {
+      name: 'Property valuations',
+      period: 'annual',
+      revision: 1,
+      sections: [{ id: 'assets', type: 'assets', title: 'Assets' }],
+    }),
+  });
+  const run = await runReport({
+    templateId: 'source-report',
+    asOf: '2026-06-01',
+    requestId: 'property-report',
+  });
+  expect(run.data.sections[0]?.rows[0]).toMatchObject({
+    value: 33000000,
+    sourceEstimates:
+      'tax: $300,000.00 (2026-01-01) · https://tax.example/home; zillow: $360,000.00 (2026-01-01) · https://zillow.example/home',
+  });
+  const archived = JSON.stringify(run.data);
+  await updateAssetSource(
+    await sourceUpdate('tax', 34000000, '2026-06-01', {
+      name: 'County assessment',
+      url: 'https://county.example/updated',
+    }),
+  );
+  expect(
+    JSON.stringify(
+      (await getState()).records.find(item => item.id === run.id)?.data,
+    ),
+  ).toBe(archived);
+  const exported = safeUnzip((await exportForActualBudget()).archive);
+  expect(
+    new TextDecoder().decode(exported['cfm-records-and-audit.json']),
+  ).toContain('https://tax.example/home');
+});
+
+test('a source-valued property can be disposed without losing its source history', async () => {
+  const { accountId } = await propertyWithSources();
+  await updateAssetSource(await sourceUpdate('tax', 30000000));
+  const asset = getCfmRecords((await getState()).records, 'asset')[0]!;
+  await saveRecord({
+    record: { ...asset, data: { ...asset.data, disposalDate: '2026-06-01' } },
+  });
+  await valueAssetAccount({
+    assetId: 'home',
+    date: '2026-06-01',
+    value: 0,
+    reason: 'Disposed home',
+    requestId: 'dispose-home',
+  });
+  const state = await getState();
+  expect(getAccountBalances(state.transactions, '2026-05-31')[accountId]).toBe(
+    30000000,
+  );
+  expect(getAccountBalances(state.transactions, '2026-06-01')[accountId]).toBe(
+    0,
+  );
+  expect(
+    getCfmRecords(state.records, 'asset')[0]!.data.valuationSources?.[0]
+      .readings,
+  ).toHaveLength(1);
+  await expect(
+    updateAssetSource(await sourceUpdate('tax', 31000000, '2026-07-01')),
+  ).rejects.toThrow('holding period');
 });

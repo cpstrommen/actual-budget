@@ -330,6 +330,7 @@ function materialize(
         column('change', 'Valuation change', 'money'),
         column('ledger', 'Ledger value', 'money'),
         column('source', 'Source'),
+        column('sourceEstimates', 'Valuation source estimates'),
         column('effectiveDate', 'Value date', 'date'),
       ],
       rows: assets().map(row => ({
@@ -341,6 +342,12 @@ function materialize(
         disposals: row.disposals,
         ledger: row.ledger,
         source: row.source,
+        sourceEstimates: (row.sourceInputs ?? [])
+          .map(
+            input =>
+              `${input.name}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: state.currency }).format(input.value / 100)} (${input.date})${input.url ? ' · ' + input.url : ''}`,
+          )
+          .join('; '),
         effectiveDate: row.effectiveDate,
       })),
     };

@@ -60,3 +60,9 @@ node packages/loot-core/scripts/test-cfm-upstream.mjs
 ```
 
 The harness extracts the pinned, unmodified upstream core/API from Git, builds it in an isolated temporary directory, imports a CFM compatibility export, exports again upstream, and compares supported table rows and dated ledger movements. It also runs offline recovery from a native backup. The Git history containing the pinned commit is needed to run the test, but is not needed to use the packaged recovery runtime.
+
+## Property valuation sources
+
+An asset may use the `source-average` policy and carry `valuationSources`. Each source has an ID, label, optional HTTP/HTTPS URL, start date, optional retirement date, and append-only `readings`. Readings retain their request ID, effective date, integer minor-unit value, recorded timestamp, source label, and original URL. Aggregate asset observations carry `sourceInputs` snapshots identifying the reading contributed by each source. The current source URL can change without changing the URL retained by earlier readings.
+
+A source reading or retirement can create an ordinary non-cash account adjustment. The upstream-compatible database carries those native transactions and dated balances. Source definitions, readings, input snapshots, and audit receipts remain in `cfm-records-and-audit.json`, `cfm-records.csv`, and the full native backup. Offline recovery uses the same representation; no CFM SQL schema migration is required.

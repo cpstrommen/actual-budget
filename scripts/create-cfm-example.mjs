@@ -137,6 +137,40 @@ export async function createCfmExample(api) {
     reason: 'Independent appraisal — synthetic example',
     requestId: 'example-appraisal',
   });
+  const home = (await api.getCfmState()).records.find(
+    record => record.id === 'example-property-policy',
+  );
+  await api.saveCfmRecord({
+    ...home,
+    data: {
+      ...home.data,
+      policy: { method: 'source-average', effectiveDate: '2026-10-01' },
+    },
+  });
+  for (const [sourceId, name, value, url] of [
+    [
+      'example-tax',
+      'Tax assessment',
+      28000000,
+      'https://assessor.example/property/123',
+    ],
+    ['example-zillow', 'Zillow estimate', 33000000, 'https://www.zillow.com/'],
+    ['example-redfin', 'Redfin estimate', 32000000, 'https://www.redfin.com/'],
+  ]) {
+    const current = (await api.getCfmState()).records.find(
+      record => record.id === 'example-property-policy',
+    );
+    await api.updateCfmAssetSource({
+      assetId: current.id,
+      sourceId,
+      name,
+      value,
+      url,
+      date: '2026-10-31',
+      expectedUpdatedAt: current.updatedAt,
+      requestId: sourceId,
+    });
+  }
   await put('example-investment-policy', 'asset', {
     accountId: investment,
     name: 'Investment holdings',

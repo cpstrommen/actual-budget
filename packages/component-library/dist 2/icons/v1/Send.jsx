@@ -1,0 +1,7 @@
+import * as React from 'react';
+export const SvgSend = (props) => (<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" style={{
+        color: 'inherit',
+        ...props.style,
+    }}>
+    <path d="m0 0 20 10L0 20zm0 8v4l10-2z" fill="currentColor"/>
+  </svg>);

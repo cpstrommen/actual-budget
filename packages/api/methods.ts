@@ -532,3 +532,9 @@ export function valueCfmAsset(
 export function applyCfmAnnualPlan(options: { id: string; requestId: string }) {
   return send('cfm-apply-annual-plan', options);
 }
+
+export function updateCfmAssetSource(
+  options: Parameters<CfmHandlers['cfm-update-asset-source']>[0],
+) {
+  return send('cfm-update-asset-source', options);
+}

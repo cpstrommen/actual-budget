@@ -176,6 +176,9 @@ export function CfmWorkspace({ section }: { section: CfmSection }) {
               save={save}
               busy={busy}
               onError={reportError}
+              updateSource={input =>
+                mutate(() => send('cfm-update-asset-source', input))
+              }
               valueAssetAccount={input =>
                 mutate(() => send('cfm-value-asset', input))
               }

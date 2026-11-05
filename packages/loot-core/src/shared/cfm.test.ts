@@ -18,9 +18,11 @@ import {
   cfmBankSyncTimestamp,
   getAccountBalances,
   getAnnualPlanPerformance,
+  getAssetSourceAverage,
   getAssetValuation,
   getCfmRecords,
   getObligationStatus,
+  normalizeCfmValuationUrl,
   projectLiquidity,
   validateCfmRecord,
 } from './cfm';
@@ -661,5 +663,129 @@ describe('CFM liquidity projection', () => {
         },
       ]),
     ).toThrow(/currencies/);
+  });
+});
+
+describe('property valuation sources', () => {
+  const asset: CfmAsset = {
+    ...car,
+    policy: { method: 'source-average', effectiveDate: '2026-01-01' },
+    valuationSources: [
+      {
+        id: 'tax',
+        name: 'Tax assessment',
+        startDate: '2026-01-01',
+        readings: [
+          {
+            id: 'tax-jan',
+            name: 'Tax assessment',
+            date: '2026-01-01',
+            value: 30000000,
+            recordedAt: '2026-01-01T12:00:00Z',
+            url: 'https://tax.example/property',
+          },
+          {
+            id: 'tax-june',
+            name: 'Tax assessment',
+            date: '2026-06-01',
+            value: 33000000,
+            recordedAt: '2026-06-01T12:00:00Z',
+          },
+        ],
+      },
+      {
+        id: 'zillow',
+        name: 'Zillow estimate',
+        startDate: '2026-01-01',
+        readings: [
+          {
+            id: 'zillow-jan',
+            name: 'Zillow estimate',
+            date: '2026-01-01',
+            value: 36000000,
+            recordedAt: '2026-01-01T12:00:00Z',
+          },
+        ],
+      },
+      { id: 'blank', name: 'Appraisal', startDate: '2026-01-01', readings: [] },
+    ],
+  };
+  it('equally weights the latest estimate per source without changing past averages', () => {
+    expect(getAssetSourceAverage(asset, '2026-05-31').value).toBe(33000000);
+    const june = getAssetSourceAverage(asset, '2026-06-01');
+    expect(june.value).toBe(34500000);
+    expect(june.inputs.map(item => item.id)).toEqual([
+      'tax-june',
+      'zillow-jan',
+    ]);
+    expect(getAssetSourceAverage(asset, '2025-12-31')).toEqual({
+      value: null,
+      inputs: [],
+    });
+  });
+  it('uses effective retirement dates and includes genuine zero-valued estimates', () => {
+    const next = structuredClone(asset);
+    next.valuationSources![1].retiredDate = '2026-07-01';
+    expect(getAssetSourceAverage(next, '2026-06-30').value).toBe(34500000);
+    expect(getAssetSourceAverage(next, '2026-07-01').value).toBe(33000000);
+    next.valuationSources![0].readings.push({
+      id: 'zero',
+      name: 'Tax assessment',
+      date: '2026-08-01',
+      value: 0,
+      recordedAt: '2026-08-01T12:00:00Z',
+    });
+    expect(getAssetSourceAverage(next, '2026-08-01').value).toBe(0);
+    next.valuationSources![0].retiredDate = '2026-09-01';
+    expect(getAssetSourceAverage(next, '2026-09-01').value).toBeNull();
+  });
+  it('rounds half a minor unit up and avoids overflowing large valid estimates', () => {
+    const small = structuredClone(asset);
+    small.valuationSources![0].readings = [
+      {
+        id: 'a',
+        name: 'A',
+        date: '2026-01-01',
+        recordedAt: '2026-01-01T12:00:00Z',
+        value: 1,
+      },
+    ];
+    small.valuationSources![1].readings[0].value = 2;
+    expect(getAssetSourceAverage(small, '2026-01-01').value).toBe(2);
+    small.valuationSources![0].readings[0].value = Number.MAX_SAFE_INTEGER;
+    small.valuationSources![1].readings[0].value = Number.MAX_SAFE_INTEGER;
+    expect(getAssetSourceAverage(small, '2026-01-01').value).toBe(
+      Number.MAX_SAFE_INTEGER,
+    );
+  });
+  it.each([
+    // eslint-disable-next-line no-script-url -- Valuation links must reject executable URLs.
+    'javascript:alert(1)',
+    'data:text/html,test',
+    'file:///tmp/test',
+    'https://user:password@example.com',
+    '/relative',
+  ])('rejects unsafe or incomplete source link %s', url => {
+    expect(() => normalizeCfmValuationUrl(url)).toThrow();
+  });
+  it('normalizes user-provided HTTP and HTTPS links without fetching them', () => {
+    expect(normalizeCfmValuationUrl(' https://tax.example/property?q=1 ')).toBe(
+      'https://tax.example/property?q=1',
+    );
+    expect(normalizeCfmValuationUrl('')).toBeUndefined();
+    expect(normalizeCfmValuationUrl('http://appraisal.example')).toBe(
+      'http://appraisal.example/',
+    );
+  });
+  it('rejects invalid source histories rather than silently dropping them', () => {
+    const invalid = structuredClone(asset);
+    invalid.valuationSources![0].readings[0].value = -1;
+    expect(() => getAssetSourceAverage(invalid, '2026-01-01')).toThrow(
+      'negative',
+    );
+    invalid.valuationSources![0].readings[0].value = 1.5;
+    expect(() => getAssetSourceAverage(invalid, '2026-01-01')).toThrow(
+      'integer',
+    );
   });
 });

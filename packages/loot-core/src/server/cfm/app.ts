@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 import * as asyncStorage from '#platform/server/asyncStorage';
 import { createApp } from '#server/app';
@@ -16,8 +16,10 @@ import {
   assertCfmCurrency,
   assertCfmDate,
   getAccountBalances,
+  getAssetSourceAverage,
   getCfmRecords,
   getObligationStatus,
+  normalizeCfmValuationUrl,
   validateCfmRecord,
   valueAsset,
 } from '#shared/cfm';
@@ -28,6 +30,9 @@ import type { TransactionEntity } from '#types/models';
 import type {
   CfmAccountKind,
   CfmAsset,
+  CfmAssetSourceUpdate,
+  CfmAssetSourceUpdateResult,
+  CfmAssetValuationSource,
   CfmRecord,
   CfmSettlement,
   CfmState,
@@ -258,11 +263,33 @@ export async function saveRecord({
           'A policy revision needs a later effective date; historical policies are preserved',
         );
       }
+      if (
+        typed.data.valuationSources !== undefined &&
+        JSON.stringify(typed.data.valuationSources) !==
+          JSON.stringify(old.data.valuationSources ?? [])
+      ) {
+        throw new Error(
+          'Use the valuation source operation to preserve source history and ledger balances',
+        );
+      }
+      typed.data.valuationSources = old.data.valuationSources;
       typed.data.observations = old.data.observations;
       typed.data.policyHistory =
         JSON.stringify(old.data.policy) === JSON.stringify(typed.data.policy)
           ? old.data.policyHistory
           : [...(old.data.policyHistory || []), old.data.policy];
+    }
+    if (
+      !old &&
+      ((typed.data.valuationSources ?? []).some(
+        source => source.readings.length,
+      ) ||
+        (typed.data.policy.method === 'source-average' &&
+          typed.data.observations?.length))
+    ) {
+      throw new Error(
+        'Add source estimates through the valuation source operation',
+      );
     }
     next.data = { ...typed.data };
   }
@@ -425,6 +452,23 @@ export async function valueAssetAccount({
   if (date < typed.data.acquisitionDate) {
     throw new Error('A valuation cannot predate acquisition');
   }
+  const valuation = valueAsset(typed.data, date);
+  if (
+    valuation.method === 'source-average' &&
+    valuation.source !== 'disposed'
+  ) {
+    throw new Error(
+      'Update the asset valuation sources instead of entering a separate observed value',
+    );
+  }
+  if (
+    valuation.method === 'source-average' &&
+    valuation.source === 'disposed' &&
+    !modeled &&
+    value !== 0
+  ) {
+    throw new Error('Record a zero value for a disposed source-valued asset');
+  }
   if (modeled) value = valueAsset(typed.data, date).value;
   const existing = typed.data.observations?.find(item => item.id === requestId);
   if (existing) return { transactionId: existing.transactionId || null, asset };
@@ -464,6 +508,184 @@ export async function valueAssetAccount({
   });
   if (!result || !next) throw new Error('Valuation was not posted');
   return { transactionId: result.transactionId, asset: next };
+}
+
+export type UpdateAssetSourceOptions = CfmAssetSourceUpdate;
+
+/** A manual source update and its calculated non-cash posting are one undo action. */
+export async function updateAssetSource(
+  options: UpdateAssetSourceOptions,
+): Promise<CfmAssetSourceUpdateResult> {
+  const { assetId, sourceId, date, value, requestId, expectedUpdatedAt } =
+    options;
+  requireRequestId(requestId);
+  requireRequestId(sourceId);
+  assertCfmDate(date);
+  if (!options.name.trim()) throw new Error('A valuation source needs a name');
+  if (value !== undefined) {
+    assertCfmAmount(value, 'Source estimate');
+    if (value < 0) throw new Error('A source estimate cannot be negative');
+  }
+  if (options.retire && value !== undefined) {
+    throw new Error('Retire a source separately from recording an estimate');
+  }
+  const url = normalizeCfmValuationUrl(options.url ?? '');
+  const request = {
+    operation: 'asset-source',
+    assetId,
+    sourceId,
+    date,
+    name: options.name.trim(),
+    url: url ?? null,
+    value: value ?? null,
+    retire: options.retire ?? false,
+    expectedUpdatedAt,
+  };
+  const previous = await priorOperation(requestId, request);
+  if (previous) {
+    const latest = await readRecord(assetId);
+    const current = getCfmRecords(latest ? [latest] : [], 'asset')[0];
+    if (!current) throw new Error('Asset not found');
+    return {
+      asset: current,
+      sourceId,
+      value: previous.value === null ? null : Number(previous.value),
+      sourceCount: Number(previous.sourceCount),
+      transactionId:
+        typeof previous.transactionId === 'string'
+          ? previous.transactionId
+          : null,
+    };
+  }
+  const raw = await readRecord(assetId);
+  const asset = getCfmRecords(raw ? [raw] : [], 'asset')[0];
+  if (!asset) throw new Error('Asset not found');
+  if (asset.updatedAt !== expectedUpdatedAt) {
+    throw new Error(
+      'This asset changed. Reload the source details before saving.',
+    );
+  }
+  if (
+    date < asset.data.acquisitionDate ||
+    (asset.data.disposalDate && date >= asset.data.disposalDate)
+  ) {
+    throw new Error('Source date is outside the asset holding period');
+  }
+  if (valueAsset(asset.data, date).method !== 'source-average') {
+    throw new Error(
+      'Select the average-of-sources valuation policy for this date first',
+    );
+  }
+  const sources = asset.data.valuationSources ?? [];
+  const oldSource = sources.find(source => source.id === sourceId);
+  if (oldSource?.retiredDate) {
+    throw new Error(
+      'A retired source retains its history; add a new source to use it again',
+    );
+  }
+  if (options.retire && !oldSource) {
+    throw new Error('Valuation source not found');
+  }
+  if (oldSource && date < oldSource.startDate) {
+    throw new Error('A source update cannot predate its creation');
+  }
+  // Backdated averages would require changing later posted adjustments. Keep
+  // that history intact and require a new dated reading instead.
+  const latest = [
+    asset.data.policy.effectiveDate,
+    ...(asset.data.observations ?? []).map(item => item.date),
+    ...sources.flatMap(source => [
+      source.startDate,
+      source.retiredDate ?? '',
+      ...source.readings.map(item => item.date),
+    ]),
+  ]
+    .sort()
+    .at(-1)!;
+  if ((value !== undefined || options.retire) && date < latest) {
+    throw new Error(
+      'Use a date on or after the latest asset valuation; later balance history is preserved',
+    );
+  }
+  const recordedAt = new Date(
+    Math.max(Date.now(), Date.parse(asset.updatedAt) + 1),
+  ).toISOString();
+  const source: CfmAssetValuationSource = {
+    id: sourceId,
+    name: options.name.trim(),
+    ...(url ? { url } : {}),
+    startDate: oldSource?.startDate ?? date,
+    ...(options.retire ? { retiredDate: date } : {}),
+    readings: [
+      ...(oldSource?.readings ?? []),
+      ...(value === undefined
+        ? []
+        : [
+            {
+              id: requestId,
+              date,
+              value,
+              recordedAt,
+              name: options.name.trim(),
+              ...(url ? { url } : {}),
+            },
+          ]),
+    ],
+  };
+  const data: CfmAsset = {
+    ...asset.data,
+    valuationSources: [...sources.filter(item => item.id !== sourceId), source],
+  };
+  const average = getAssetSourceAverage(data, date);
+  const shouldPost =
+    average.value !== null && (value !== undefined || options.retire);
+  const state = await getState();
+  const result = {
+    sourceId,
+    value: average.value,
+    sourceCount: average.inputs.length,
+    transactionId: null as string | null,
+  };
+  const next: CfmRecord<CfmAsset> = { ...asset, updatedAt: recordedAt, data };
+  validateCfmRecord(next, state);
+  await batchMessages(async () => {
+    if (shouldPost && average.value !== null) {
+      const posted = await adjustment({
+        accountId: data.accountId,
+        targetBalance: average.value,
+        date,
+        reason:
+          'Average of valuation sources: ' +
+          average.inputs.map(input => input.name).join(', '),
+        requestId: 'source-' + uuidv5(requestId, uuidv5.URL),
+      });
+      result.transactionId = posted.transactionId;
+      next.data.observations = [
+        ...(data.observations ?? []),
+        {
+          id: requestId,
+          date,
+          value: average.value,
+          recordedAt,
+          source: 'Average of valuation sources',
+          sourceInputs: average.inputs,
+          ...(posted.transactionId
+            ? { transactionId: posted.transactionId }
+            : {}),
+        },
+      ];
+    }
+    await writeRecord(next);
+    await appendAudit('asset-source-updated', {
+      assetId,
+      before: asset,
+      after: next,
+      average,
+      nonCash: true,
+    });
+    await completeOperation(requestId, request, result);
+  });
+  return { ...result, asset: next };
 }
 
 async function transferPayee(accountId: string): Promise<string> {
@@ -992,6 +1214,7 @@ export type CfmHandlers = {
   'cfm-create-account': typeof createAccount;
   'cfm-post-adjustment': typeof postAdjustment;
   'cfm-value-asset': typeof valueAssetAccount;
+  'cfm-update-asset-source': typeof updateAssetSource;
   'cfm-settle-obligation': typeof settleObligation;
   'cfm-project-liquidity': typeof projectCfmLiquidity;
   'cfm-run-report': typeof runReport;
@@ -1008,6 +1231,7 @@ app.method('cfm-delete-record', mutator(undoable(deleteRecord)));
 app.method('cfm-create-account', mutator(undoable(createAccount)));
 app.method('cfm-post-adjustment', mutator(undoable(postAdjustment)));
 app.method('cfm-value-asset', mutator(undoable(valueAssetAccount)));
+app.method('cfm-update-asset-source', mutator(undoable(updateAssetSource)));
 app.method('cfm-settle-obligation', mutator(undoable(settleObligation)));
 app.method('cfm-run-report', mutator(runReport));
 app.method('cfm-run-automation', runAutomation);

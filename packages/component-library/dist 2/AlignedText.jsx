@@ -1,0 +1,26 @@
+import { Block } from './Block';
+import { View } from './View';
+export function AlignedText({ left, right, style, leftStyle, rightStyle, truncate = 'left', ...nativeProps }) {
+    const truncateStyle = {
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+    };
+    return (<View style={{ flexDirection: 'row', alignItems: 'center', ...style }} {...nativeProps}>
+      <Block style={{
+            marginRight: 10,
+            ...(truncate === 'left' && truncateStyle),
+            ...leftStyle,
+        }}>
+        {left}
+      </Block>
+      <Block style={{
+            flex: 1,
+            textAlign: 'right',
+            ...(truncate === 'right' && truncateStyle),
+            ...rightStyle,
+        }}>
+        {right}
+      </Block>
+    </View>);
+}

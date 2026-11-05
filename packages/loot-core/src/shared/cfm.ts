@@ -6,6 +6,10 @@ import type {
   CfmAnnualPlanPerformance,
   CfmAsset,
   CfmAssetPolicy,
+  CfmAssetSourceAverage,
+  CfmAssetSourceInput,
+  CfmAssetSourceReading,
+  CfmAssetValuationSource,
   CfmBalanceSheet,
   CfmBalanceSheetRow,
   CfmForecastEvent,
@@ -209,9 +213,13 @@ function isAssetPolicy(value: unknown): value is CfmAssetPolicy {
   return (
     isObject(value) &&
     typeof value.effectiveDate === 'string' &&
-    ['manual', 'straight-line', 'fixed-rate', 'schedule'].some(
-      method => method === value.method,
-    ) &&
+    [
+      'manual',
+      'straight-line',
+      'fixed-rate',
+      'schedule',
+      'source-average',
+    ].some(method => method === value.method) &&
     [
       'baseValue',
       'residualValue',
@@ -230,6 +238,29 @@ function isAssetPolicy(value: unknown): value is CfmAssetPolicy {
   );
 }
 
+function isSourceReading(value: unknown): value is CfmAssetSourceReading {
+  return (
+    isObject(value) &&
+    ['id', 'date', 'recordedAt', 'name'].every(
+      key => typeof value[key] === 'string',
+    ) &&
+    typeof value.value === 'number' &&
+    (value.url === undefined || typeof value.url === 'string')
+  );
+}
+
+function isValuationSource(value: unknown): value is CfmAssetValuationSource {
+  return (
+    isObject(value) &&
+    ['id', 'name', 'startDate'].every(key => typeof value[key] === 'string') &&
+    (value.url === undefined || typeof value.url === 'string') &&
+    (value.retiredDate === undefined ||
+      typeof value.retiredDate === 'string') &&
+    Array.isArray(value.readings) &&
+    value.readings.every(isSourceReading)
+  );
+}
+
 function isAsset(value: unknown): value is CfmAsset {
   return (
     isObject(value) &&
@@ -239,6 +270,9 @@ function isAsset(value: unknown): value is CfmAsset {
     typeof value.acquisitionDate === 'string' &&
     typeof value.acquisitionValue === 'number' &&
     isAssetPolicy(value.policy) &&
+    (value.valuationSources === undefined ||
+      (Array.isArray(value.valuationSources) &&
+        value.valuationSources.every(isValuationSource))) &&
     (value.policyHistory === undefined ||
       (Array.isArray(value.policyHistory) &&
         value.policyHistory.every(isAssetPolicy))) &&
@@ -256,6 +290,14 @@ function isAsset(value: unknown): value is CfmAsset {
             typeof item.value === 'number' &&
             typeof item.recordedAt === 'string' &&
             typeof item.source === 'string' &&
+            (item.sourceInputs === undefined ||
+              (Array.isArray(item.sourceInputs) &&
+                item.sourceInputs.every(
+                  input =>
+                    isObject(input) &&
+                    typeof input.sourceId === 'string' &&
+                    isSourceReading(input),
+                ))) &&
             (item.transactionId === undefined ||
               typeof item.transactionId === 'string') &&
             (item.notes === undefined || typeof item.notes === 'string'),
@@ -383,6 +425,83 @@ export function validateCfmAnnualPlan(value: CfmAnnualPlan): void {
   }
 }
 
+/** Links are opened by the user; CFM never retrieves their contents. */
+export function normalizeCfmValuationUrl(value: string): string | undefined {
+  const text = value.trim();
+  if (!text) return undefined;
+  let url: URL;
+  try {
+    url = new URL(text);
+  } catch {
+    throw new Error(
+      'A valuation source URL must be a complete HTTP or HTTPS URL.',
+    );
+  }
+  if (
+    !['http:', 'https:'].includes(url.protocol) ||
+    !url.hostname ||
+    url.username ||
+    url.password
+  ) {
+    throw new Error(
+      'A valuation source URL must use HTTP or HTTPS without embedded credentials.',
+    );
+  }
+  return url.href;
+}
+
+function validateSourceReading(reading: CfmAssetSourceReading): void {
+  requiredText(reading.id, 'Source reading ID');
+  requiredText(reading.name, 'Valuation source name');
+  assertCfmDate(reading.date);
+  nonnegative(reading.value, 'Source estimate');
+  if (!Number.isFinite(Date.parse(reading.recordedAt))) {
+    throw new Error('Source reading requires a recorded timestamp.');
+  }
+  if (reading.url !== undefined) normalizeCfmValuationUrl(reading.url);
+}
+
+/** One equally weighted, latest dated reading per active source; no invented zeros. */
+export function getAssetSourceAverage(
+  asset: CfmAsset,
+  asOf: string,
+): CfmAssetSourceAverage {
+  validateCfmAsset(asset);
+  assertCfmDate(asOf);
+  const inputs: CfmAssetSourceInput[] = [];
+  if (
+    asOf < asset.acquisitionDate ||
+    (asset.disposalDate && asOf >= asset.disposalDate)
+  ) {
+    return { value: null, inputs };
+  }
+  for (const source of asset.valuationSources ?? []) {
+    if (
+      source.startDate > asOf ||
+      (source.retiredDate && source.retiredDate <= asOf)
+    ) {
+      continue;
+    }
+    const reading = [...source.readings]
+      .filter(item => item.date <= asOf)
+      .sort(
+        (a, b) =>
+          a.date.localeCompare(b.date) ||
+          a.recordedAt.localeCompare(b.recordedAt),
+      )
+      .at(-1);
+    if (reading) inputs.push({ ...reading, sourceId: source.id });
+  }
+  if (!inputs.length) return { value: null, inputs };
+  // BigInt avoids overflowing the sum of otherwise valid minor-unit estimates.
+  const count = BigInt(inputs.length);
+  const total = inputs.reduce((acc, input) => acc + BigInt(input.value), 0n);
+  const rounded = total / count + (2n * (total % count) >= count ? 1n : 0n);
+  const value = Number(rounded);
+  assertCfmAmount(value, 'Average source value');
+  return { value, inputs };
+}
+
 export function validateCfmAsset(value: CfmAsset): void {
   requiredText(value.accountId, 'Asset account');
   requiredText(value.name, 'Asset name');
@@ -455,6 +574,41 @@ export function validateCfmAsset(value: CfmAsset): void {
       seen.add(item.date);
     }
   }
+  const sourceIds = new Set<string>();
+  const readingIds = new Set<string>();
+  for (const source of value.valuationSources ?? []) {
+    requiredText(source.id, 'Valuation source ID');
+    requiredText(source.name, 'Valuation source name');
+    if (sourceIds.has(source.id)) {
+      throw new Error('Duplicate valuation source ID.');
+    }
+    sourceIds.add(source.id);
+    assertCfmDate(source.startDate);
+    if (source.startDate < value.acquisitionDate) {
+      throw new Error('A valuation source cannot predate acquisition.');
+    }
+    if (source.url !== undefined) normalizeCfmValuationUrl(source.url);
+    if (source.retiredDate !== undefined) {
+      assertCfmDate(source.retiredDate);
+      if (source.retiredDate < source.startDate) {
+        throw new Error('A source cannot retire before it starts.');
+      }
+    }
+    for (const reading of source.readings) {
+      validateSourceReading(reading);
+      if (readingIds.has(reading.id)) {
+        throw new Error('Duplicate source reading ID.');
+      }
+      readingIds.add(reading.id);
+      if (
+        reading.date < source.startDate ||
+        (source.retiredDate && reading.date > source.retiredDate) ||
+        (value.disposalDate && reading.date > value.disposalDate)
+      ) {
+        throw new Error('Source reading is outside its active holding period.');
+      }
+    }
+  }
   const ids = new Set<string>();
   for (const observation of value.observations ?? []) {
     requiredText(observation.id, 'Observation ID');
@@ -469,6 +623,10 @@ export function validateCfmAsset(value: CfmAsset): void {
       (value.disposalDate && observation.date > value.disposalDate)
     ) {
       throw new Error('Observation date is outside the asset holding period.');
+    }
+    for (const input of observation.sourceInputs ?? []) {
+      requiredText(input.sourceId, 'Valuation source ID');
+      validateSourceReading(input);
     }
     nonnegative(observation.value, 'Observed value');
     if (!Number.isFinite(Date.parse(observation.recordedAt))) {
@@ -814,7 +972,13 @@ function modelAsset(
   to: string,
   policy: CfmAssetPolicy,
 ): number {
-  if (to <= from || policy.method === 'manual') return value;
+  if (
+    to <= from ||
+    policy.method === 'manual' ||
+    policy.method === 'source-average'
+  ) {
+    return value;
+  }
   if (policy.method === 'schedule') {
     const latest = [...(policy.schedule ?? [])]
       .filter(item => item.date > from && item.date <= to)
@@ -943,6 +1107,7 @@ export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
   let policy: CfmAssetPolicy = { effectiveDate: date, method: 'manual' };
   let source: CfmValuation['source'] = 'acquisition';
   let observationId: string | undefined;
+  let sourceInputs: CfmAssetSourceInput[] | undefined;
   for (const event of events) {
     const next = modelAsset(value, date, event.date, policy);
     if (next !== value) source = 'modeled';
@@ -950,7 +1115,11 @@ export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
     date = event.date;
     if (event.policy) {
       policy = event.policy;
-      if (policy.baseValue !== undefined) value = policy.baseValue;
+      if (policy.baseValue !== undefined) {
+        value = policy.baseValue;
+        sourceInputs = undefined;
+        observationId = undefined;
+      }
       if (policy.method === 'schedule') {
         const initial = policy.schedule?.find(item => item.date === date);
         if (initial) value = initial.amount;
@@ -960,6 +1129,7 @@ export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
       value = event.observation.value;
       source = 'observed';
       observationId = event.observation.id;
+      sourceInputs = event.observation.sourceInputs;
     }
   }
   const result = modelAsset(value, date, asOf, policy);
@@ -971,6 +1141,7 @@ export function getAssetValuation(asset: CfmAsset, asOf: string): CfmValuation {
     source,
     method: policy.method,
     observationId,
+    ...(sourceInputs ? { sourceInputs } : {}),
   };
 }
 
